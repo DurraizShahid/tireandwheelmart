@@ -20,7 +20,7 @@ const HomeScreen = () => {
     <div className="min-h-screen bg-white dark:bg-background text-foreground flex flex-col items-center p-4 sm:p-6 md:p-8">
       {/* Header */}
       <MobileHeader
-        title="AutoLux"
+        title="Tire&Wheel" // Changed from AutoLux
         rightAction={
           <Button variant="ghost" size="icon" className="text-primary dark:text-primary-foreground">
             <Search className="h-6 w-6" />
@@ -46,7 +46,7 @@ const HomeScreen = () => {
           icon={Car}
           imageSrc={productImages.tires}
           accentColor="bg-blue-600"
-          href="/category/tires" // Added href
+          href="/category/tires"
         />
         <ProductCard
           title="Brake Systems"
@@ -54,7 +54,7 @@ const HomeScreen = () => {
           icon={Wrench}
           imageSrc={productImages.brakes}
           accentColor="bg-red-600"
-          href="/category/brakes" // Added href
+          href="/category/brakes"
         />
         <ProductCard
           title="Suspension Kits"
@@ -62,7 +62,7 @@ const HomeScreen = () => {
           icon={Zap}
           imageSrc={productImages.suspension}
           accentColor="bg-green-600"
-          href="/category/suspension" // Added href
+          href="/category/suspension"
         />
         <ProductCard
           title="Engine Components"
@@ -70,7 +70,7 @@ const HomeScreen = () => {
           icon={Package}
           imageSrc={productImages.engine}
           accentColor="bg-purple-600"
-          href="/category/engine" // Added href
+          href="/category/engine"
         />
       </section>
     </div>

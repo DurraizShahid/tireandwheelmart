@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AutoLux E-commerce",
+  title: "Tire&Wheel E-commerce", // Changed from AutoLux
   description: "Modern automotive e-commerce mobile app for selling car parts, accessories, and tires.",
 };
 
