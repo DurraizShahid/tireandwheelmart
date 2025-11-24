@@ -27,8 +27,8 @@ const Header = () => {
           Tire&Wheel
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        {/* Desktop Navigation - Centered */}
+        <nav className="hidden md:flex flex-grow justify-center items-center space-x-6">
           {navLinks.map((link) => (
             <Link
               key={link.name}
