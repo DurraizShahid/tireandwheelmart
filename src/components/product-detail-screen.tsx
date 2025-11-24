@@ -3,10 +3,9 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ChevronLeft, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import MobileHeader from "@/components/mobile-header"; // Import MobileHeader
 
 interface ProductDetailScreenProps {
   productId: string;
@@ -47,48 +46,45 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background text-foreground flex flex-col items-center p-4 sm:p-6 md:p-8">
-      {/* Header */}
-      <MobileHeader
-        title={product.name}
-        leftAction={
-          <Button variant="ghost" size="icon" onClick={() => router.back()} className="text-primary dark:text-primary-foreground">
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-        }
-        // No right action for product detail page, but the component handles alignment
-      />
+    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-8 text-center">
+          {product.name}
+        </h1>
 
-      {/* Product Image */}
-      <div className="w-full max-w-md relative h-64 sm:h-80 md:h-96 mb-8 rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
-        <Image
-          src={product.imageSrc}
-          alt={product.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          style={{ objectFit: "contain" }}
-          className="drop-shadow-2xl"
-        />
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          {/* Product Image */}
+          <div className="relative h-80 sm:h-96 md:h-[450px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+            <Image
+              src={product.imageSrc}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: "contain" }}
+              className="drop-shadow-2xl"
+            />
+          </div>
 
-      {/* Product Details */}
-      <section className="w-full max-w-md bg-white dark:bg-card p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
-        <div className="flex justify-between items-baseline mb-4">
-          <h2 className="text-3xl font-bold text-primary dark:text-primary-foreground">{product.name}</h2>
-          <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">{product.price}</p>
+          {/* Product Details */}
+          <section className="bg-white dark:bg-card p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
+            <div className="flex justify-between items-baseline mb-4">
+              <h2 className="text-3xl font-bold text-primary dark:text-primary-foreground">{product.name}</h2>
+              <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">{product.price}</p>
+            </div>
+            <p className="text-base text-muted-foreground mb-8 leading-relaxed">
+              {product.description}
+            </p>
+
+            <Button
+              className="w-full py-3 text-lg font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 shadow-lg flex items-center justify-center gap-2"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              Add to Cart
+            </Button>
+          </section>
         </div>
-        <p className="text-base text-muted-foreground mb-8 leading-relaxed">
-          {product.description}
-        </p>
-
-        <Button
-          className="w-full py-3 text-lg font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 shadow-lg flex items-center justify-center gap-2"
-          onClick={handleAddToCart}
-        >
-          <ShoppingCart className="h-5 w-5" />
-          Add to Cart
-        </Button>
-      </section>
+      </div>
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import Header from "@/components/header"; // Import the new Header
+import Footer from "@/components/footer"; // Import the new Footer
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tire&Wheel E-commerce", // Changed from AutoLux
+  title: "Tire&Wheel E-commerce",
   description: "Modern automotive e-commerce mobile app for selling car parts, accessories, and tires.",
 };
 
@@ -27,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <ThemeProvider
           attribute="class"
@@ -35,8 +37,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Header /> {/* Render the Header */}
+          <main className="flex-grow"> {/* Main content area */}
+            {children}
+          </main>
           <Toaster />
+          <Footer /> {/* Render the Footer */}
         </ThemeProvider>
       </body>
     </html>

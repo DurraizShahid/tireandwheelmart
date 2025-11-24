@@ -1,11 +1,8 @@
 "use client";
 
 import React from "react";
-import { Search, Car, Wrench, Zap, Package } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Car, Wrench, Zap, Package } from "lucide-react";
 import ProductCard from "@/components/product-card";
-import MobileHeader from "@/components/mobile-header"; // Import MobileHeader
 
 const HomeScreen = () => {
   // Placeholder for product images - you'll need to add these to your public/images directory
@@ -17,29 +14,30 @@ const HomeScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background text-foreground flex flex-col items-center p-4 sm:p-6 md:p-8">
-      {/* Header */}
-      <MobileHeader
-        title="Tire&Wheel" // Changed from AutoLux
-        rightAction={
-          <Button variant="ghost" size="icon" className="text-primary dark:text-primary-foreground">
-            <Search className="h-6 w-6" />
-          </Button>
-        }
-      />
-
-      {/* Search Bar with Glassmorphism Effect */}
-      <div className="w-full max-w-md relative mb-8">
-        <Input
-          type="text"
-          placeholder="Search for parts, accessories..."
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-300"
-        />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-      </div>
+    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground">
+      {/* Hero Section */}
+      <section className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-cover bg-center flex items-center justify-center text-center p-4"
+        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }} // Placeholder image
+      >
+        <div className="absolute inset-0 bg-black/50"></div> {/* Overlay */}
+        <div className="relative z-10 max-w-3xl text-white">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 drop-shadow-lg">
+            Your Ultimate Destination for Car Parts
+          </h1>
+          <p className="text-lg md:text-xl mb-8 drop-shadow-md">
+            Explore a wide range of high-quality tires, brakes, suspension, and engine components.
+          </p>
+          <a
+            href="/category/tires" // Link to a default category or shop page
+            className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg"
+          >
+            Shop Now
+          </a>
+        </div>
+      </section>
 
       {/* Categories/Featured Products Grid */}
-      <section className="w-full max-w-md grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <section className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <ProductCard
           title="Tires & Wheels"
           description="Performance and style"

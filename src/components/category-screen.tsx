@@ -2,11 +2,9 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProductItem from "@/components/product-item";
-import MobileHeader from "@/components/mobile-header"; // Import MobileHeader
+import { Search } from "lucide-react"; // Keep Search for the local search bar
 
 interface CategoryScreenProps {
   categorySlug: string;
@@ -51,45 +49,36 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
   const currentCategoryTitle = categoryTitleMap[categorySlug] || "Category";
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background text-foreground flex flex-col items-center p-4 sm:p-6 md:p-8">
-      {/* Header */}
-      <MobileHeader
-        title={currentCategoryTitle}
-        leftAction={
-          <Button variant="ghost" size="icon" onClick={() => router.back()} className="text-primary dark:text-primary-foreground">
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-        }
-        rightAction={
-          <Button variant="ghost" size="icon" className="text-primary dark:text-primary-foreground">
-            <Search className="h-6 w-6" />
-          </Button>
-        }
-      />
+    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-8 text-center">
+          {currentCategoryTitle}
+        </h1>
 
-      {/* Search Bar with Glassmorphism Effect */}
-      <div className="w-full max-w-md relative mb-8">
-        <Input
-          type="text"
-          placeholder={`Search in ${currentCategoryTitle}...`}
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-300"
-        />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-      </div>
-
-      {/* Product Grid */}
-      <section className="w-full max-w-md grid grid-cols-2 gap-4">
-        {currentCategoryProducts.map((product) => (
-          <ProductItem
-            key={product.id}
-            name={product.name}
-            price={product.price}
-            imageSrc={product.imageSrc}
-            href={`/product/${product.id}`} // Link to product detail page
-            // You can add specific accent colors here if needed
+        {/* Local Search Bar */}
+        <div className="w-full relative mb-8 max-w-md mx-auto">
+          <Input
+            type="text"
+            placeholder={`Search in ${currentCategoryTitle}...`}
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-300"
           />
-        ))}
-      </section>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        </div>
+
+        {/* Product Grid */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {currentCategoryProducts.map((product) => (
+            <ProductItem
+              key={product.id}
+              name={product.name}
+              price={product.price}
+              imageSrc={product.imageSrc}
+              href={`/product/${product.id}`}
+              // You can add specific accent colors here if needed
+            />
+          ))}
+        </section>
+      </div>
     </div>
   );
 };
