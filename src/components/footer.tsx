@@ -11,6 +11,7 @@ const Footer = () => {
         {/* Company Info / Logo */}
         <div className="col-span-full md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
           <Link href="/" className="flex items-center gap-2 text-3xl font-bold text-primary dark:text-primary-foreground mb-4">
+            <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
             Tire&Wheel
           </Link>
           <p className="text-sm leading-relaxed max-w-xs">
