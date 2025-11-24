@@ -14,6 +14,7 @@ const navLinks = [
   { name: "Categories", href: "/category/tires" }, // Link to a default category
   { name: "About", href: "/about" }, // Placeholder
   { name: "Contact", href: "/contact" }, // Placeholder
+  { name: "Track Order", href: "/track-order" }, // New Track Order link
 ];
 
 const Header = () => {
