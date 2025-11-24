@@ -7,7 +7,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react"; // Import social me
 const Footer = () => {
   return (
     <footer className="w-full border-t bg-background py-12 mt-16 text-muted-foreground">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl">
         {/* Company Info / Logo */}
         <div className="col-span-full md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
           <Link href="/" className="flex items-center gap-2 text-3xl font-bold text-primary dark:text-primary-foreground mb-4">
@@ -74,7 +74,7 @@ const Footer = () => {
       </div>
 
       {/* Copyright */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-border flex flex-col items-center justify-between gap-4 md:flex-row">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-border flex flex-col items-center justify-between gap-4 md:flex-row max-w-7xl">
         <p className="text-sm text-muted-foreground text-center md:text-left">
           &copy; {new Date().getFullYear()} Tire&Wheel. All rights reserved.
         </p>

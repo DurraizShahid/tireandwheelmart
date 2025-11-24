@@ -47,12 +47,12 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
 
   return (
     <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-8 text-center">
           {product.name}
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-7xl mx-auto">
           {/* Product Image */}
           <div className="relative h-80 sm:h-96 md:h-[450px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
             <Image

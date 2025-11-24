@@ -24,7 +24,7 @@ const TrackOrderScreen = () => {
 
   return (
     <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-12 min-h-[calc(100vh-128px)]"> {/* Adjusted min-h to account for header/footer */}
-      <div className="container max-w-md mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-md">
         <PackageSearch className="h-16 w-16 text-blue-600 dark:text-blue-400 mx-auto mb-6" />
         <h1 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-4">
           Track Your Order

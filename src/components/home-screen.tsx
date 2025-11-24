@@ -126,44 +126,46 @@ const HomeScreen = () => {
       </section>
 
       {/* Main Categories Grid */}
-      <section className="container px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <ProductCard
-          title="Tires & Wheels"
-          description="Performance and style"
-          icon={Car}
-          imageSrc={productImages.tires}
-          accentColor="bg-blue-600"
-          href="/category/tires"
-        />
-        <ProductCard
-          title="Brake Systems"
-          description="Superior stopping power"
-          icon={Wrench}
-          imageSrc={productImages.brakes}
-          accentColor="bg-red-600"
-          href="/category/brakes"
-        />
-        <ProductCard
-          title="Suspension Kits"
-          description="Enhance handling"
-          icon={Zap}
-          imageSrc={productImages.suspension}
-          accentColor="bg-green-600"
-          href="/category/suspension"
-        />
-        <ProductCard
-          title="Engine Components"
-          description="Unleash true power"
-          icon={Package}
-          imageSrc={productImages.engine}
-          accentColor="bg-purple-600"
-          href="/category/engine"
-        />
+      <section className="w-full px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <ProductCard
+            title="Tires & Wheels"
+            description="Performance and style"
+            icon={Car}
+            imageSrc={productImages.tires}
+            accentColor="bg-blue-600"
+            href="/category/tires"
+          />
+          <ProductCard
+            title="Brake Systems"
+            description="Superior stopping power"
+            icon={Wrench}
+            imageSrc={productImages.brakes}
+            accentColor="bg-red-600"
+            href="/category/brakes"
+          />
+          <ProductCard
+            title="Suspension Kits"
+            description="Enhance handling"
+            icon={Zap}
+            imageSrc={productImages.suspension}
+            accentColor="bg-green-600"
+            href="/category/suspension"
+          />
+          <ProductCard
+            title="Engine Components"
+            description="Unleash true power"
+            icon={Package}
+            imageSrc={productImages.engine}
+            accentColor="bg-purple-600"
+            href="/category/engine"
+          />
+        </div>
       </section>
 
       {/* Featured Tires and Wheels Product Categories Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
-        <div className="container px-4 sm:px-6 lg:px-8 text-center">
+        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             Featured Tires & Wheels Categories
           </h2>
@@ -188,7 +190,7 @@ const HomeScreen = () => {
 
       {/* Featured Products Section */}
       <section className="w-full py-16">
-        <div className="container px-4 sm:px-6 lg:px-8 text-center">
+        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             Our Featured Products
           </h2>
@@ -211,7 +213,7 @@ const HomeScreen = () => {
 
       {/* Featured Tires Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
-        <div className="container px-4 sm:px-6 lg:px-8 text-center">
+        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             Featured Tires
           </h2>
@@ -234,7 +236,7 @@ const HomeScreen = () => {
 
       {/* Why Choose Us Section */}
       <section className="w-full py-16">
-        <div className="container px-4 sm:px-6 lg:px-8 text-center">
+        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             Why Choose Tire&Wheel?
           </h2>
@@ -266,7 +268,7 @@ const HomeScreen = () => {
 
       {/* What Our Customers Say Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
-        <div className="container px-4 sm:px-6 lg:px-8 text-center">
+        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             What Our Customers Say
           </h2>
