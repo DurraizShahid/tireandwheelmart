@@ -2,20 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface CategoryGridCardProps {
   title: string;
-  imageSrc: string;
   href: string;
   backgroundColor?: string; // Optional background color for special cards (like red for batteries)
 }
 
 const CategoryGridCard = ({
   title,
-  imageSrc,
   href,
   backgroundColor = "bg-gray-100 dark:bg-gray-800", // Default light gray background
 }: CategoryGridCardProps) => {
@@ -32,18 +29,7 @@ const CategoryGridCard = ({
           )}>
             {title}
           </h3>
-          {imageSrc && (
-            <div className="relative w-24 h-24 flex-shrink-0"> {/* Fixed size for image container */}
-              <Image
-                src={imageSrc}
-                alt={title}
-                fill
-                sizes="96px" // Image size for responsiveness
-                style={{ objectFit: "contain" }}
-                className="drop-shadow-md"
-              />
-            </div>
-          )}
+          {/* Removed the image/icon */}
         </CardContent>
       </Card>
     </Link>

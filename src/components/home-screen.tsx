@@ -194,7 +194,6 @@ const HomeScreen = () => {
               <CategoryGridCard
                 key={index}
                 title={category.title}
-                imageSrc={category.imageSrc}
                 href={category.href}
                 backgroundColor={category.backgroundColor}
               />
