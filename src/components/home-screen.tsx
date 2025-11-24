@@ -39,7 +39,7 @@ const HomeScreen = () => {
       title: "Performance Tires",
       description: "Maximize grip and handling for spirited driving.",
       icon: Gauge,
-      imageSrc: "/images/performance-tires.png", // Placeholder image
+      imageSrc: "/images/tires_icon.webp", // Updated image source
       accentColor: "bg-orange-600",
       href: "/category/tires?type=performance", // Example sub-category link
     },
@@ -47,7 +47,7 @@ const HomeScreen = () => {
       title: "Alloy Wheels",
       description: "Lightweight and stylish options for every vehicle.",
       icon: Disc,
-      imageSrc: "/images/alloy-wheels.png", // Placeholder image
+      imageSrc: "/images/wheels_icon.webp", // Updated image source
       accentColor: "bg-teal-600",
       href: "/category/wheels?type=alloy", // Example sub-category link
     },
@@ -55,7 +55,7 @@ const HomeScreen = () => {
       title: "Off-Road Tires",
       description: "Conquer any terrain with rugged and durable tires.",
       icon: Truck,
-      imageSrc: "/images/offroad-tires.png", // Placeholder image
+      imageSrc: "/images/snowTire_icon.webp", // Updated image source
       accentColor: "bg-amber-600",
       href: "/category/tires?type=offroad", // Example sub-category link
     },
@@ -63,7 +63,7 @@ const HomeScreen = () => {
       title: "Wheel Accessories",
       description: "Lug nuts, spacers, and more to complete your setup.",
       icon: Settings, // Replaced Spanner with Settings
-      imageSrc: "/images/wheel-accessories.png", // Placeholder image
+      imageSrc: "/images/package_icon.webp", // Updated image source
       accentColor: "bg-indigo-600",
       href: "/category/accessories?type=wheels", // Example sub-category link
     },
