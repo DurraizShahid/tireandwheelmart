@@ -3,6 +3,7 @@
 import React from "react";
 import { Car, Wrench, Zap, Package } from "lucide-react";
 import ProductCard from "@/components/product-card";
+import Link from "next/link"; // Import Link for the new button
 
 const HomeScreen = () => {
   // Placeholder for product images - you'll need to add these to your public/images directory
@@ -27,12 +28,20 @@ const HomeScreen = () => {
           <p className="text-lg md:text-xl mb-8 drop-shadow-md">
             Explore a wide range of high-quality tires, brakes, suspension, and engine components.
           </p>
-          <a
-            href="/category/tires" // Link to a default category or shop page
-            className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg"
-          >
-            Shop Now
-          </a>
+          <div className="flex justify-center gap-4"> {/* Container for buttons */}
+            <Link
+              href="/category/tires" // Link to a default category or shop page
+              className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg"
+            >
+              Shop Now
+            </Link>
+            <Link
+              href="/track-order" // Link to the Track Order page
+              className="inline-flex items-center justify-center px-8 py-3 border border-white text-base font-medium rounded-md text-white bg-transparent hover:bg-white hover:text-blue-600 transition-colors duration-300 shadow-lg"
+            >
+              Track Order
+            </Link>
+          </div>
         </div>
       </section>
 
