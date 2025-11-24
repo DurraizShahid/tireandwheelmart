@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { Car, Wrench, Zap, Package, Truck, ShieldCheck, Headset, Disc, Gauge, Settings } from "lucide-react"; // Replaced Spanner with Settings
+import { Car, Wrench, Zap, Package, Truck, ShieldCheck, Headset, Disc, Gauge, Settings } from "lucide-react";
 import ProductCard from "@/components/product-card";
 import ProductItem from "@/components/product-item";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import TestimonialCard from "@/components/testimonial-card"; // Import the new TestimonialCard
+import TestimonialCard from "@/components/testimonial-card";
+import CategoryGridCard from "@/components/category-grid-card"; // Import the new component
 
 const HomeScreen = () => {
   // Placeholder for product images - you'll need to add these to your public/images directory
@@ -33,39 +34,53 @@ const HomeScreen = () => {
     { id: "4", name: "Continental ExtremeContact", price: "$230", imageSrc: "/images/tire4.png", href: "/product/4" },
   ];
 
-  // Dummy data for featured tires and wheels categories
-  const featuredTireWheelCategories = [
+  // Updated dummy data for featured categories to match the image layout
+  const featuredCategories = [
     {
-      title: "Performance Tires",
-      description: "Maximize grip and handling for spirited driving.",
-      icon: Gauge,
-      imageSrc: "/images/tires_icon.webp", // Updated image source
-      accentColor: "bg-orange-600",
-      href: "/category/tires?type=performance", // Example sub-category link
+      title: "General Catalog",
+      imageSrc: "/images/tire1.png", // Placeholder: Replace with /images/general_catalog.png
+      href: "/category/general",
     },
     {
-      title: "Alloy Wheels",
-      description: "Lightweight and stylish options for every vehicle.",
-      icon: Disc,
-      imageSrc: "/images/wheels_icon.webp", // Updated image source
-      accentColor: "bg-teal-600",
-      href: "/category/wheels?type=alloy", // Example sub-category link
+      title: "Original Spare Parts",
+      imageSrc: "/images/brake1.png", // Placeholder: Replace with /images/original_parts.png
+      href: "/category/original-parts",
     },
     {
-      title: "Off-Road Tires",
-      description: "Conquer any terrain with rugged and durable tires.",
-      icon: Truck,
-      imageSrc: "/images/snowTire_icon.webp", // Updated image source
-      accentColor: "bg-amber-600",
-      href: "/category/tires?type=offroad", // Example sub-category link
+      title: "Maintenance Parts",
+      imageSrc: "/images/suspension1.png", // Placeholder: Replace with /images/maintenance_parts.png
+      href: "/category/maintenance",
     },
     {
-      title: "Wheel Accessories",
-      description: "Lug nuts, spacers, and more to complete your setup.",
-      icon: Settings, // Replaced Spanner with Settings
-      imageSrc: "/images/package_icon.webp", // Updated image source
-      accentColor: "bg-indigo-600",
-      href: "/category/accessories?type=wheels", // Example sub-category link
+      title: "Motor Oils",
+      imageSrc: "/images/engine2.png", // Placeholder: Replace with /images/motor_oils.png
+      href: "/category/motor-oils",
+    },
+    {
+      title: "Automotive Fluids",
+      imageSrc: "/images/engine1.png", // Placeholder: Replace with /images/automotive_fluids.png
+      href: "/category/automotive-fluids",
+    },
+    {
+      title: "Autochemistry",
+      imageSrc: "/images/engine3.png", // Placeholder: Replace with /images/autochemistry.png
+      href: "/category/autochemistry",
+    },
+    {
+      title: "Tires & Wheels",
+      imageSrc: "/images/tire2.png", // Placeholder: Replace with /images/tires_wheels.png
+      href: "/category/tires",
+    },
+    {
+      title: "Batteries",
+      imageSrc: "/images/brake2.png", // Placeholder: Replace with /images/batteries.png
+      backgroundColor: "bg-red-600", // Red background for this card
+      href: "/category/batteries",
+    },
+    {
+      title: "Accessories",
+      imageSrc: "/images/package_icon.webp", // Placeholder: Replace with /images/accessories.png
+      href: "/category/accessories",
     },
   ];
 
@@ -125,7 +140,7 @@ const HomeScreen = () => {
         </div>
       </section>
 
-      {/* Main Categories Grid */}
+      {/* Main Categories Grid (existing section, kept as is) */}
       <section className="w-full px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           <ProductCard
@@ -163,28 +178,28 @@ const HomeScreen = () => {
         </div>
       </section>
 
-      {/* Featured Tires and Wheels Product Categories Section */}
-      <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
-        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
-            Featured Tires & Wheels Categories
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {featuredTireWheelCategories.map((category, index) => (
-              <ProductCard
+      {/* Remade Featured Categories Section */}
+      <section className="w-full bg-white dark:bg-background py-16">
+        <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-10 gap-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-primary-foreground text-center sm:text-left">
+              Category Selection
+            </h2>
+            <Link href="/category/all" className="inline-flex items-center justify-center px-6 py-2 border-2 border-red-600 text-base font-medium rounded-md text-red-600 hover:bg-red-600 hover:text-white transition-colors duration-300">
+              All Categories
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"> {/* 3x3 grid */}
+            {featuredCategories.map((category, index) => (
+              <CategoryGridCard
                 key={index}
                 title={category.title}
-                description={category.description}
-                icon={category.icon}
                 imageSrc={category.imageSrc}
-                accentColor={category.accentColor}
                 href={category.href}
+                backgroundColor={category.backgroundColor}
               />
             ))}
           </div>
-          <Link href="/category/tires" className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg">
-            Explore All Tires & Wheels
-          </Link>
         </div>
       </section>
 
