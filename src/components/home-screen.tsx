@@ -43,6 +43,7 @@ const HomeScreen = () => {
           icon={Car}
           imageSrc={productImages.tires}
           accentColor="bg-blue-600"
+          href="/category/tires" // Added href
         />
         <ProductCard
           title="Brake Systems"
@@ -50,6 +51,7 @@ const HomeScreen = () => {
           icon={Wrench}
           imageSrc={productImages.brakes}
           accentColor="bg-red-600"
+          href="/category/brakes" // Added href
         />
         <ProductCard
           title="Suspension Kits"
@@ -57,6 +59,7 @@ const HomeScreen = () => {
           icon={Zap}
           imageSrc={productImages.suspension}
           accentColor="bg-green-600"
+          href="/category/suspension" // Added href
         />
         <ProductCard
           title="Engine Components"
@@ -64,6 +67,7 @@ const HomeScreen = () => {
           icon={Package}
           imageSrc={productImages.engine}
           accentColor="bg-purple-600"
+          href="/category/engine" // Added href
         />
       </section>
     </div>
