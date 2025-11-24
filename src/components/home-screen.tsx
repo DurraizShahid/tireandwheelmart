@@ -82,7 +82,7 @@ const HomeScreen = () => {
       </section>
 
       {/* Categories/Featured Products Grid */}
-      <section className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="container px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <ProductCard
           title="Tires & Wheels"
           description="Performance and style"
@@ -119,7 +119,7 @@ const HomeScreen = () => {
 
       {/* Featured Products Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="container px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             Our Featured Products
           </h2>
@@ -142,7 +142,7 @@ const HomeScreen = () => {
 
       {/* Why Choose Us Section */}
       <section className="w-full py-16">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="container px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             Why Choose Tire&Wheel?
           </h2>
@@ -174,7 +174,7 @@ const HomeScreen = () => {
 
       {/* What Our Customers Say Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="container px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             What Our Customers Say
           </h2>
