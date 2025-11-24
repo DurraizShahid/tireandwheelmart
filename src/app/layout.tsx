@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tire&Wheel E-commerce",
   description: "Modern automotive e-commerce mobile app for selling car parts, accessories, and tires.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

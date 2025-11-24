@@ -25,6 +25,7 @@ const Header = () => {
       <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary dark:text-primary-foreground">
+          <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
           Tire&Wheel
         </Link>
 
@@ -79,6 +80,7 @@ const Header = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[250px] sm:w-[300px]">
               <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary mb-6">
+                <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
                 Tire&Wheel
               </Link>
               <nav className="flex flex-col gap-4">
