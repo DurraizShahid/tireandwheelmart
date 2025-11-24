@@ -12,8 +12,8 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Categories", href: "/category/tires" }, // Link to a default category
-  { name: "About", "href": "/about" }, // Placeholder
-  { name: "Contact", "href": "/contact" }, // Placeholder
+  { name: "About", href: "/about" }, // Placeholder
+  { name: "Contact", href: "/contact" }, // Placeholder
   { name: "Track Order", href: "/track-order" }, // New Track Order link
 ];
 
@@ -22,17 +22,15 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
-        {/* Left section: Logo */}
-        <div className="flex-1 flex items-center justify-start">
-          <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary dark:text-primary-foreground">
-            <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
-            Tire&Wheel
-          </Link>
-        </div>
+      <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary dark:text-primary-foreground">
+          <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
+          Tire&Wheel
+        </Link>
 
         {/* Desktop Navigation - Centered */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden md:flex flex-grow justify-center items-center space-x-6">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -47,8 +45,8 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Right section: Desktop Search and Cart */}
-        <div className="flex-1 hidden md:flex items-center justify-end space-x-4">
+        {/* Desktop Search and Cart */}
+        <div className="hidden md:flex items-center space-x-4">
           <div className="relative">
             <Input
               type="text"
@@ -65,7 +63,7 @@ const Header = () => {
           </Button>
         </div>
 
-        {/* Mobile Navigation - This part remains largely the same, as it's a different layout */}
+        {/* Mobile Navigation */}
         <div className="flex items-center md:hidden">
           <Button variant="ghost" size="icon" className="relative mr-2">
             <ShoppingCart className="h-5 w-5" />
