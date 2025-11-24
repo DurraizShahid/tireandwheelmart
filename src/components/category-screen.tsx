@@ -6,6 +6,7 @@ import { ChevronLeft, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProductItem from "@/components/product-item";
+import MobileHeader from "@/components/mobile-header"; // Import MobileHeader
 
 interface CategoryScreenProps {
   categorySlug: string;
@@ -52,15 +53,19 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
   return (
     <div className="min-h-screen bg-white dark:bg-background text-foreground flex flex-col items-center p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <header className="w-full max-w-md flex items-center justify-between py-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()} className="text-primary dark:text-primary-foreground">
-          <ChevronLeft className="h-6 w-6" />
-        </Button>
-        <h1 className="text-2xl font-bold text-primary dark:text-primary-foreground">{currentCategoryTitle}</h1>
-        <Button variant="ghost" size="icon" className="text-primary dark:text-primary-foreground">
-          <Search className="h-6 w-6" />
-        </Button>
-      </header>
+      <MobileHeader
+        title={currentCategoryTitle}
+        leftAction={
+          <Button variant="ghost" size="icon" onClick={() => router.back()} className="text-primary dark:text-primary-foreground">
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+        }
+        rightAction={
+          <Button variant="ghost" size="icon" className="text-primary dark:text-primary-foreground">
+            <Search className="h-6 w-6" />
+          </Button>
+        }
+      />
 
       {/* Search Bar with Glassmorphism Effect */}
       <div className="w-full max-w-md relative mb-8">

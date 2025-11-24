@@ -5,6 +5,7 @@ import { Search, Car, Wrench, Zap, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProductCard from "@/components/product-card";
+import MobileHeader from "@/components/mobile-header"; // Import MobileHeader
 
 const HomeScreen = () => {
   // Placeholder for product images - you'll need to add these to your public/images directory
@@ -18,12 +19,14 @@ const HomeScreen = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-background text-foreground flex flex-col items-center p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <header className="w-full max-w-md flex items-center justify-between py-4">
-        <h1 className="text-3xl font-bold text-primary dark:text-primary-foreground">AutoLux</h1>
-        <Button variant="ghost" size="icon" className="text-primary dark:text-primary-foreground">
-          <Search className="h-6 w-6" />
-        </Button>
-      </header>
+      <MobileHeader
+        title="AutoLux"
+        rightAction={
+          <Button variant="ghost" size="icon" className="text-primary dark:text-primary-foreground">
+            <Search className="h-6 w-6" />
+          </Button>
+        }
+      />
 
       {/* Search Bar with Glassmorphism Effect */}
       <div className="w-full max-w-md relative mb-8">
