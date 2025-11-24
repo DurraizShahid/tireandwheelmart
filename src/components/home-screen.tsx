@@ -17,7 +17,7 @@ const HomeScreen = () => {
     <div className="flex flex-col items-center bg-white dark:bg-background text-foreground">
       {/* Hero Section */}
       <section className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-cover bg-center flex items-center justify-center text-center p-4"
-        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }} // Placeholder image
+        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }} // Using the new image
       >
         <div className="absolute inset-0 bg-black/50"></div> {/* Overlay */}
         <div className="relative z-10 max-w-3xl text-white">
