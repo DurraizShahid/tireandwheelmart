@@ -3,9 +3,10 @@
 import React from "react";
 import { Car, Wrench, Zap, Package, Truck, ShieldCheck, Headset } from "lucide-react";
 import ProductCard from "@/components/product-card";
-import ProductItem from "@/components/product-item"; // Import ProductItem
-import { Card, CardContent } from "@/components/ui/card"; // Import Card components
+import ProductItem from "@/components/product-item";
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import TestimonialCard from "@/components/testimonial-card"; // Import the new TestimonialCard
 
 const HomeScreen = () => {
   // Placeholder for product images - you'll need to add these to your public/images directory
@@ -22,6 +23,31 @@ const HomeScreen = () => {
     { id: "5", name: "Brembo GT Kit", price: "$2500", imageSrc: "/images/brake1.png", href: "/product/5" },
     { id: "8", name: "Ohlins Road & Track Coilovers", price: "$3200", imageSrc: "/images/suspension1.png", href: "/product/8" },
     { id: "11", name: "APR Stage 1 ECU Tune", price: "$700", imageSrc: "/images/engine1.png", href: "/product/11" },
+  ];
+
+  // Dummy data for testimonials
+  const testimonials = [
+    {
+      quote: "The best place to buy car parts online! Fast shipping and excellent quality. My car feels brand new.",
+      author: "Alex Johnson",
+      title: "Performance Enthusiast",
+      avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=AJ",
+      rating: 5,
+    },
+    {
+      quote: "I found exactly what I needed for my brake upgrade. The product description was accurate, and delivery was quick.",
+      author: "Maria Rodriguez",
+      title: "DIY Mechanic",
+      avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=MR",
+      rating: 4,
+    },
+    {
+      quote: "Fantastic customer service! They helped me choose the right suspension kit for my vehicle. Highly recommend!",
+      author: "David Lee",
+      title: "Car Tuner",
+      avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=DL",
+      rating: 5,
+    },
   ];
 
   return (
@@ -142,6 +168,27 @@ const HomeScreen = () => {
                 <p className="text-muted-foreground">Our dedicated team is always here to help you with any queries.</p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* What Our Customers Say Section */}
+      <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
+            What Our Customers Say
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard
+                key={index}
+                quote={testimonial.quote}
+                author={testimonial.author}
+                title={testimonial.title}
+                avatarSrc={testimonial.avatarSrc}
+                rating={testimonial.rating}
+              />
+            ))}
           </div>
         </div>
       </section>
