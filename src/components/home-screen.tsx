@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Car, Wrench, Zap, Package, Truck, ShieldCheck, Headset } from "lucide-react";
+import { Car, Wrench, Zap, Package, Truck, ShieldCheck, Headset, Disc, Gauge, Settings } from "lucide-react"; // Replaced Spanner with Settings
 import ProductCard from "@/components/product-card";
 import ProductItem from "@/components/product-item";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +23,50 @@ const HomeScreen = () => {
     { id: "5", name: "Brembo GT Kit", price: "$2500", imageSrc: "/images/brake1.png", href: "/product/5" },
     { id: "8", name: "Ohlins Road & Track Coilovers", price: "$3200", imageSrc: "/images/suspension1.png", href: "/product/8" },
     { id: "11", name: "APR Stage 1 ECU Tune", price: "$700", imageSrc: "/images/engine1.png", href: "/product/11" },
+  ];
+
+  // Dummy data for featured tires
+  const featuredTires = [
+    { id: "1", name: "Michelin Pilot Sport 4S", price: "$250", imageSrc: "/images/tire1.png", href: "/product/1" },
+    { id: "2", name: "Pirelli P Zero", price: "$280", imageSrc: "/images/tire2.png", href: "/product/2" },
+    { id: "3", name: "Goodyear Eagle F1", price: "$220", imageSrc: "/images/tire3.png", href: "/product/3" },
+    { id: "4", name: "Continental ExtremeContact", price: "$230", imageSrc: "/images/tire4.png", href: "/product/4" },
+  ];
+
+  // Dummy data for featured tires and wheels categories
+  const featuredTireWheelCategories = [
+    {
+      title: "Performance Tires",
+      description: "Maximize grip and handling for spirited driving.",
+      icon: Gauge,
+      imageSrc: "/images/performance-tires.png", // Placeholder image
+      accentColor: "bg-orange-600",
+      href: "/category/tires?type=performance", // Example sub-category link
+    },
+    {
+      title: "Alloy Wheels",
+      description: "Lightweight and stylish options for every vehicle.",
+      icon: Disc,
+      imageSrc: "/images/alloy-wheels.png", // Placeholder image
+      accentColor: "bg-teal-600",
+      href: "/category/wheels?type=alloy", // Example sub-category link
+    },
+    {
+      title: "Off-Road Tires",
+      description: "Conquer any terrain with rugged and durable tires.",
+      icon: Truck,
+      imageSrc: "/images/offroad-tires.png", // Placeholder image
+      accentColor: "bg-amber-600",
+      href: "/category/tires?type=offroad", // Example sub-category link
+    },
+    {
+      title: "Wheel Accessories",
+      description: "Lug nuts, spacers, and more to complete your setup.",
+      icon: Settings, // Replaced Spanner with Settings
+      imageSrc: "/images/wheel-accessories.png", // Placeholder image
+      accentColor: "bg-indigo-600",
+      href: "/category/accessories?type=wheels", // Example sub-category link
+    },
   ];
 
   // Dummy data for testimonials
@@ -81,7 +125,7 @@ const HomeScreen = () => {
         </div>
       </section>
 
-      {/* Categories/Featured Products Grid */}
+      {/* Main Categories Grid */}
       <section className="container px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <ProductCard
           title="Tires & Wheels"
@@ -117,8 +161,33 @@ const HomeScreen = () => {
         />
       </section>
 
-      {/* Featured Products Section */}
+      {/* Featured Tires and Wheels Product Categories Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="container px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
+            Featured Tires & Wheels Categories
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {featuredTireWheelCategories.map((category, index) => (
+              <ProductCard
+                key={index}
+                title={category.title}
+                description={category.description}
+                icon={category.icon}
+                imageSrc={category.imageSrc}
+                accentColor={category.accentColor}
+                href={category.href}
+              />
+            ))}
+          </div>
+          <Link href="/category/tires" className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg">
+            Explore All Tires & Wheels
+          </Link>
+        </div>
+      </section>
+
+      {/* Featured Products Section */}
+      <section className="w-full py-16">
         <div className="container px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
             Our Featured Products
@@ -136,6 +205,29 @@ const HomeScreen = () => {
           </div>
           <Link href="/category/tires" className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg">
             View All Products
+          </Link>
+        </div>
+      </section>
+
+      {/* Featured Tires Section */}
+      <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="container px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-10">
+            Featured Tires
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {featuredTires.map((tire) => (
+              <ProductItem
+                key={tire.id}
+                name={tire.name}
+                price={tire.price}
+                imageSrc={tire.imageSrc}
+                href={tire.href}
+              />
+            ))}
+          </div>
+          <Link href="/category/tires" className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg">
+            View All Tires
           </Link>
         </div>
       </section>
