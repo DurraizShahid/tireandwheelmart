@@ -48,9 +48,9 @@ export default function CartPage() {
               <CardContent className="p-0">
                 <div className="divide-y">
                   {items.map((item) => (
-                    <div key={item.id} className="p-6 flex gap-6">
+                    <div key={item.id} className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6">
                       {/* Product Image */}
-                      <div className="relative w-24 h-24 flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
                         <Image
                           src={item.imageSrc}
                           alt={item.name}
@@ -63,7 +63,7 @@ export default function CartPage() {
                       <div className="flex-1 flex flex-col justify-between">
                         <div>
                           <Link href={`/product/${item.id}`}>
-                            <h3 className="font-semibold text-foreground hover:text-blue-600 transition-colors">
+                            <h3 className="font-semibold text-foreground hover:text-blue-600 transition-colors text-sm sm:text-base">
                               {item.name}
                             </h3>
                           </Link>
@@ -73,7 +73,7 @@ export default function CartPage() {
                         </div>
 
                         {/* Quantity Controls */}
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 mt-2 sm:mt-0">
                           <Button
                             variant="outline"
                             size="sm"
@@ -101,8 +101,8 @@ export default function CartPage() {
                       </div>
 
                       {/* Price and Remove */}
-                      <div className="flex flex-col items-end justify-between">
-                        <p className="font-semibold text-foreground">
+                      <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-between">
+                        <p className="font-semibold text-foreground text-sm sm:text-base">
                           ${(item.price * item.quantity).toFixed(2)}
                         </p>
                         <Button

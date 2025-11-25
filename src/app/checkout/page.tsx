@@ -107,40 +107,40 @@ export default function CheckoutPage() {
 
             <div className="flex justify-between">
               <div className="text-center">
-                <div className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center font-bold ${
+                <div className={`h-8 w-8 sm:h-12 sm:w-12 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-sm sm:text-base ${
                   step === "shipping" || step === "payment" || step === "review"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-600"
                 }`}>
-                  {step === "shipping" || step === "payment" || step === "review" ? "1" : <Check className="w-6 h-6" />}
+                  {step === "shipping" || step === "payment" || step === "review" ? "1" : <Check className="w-4 h-4 sm:w-6 sm:h-6" />}
                 </div>
-                <p className="text-sm font-medium">Shipping</p>
+                <p className="text-xs sm:text-sm font-medium">Shipping</p>
               </div>
 
               <div className="text-center">
-                <div className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center font-bold ${
+                <div className={`h-8 w-8 sm:h-12 sm:w-12 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-sm sm:text-base ${
                   step === "payment" || step === "review"
                     ? "bg-blue-600 text-white"
                     : (step as any) === "confirmation"
                     ? "bg-green-600 text-white"
                     : "bg-gray-200 text-gray-600"
                 }`}>
-                  {step === "payment" || step === "review" ? "2" : (step as any) === "confirmation" ? <Check className="w-6 h-6" /> : "2"}
+                  {step === "payment" || step === "review" ? "2" : (step as any) === "confirmation" ? <Check className="w-4 h-4 sm:w-6 sm:h-6" /> : "2"}
                 </div>
-                <p className="text-sm font-medium">Payment</p>
+                <p className="text-xs sm:text-sm font-medium">Payment</p>
               </div>
 
               <div className="text-center">
-                <div className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center font-bold ${
+                <div className={`h-8 w-8 sm:h-12 sm:w-12 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-sm sm:text-base ${
                   step === "review"
                     ? "bg-blue-600 text-white"
                     : (step as any) === "confirmation"
                     ? "bg-green-600 text-white"
                     : "bg-gray-200 text-gray-600"
                 }`}>
-                  {(step as any) === "confirmation" ? <Check className="w-6 h-6" /> : "3"}
+                  {(step as any) === "confirmation" ? <Check className="w-4 h-4 sm:w-6 sm:h-6" /> : "3"}
                 </div>
-                <p className="text-sm font-medium">Review</p>
+                <p className="text-xs sm:text-sm font-medium">Review</p>
               </div>
             </div>
           </div>

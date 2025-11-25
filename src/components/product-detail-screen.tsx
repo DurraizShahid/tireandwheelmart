@@ -671,15 +671,15 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
+    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-4 sm:py-8">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-foreground mb-8 text-center">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4 sm:mb-8 text-center">
           {product.name}
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 items-start max-w-7xl mx-auto">
           {/* Product Image */}
-          <div className="relative h-80 sm:h-96 md:h-[450px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[450px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
             <Image
               src={product.imageSrc}
               alt={product.name}
@@ -691,43 +691,43 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
           </div>
 
           {/* Product Details */}
-          <div className="space-y-6">
-            <Card className="bg-white dark:bg-card p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
-              <div className="flex justify-between items-baseline mb-4">
-                <h2 className="text-3xl font-bold text-foreground">{product.name}</h2>
-                <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">{product.price}</p>
+          <div className="space-y-4 sm:space-y-6">
+            <Card className="bg-white dark:bg-card p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-2 sm:gap-4 mb-4">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">{product.name}</h2>
+                <p className="text-xl sm:text-2xl font-semibold text-blue-600 dark:text-blue-400">{product.price}</p>
               </div>
               
               {/* Season Badge */}
               {product.specs?.season && (
                 <div className="mb-4">
-                  <Badge variant="secondary" className="flex items-center text-sm font-medium bg-gray-100 dark:bg-gray-800 text-foreground">
+                  <Badge variant="secondary" className="flex items-center text-xs sm:text-sm font-medium bg-gray-100 dark:bg-gray-800 text-foreground">
                     {getSeasonIcon(product.specs.season)}
                     {product.specs.season}
                   </Badge>
                 </div>
               )}
               
-              <p className="text-base text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
                 {product.description}
               </p>
 
             <Button
-              className="w-full py-3 text-lg font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-2 sm:py-3 text-base sm:text-lg font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 shadow-lg flex items-center justify-center gap-2"
               onClick={handleAddToCart}
             >
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-4 sm:h-5 w-4 sm:w-5" />
               Add to Cart
             </Button>
             
             {/* Quantity Selector */}
-            <div className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
-              <span className="text-sm font-medium text-muted-foreground">Quantity:</span>
+            <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 dark:bg-gray-800 p-2 sm:p-3 rounded-lg">
+              <span className="text-xs sm:text-sm font-medium text-muted-foreground">Qty:</span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 text-sm"
               >
                 −
               </Button>
@@ -736,13 +736,13 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-12 h-8 text-center border rounded-md bg-background text-foreground"
+                className="w-12 h-8 text-center border rounded-md bg-background text-foreground text-sm"
               />
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setQuantity(quantity + 1)}
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 text-sm"
               >
                 +
               </Button>
@@ -751,18 +751,18 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
 
             {/* Key Specifications */}
             {(product.specs?.size || product.specs?.loadSpeed || product.specs?.loadIndex || product.specs?.speedRating) && (
-              <Card className="bg-white dark:bg-card p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
+              <Card className="bg-white dark:bg-card p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
                 <CardHeader className="p-0 mb-4">
-                  <CardTitle className="text-xl font-bold text-foreground">Specifications</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl font-bold text-foreground">Specifications</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {product.specs?.size && (
-                      <div className="flex items-center">
-                        <Gauge className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Tire Size</p>
-                          <p className="font-medium">{product.specs.size}</p>
+                      <div className="flex items-start sm:items-center gap-2">
+                        <Gauge className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5 sm:mt-0" />
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm text-muted-foreground">Tire Size</p>
+                          <p className="font-medium text-sm">{product.specs.size}</p>
                         </div>
                       </div>
                     )}

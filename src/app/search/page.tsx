@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductItem from "@/components/product-item";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const SearchPage = () => {
+const SearchContent = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
 
@@ -253,6 +253,20 @@ const SearchPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const SearchPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
+        <div className="text-center py-12">
+          <p className="text-lg text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   );
 };
 

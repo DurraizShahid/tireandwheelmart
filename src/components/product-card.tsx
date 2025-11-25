@@ -55,8 +55,8 @@ const ProductCard = ({
   };
 
   return (
-    <Link href={href} className="block"> {/* Wrap with Link */}
-      <Card className="relative overflow-hidden rounded-2xl shadow-xl border-none group cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <Link href={href} className="block flex-shrink-0"> {/* Wrap with Link */}
+      <Card className="relative overflow-hidden rounded-2xl shadow-xl border-none group cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 w-64 sm:w-80 md:w-96 h-80 sm:h-96 md:h-[420px]">
         {/* Subtle accent color overlay */}
         <div
           className={cn(
@@ -64,7 +64,7 @@ const ProductCard = ({
             accentColor
           )}
         ></div>
-        <CardContent className="relative z-10 p-6 flex flex-col justify-between h-full">
+        <CardContent className="relative z-10 p-6 sm:p-8 flex flex-col justify-between h-full">
           <div className="flex items-center justify-between mb-4">
             <Icon className="h-8 w-8 text-red-600" />
             <div className="flex items-center gap-1">

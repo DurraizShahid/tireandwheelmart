@@ -27,18 +27,18 @@ const CategoryGridCard = ({
         "relative overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700 group cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:bg-red-600",
         backgroundColor
       )}>
-        <CardContent className="relative z-10 p-5 flex items-center justify-between h-full min-h-[160px]">
+        <CardContent className="relative z-10 p-3 sm:p-5 flex flex-col sm:flex-row items-center justify-between h-full min-h-[120px] sm:min-h-[160px] gap-2 sm:gap-0">
           {/* Text on the left */}
-          <div className="flex-1 pr-4 flex flex-col justify-center">
+          <div className="flex-1 pr-0 sm:pr-4 flex flex-col justify-center">
             <h3 className={cn(
-              "text-lg md:text-xl font-bold text-foreground uppercase leading-tight mb-2 group-hover:text-white transition-colors duration-300",
+              "text-sm sm:text-lg md:text-xl font-bold text-foreground uppercase leading-tight mb-1 sm:mb-2 group-hover:text-white transition-colors duration-300",
               backgroundColor === "bg-red-600" && "text-white dark:text-white"
             )}>
               {title}
             </h3>
             {description && (
               <p className={cn(
-                "text-sm text-muted-foreground leading-relaxed line-clamp-2 group-hover:text-red-50 transition-colors duration-300",
+                "text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2 group-hover:text-red-50 transition-colors duration-300",
                 backgroundColor === "bg-red-600" && "text-red-50 dark:text-red-50"
               )}>
                 {description}
@@ -48,12 +48,12 @@ const CategoryGridCard = ({
 
           {/* Image on the right */}
           {imageSrc && (
-            <div className="relative w-28 h-28 md:w-32 md:h-32 flex-shrink-0 rounded-lg overflow-hidden">
+            <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 flex-shrink-0 rounded-lg overflow-hidden">
               <Image
                 src={imageSrc}
                 alt={title}
                 fill
-                sizes="(max-width: 768px) 112px, 128px"
+                sizes="(max-width: 640px) 80px, (max-width: 768px) 112px, 128px"
                 className="object-cover group-hover:scale-110 transition-transform duration-300"
               />
             </div>

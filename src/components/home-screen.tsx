@@ -9,6 +9,8 @@ import Link from "next/link";
 import TestimonialCard from "@/components/testimonial-card";
 import CategoryGridCard from "@/components/category-grid-card";
 import BrandCard from "@/components/brand-card";
+import HeaderSlideshow from "@/components/header-slideshow";
+import ProductCarousel from "@/components/product-carousel";
 
 const HomeScreen = () => {
   // Product images for wheel and tire categories
@@ -319,70 +321,55 @@ const HomeScreen = () => {
 
   return (
     <div className="flex flex-col items-center bg-white dark:bg-background text-foreground">
-      {/* Hero Section */}
-      <section className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-cover bg-center flex items-center justify-center text-center p-4"
-        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative z-10 max-w-3xl text-white">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 drop-shadow-lg">
-            Your Ultimate Destination for Wheels & Tires
-          </h1>
-          <p className="text-lg md:text-xl mb-8 drop-shadow-md">
-            Explore a wide range of high-quality tires, wheels, and wheel accessories for every vehicle and season.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link
-              href="/category/all-season-tires"
-              className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-300 shadow-lg"
-            >
-              Shop Now
-            </Link>
-            <Link
-              href="/track-order"
-              className="inline-flex items-center justify-center px-8 py-3 border border-white text-base font-medium rounded-md text-white bg-transparent hover:bg-white hover:text-primary transition-colors duration-300 shadow-lg"
-            >
-              Track Order
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section - Slideshow */}
+      <HeaderSlideshow
+        slides={[
+          "/header/pexels-gustavo-fring-6870311.jpg",
+          "/header/pexels-olly-3806249.jpg",
+          "/header/pexels-olly-3806252.jpg",
+          "/header/pexels-olly-3807386.jpg",
+          "/header/pexels-tima-miroshnichenko-5640626.jpg",
+        ]}
+      />
 
-      {/* Main Categories Grid */}
-      <section className="w-full px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
-          <ProductCard
-            title="All-Season Tires"
-            description="Year-round performance"
-            icon={Car}
-            imageSrc={productImages.tires}
-            accentColor="bg-blue-600"
-            href="/category/all-season-tires"
-          />
-          <ProductCard
-            title="Alloy Wheels"
-            description="Style and durability"
-            icon={Circle}
-            imageSrc={productImages.wheels}
-            accentColor="bg-red-600"
-            href="/category/alloy-wheels"
-          />
-          <ProductCard
-            title="Winter Tires"
-            description="Superior grip in snow"
-            icon={Snowflake}
-            imageSrc={productImages.snowTires}
-            accentColor="bg-green-600"
-            href="/category/winter-tires"
-          />
-          <ProductCard
-            title="Tire Packages"
-            description="Complete wheel sets"
-            icon={Package}
-            imageSrc={productImages.packages}
-            accentColor="bg-purple-600"
-            href="/category/packages"
-          />
+      {/* Main Categories Grid - Horizontal Scroll */}
+      <section className="w-full px-4 sm:px-6 lg:px-8 py-12 bg-white">
+        <div className="max-w-7xl mx-auto w-full" >
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-8">Featured Categories</h2>
+          <ProductCarousel autoScrollSpeed={2000}>
+            <ProductCard
+              title="All-Season Tires"
+              description="Year-round performance"
+              icon={Car}
+              imageSrc={productImages.tires}
+              accentColor="bg-blue-600"
+              href="/category/all-season-tires"
+            />
+            <ProductCard
+              title="Alloy Wheels"
+              description="Style and durability"
+              icon={Circle}
+              imageSrc={productImages.wheels}
+              accentColor="bg-red-600"
+              href="/category/alloy-wheels"
+            />
+            <ProductCard
+              title="Winter Tires"
+              description="Superior grip in snow"
+              icon={Snowflake}
+              imageSrc={productImages.snowTires}
+              accentColor="bg-green-600"
+              href="/category/winter-tires"
+            />
+            <ProductCard
+              title="Tire Packages"
+              description="Complete wheel sets"
+              icon={Package}
+              imageSrc={productImages.packages}
+              accentColor="bg-purple-600"
+              href="/category/packages"
+            />
+          </ProductCarousel>
         </div>
       </section>
 
@@ -390,7 +377,7 @@ const HomeScreen = () => {
       <section className="w-full bg-white dark:bg-background py-16">
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center sm:text-left">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-center sm:text-left">
               Category Selection
             </h2>
           </div>
@@ -411,7 +398,7 @@ const HomeScreen = () => {
       {/* Featured Products Section */}
       <section className="w-full py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-foreground mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
             Our Featured Products
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -437,7 +424,7 @@ const HomeScreen = () => {
       {/* Featured Tires Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-foreground mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
             Featured Tires
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -463,7 +450,7 @@ const HomeScreen = () => {
       {/* Why Choose Us Section */}
       <section className="w-full py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-foreground mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
             Why Choose Tire&Wheel?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -495,7 +482,7 @@ const HomeScreen = () => {
       {/* Explore via Brands Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
             Explore via Brands
           </h2>
           <p className="text-lg text-muted-foreground mb-12">
@@ -517,7 +504,7 @@ const HomeScreen = () => {
       {/* What Our Customers Say Section */}
       <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-foreground mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
             What Our Customers Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
