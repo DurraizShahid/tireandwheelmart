@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { CategoryDropdown } from "@/components/category-dropdown";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Categories", href: "/category/all-season-tires" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
   { name: "Track Order", href: "/track-order" },
@@ -31,18 +31,39 @@ const Header = () => {
 
         {/* Desktop Navigation - Centered */}
         <nav className="hidden md:flex flex-grow justify-center items-center space-x-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === link.href ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              {link.name}
-            </Link>
-          ))}
+          <Link
+            href="/"
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+              pathname === "/" ? "text-red-600" : ""
+            }`}
+          >
+            Home
+          </Link>
+          <Link
+            href="/about"
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+              pathname === "/about" ? "text-red-600" : ""
+            }`}
+          >
+            About
+          </Link>
+          <CategoryDropdown />
+          <Link
+            href="/contact"
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+              pathname === "/contact" ? "text-red-600" : ""
+            }`}
+          >
+            Contact
+          </Link>
+          <Link
+            href="/track-order"
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+              pathname === "/track-order" ? "text-red-600" : ""
+            }`}
+          >
+            Track Order
+          </Link>
         </nav>
 
         {/* Desktop Search and Cart */}

@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import TestimonialCard from "@/components/testimonial-card";
 import CategoryGridCard from "@/components/category-grid-card";
+import BrandCard from "@/components/brand-card";
 
 const HomeScreen = () => {
   // Product images for wheel and tire categories
@@ -18,20 +19,180 @@ const HomeScreen = () => {
     snowTires: "/images/snowTire_icon.webp",
   };
 
-  // Dummy data for featured products (wheels and tires only)
+  // Featured products from all-season-tires category
   const featuredProducts = [
-    { id: "1", name: "Michelin Pilot Sport 4S", price: "$250", imageSrc: "/images/tires_icon.webp", href: "/product/1" },
-    { id: "2", name: "Enkei RPF1 Alloy Wheels", price: "$1200", imageSrc: "/images/wheels_icon.webp", href: "/product/2" },
-    { id: "3", name: "Bridgestone Blizzak Winter Tire", price: "$280", imageSrc: "/images/snowTire_icon.webp", href: "/product/3" },
-    { id: "4", name: "OZ Racing Superturismo Wheels", price: "$1800", imageSrc: "/images/wheels_icon.webp", href: "/product/4" },
+    {
+      id: "1",
+      name: "Michelin CrossClimate2",
+      price: "$250",
+      imageSrc: "/tires/Michelin CrossClimate2/mi_crossclimate2_suv_full.webp",
+      href: "/product/1",
+      specs: {
+        size: "225/45R17",
+        loadSpeed: "94V",
+        season: "All-Season" as const,
+        type: "Grand Touring",
+        treadwear: "620",
+        traction: "AA",
+        temperature: "A",
+        warranty: "6 Years",
+        loadIndex: "94",
+        speedRating: "V"
+      },
+      rating: 4.8,
+      reviews: 1240
+    },
+    {
+      id: "2",
+      name: "Continental ExtremeContact",
+      price: "$180",
+      imageSrc: "/tires/Continental ExtremeContact/conraj_ang_l.jpg",
+      href: "/product/2",
+      specs: {
+        size: "205/55R16",
+        loadSpeed: "91H",
+        season: "All-Season" as const,
+        type: "Standard Touring",
+        treadwear: "700",
+        traction: "A",
+        temperature: "A",
+        warranty: "6 Years",
+        loadIndex: "91",
+        speedRating: "H"
+      },
+      rating: 4.6,
+      reviews: 850
+    },
+    {
+      id: "3",
+      name: "Goodyear Eagle F1",
+      price: "$220",
+      imageSrc: "/tires/Goodyear Eagle F1/Eagle_F1_Asymmetric_All_Season_2614.png",
+      href: "/product/3",
+      specs: {
+        size: "215/60R16",
+        loadSpeed: "95H",
+        season: "All-Season" as const,
+        type: "Grand Touring",
+        treadwear: "750",
+        traction: "AA",
+        temperature: "A",
+        warranty: "70,000 miles",
+        loadIndex: "95",
+        speedRating: "H"
+      },
+      rating: 4.7,
+      reviews: 920
+    },
+    {
+      id: "4",
+      name: "Bridgestone Blizzak WS90",
+      price: "$230",
+      imageSrc: "/tires/Bridgestone Blizzak WS90/bs_blizzak_ws90_full.webp",
+      href: "/product/4",
+      specs: {
+        size: "235/50R18",
+        loadSpeed: "97V",
+        season: "All-Season" as const,
+        type: "Grand Touring",
+        treadwear: "820",
+        traction: "AA",
+        temperature: "A",
+        warranty: "65,000 miles",
+        loadIndex: "97",
+        speedRating: "V"
+      },
+      rating: 4.5,
+      reviews: 640
+    },
   ];
 
-  // Dummy data for featured tires
+  // Featured tires from summer-tires category
   const featuredTires = [
-    { id: "1", name: "Michelin Pilot Sport 4S", price: "$250", imageSrc: "/images/tires_icon.webp", href: "/product/1" },
-    { id: "5", name: "Pirelli P Zero", price: "$280", imageSrc: "/images/tires_icon.webp", href: "/product/5" },
-    { id: "6", name: "Goodyear Eagle F1", price: "$220", imageSrc: "/images/tires_icon.webp", href: "/product/6" },
-    { id: "7", name: "Continental ExtremeContact", price: "$230", imageSrc: "/images/tires_icon.webp", href: "/product/7" },
+    {
+      id: "5",
+      name: "Michelin Pilot Sport Cup 2",
+      price: "$280",
+      imageSrc: "/tires/Michelin Pilot Sport Cup 2/4w-368_3528703112235_tire_michelin_pilot-sport-cup-2-r_325-slash-30-zr21-108y-xl_n0_a_main_5-quarterzoom_nopad.webp",
+      href: "/product/5",
+      specs: {
+        size: "245/40R19",
+        loadSpeed: "98Y",
+        season: "Summer" as const,
+        type: "Max Performance",
+        treadwear: "300",
+        traction: "AA",
+        temperature: "A",
+        warranty: "5 Years",
+        loadIndex: "98",
+        speedRating: "Y"
+      },
+      rating: 4.9,
+      reviews: 2100
+    },
+    {
+      id: "6",
+      name: "Pirelli P Zero",
+      price: "$290",
+      imageSrc: "/tires/Pirelli P Zero/pzero.png",
+      href: "/product/6",
+      specs: {
+        size: "255/35R19",
+        loadSpeed: "96Y",
+        season: "Summer" as const,
+        type: "Max Performance",
+        treadwear: "320",
+        traction: "AA",
+        temperature: "A",
+        warranty: "5 Years",
+        loadIndex: "96",
+        speedRating: "Y"
+      },
+      rating: 4.7,
+      reviews: 1500
+    },
+    {
+      id: "7",
+      name: "Goodyear Eagle F1",
+      price: "$240",
+      imageSrc: "/tires/Goodyear Eagle F1/Eagle_F1_Supercar_58.png",
+      href: "/product/7",
+      specs: {
+        size: "225/40R18",
+        loadSpeed: "92Y",
+        season: "Summer" as const,
+        type: "Ultra High Performance",
+        treadwear: "340",
+        traction: "AA",
+        temperature: "A",
+        warranty: "5 Years",
+        loadIndex: "92",
+        speedRating: "Y"
+      },
+      rating: 4.6,
+      reviews: 780
+    },
+    {
+      id: "8",
+      name: "Continental ExtremeContact",
+      price: "$250",
+      imageSrc: "/tires/Continental ExtremeContact/p3-conti.png",
+      href: "/product/8",
+      specs: {
+        size: "235/40R18",
+        loadSpeed: "95Y",
+        season: "Summer" as const,
+        type: "Max Performance",
+        treadwear: "300",
+        traction: "AA",
+        temperature: "A",
+        warranty: "5 Years",
+        loadIndex: "95",
+        speedRating: "Y"
+      },
+      rating: 4.8,
+      reviews: 1100
+    },
   ];
 
   // Updated categories - only wheel and tire related
@@ -89,6 +250,45 @@ const HomeScreen = () => {
       imageSrc: "/categories/tireaccessories.png",
       description: "TPMS sensors, valve stems, and repair kits. Essential tire maintenance items.",
       href: "/category/tire-accessories",
+    },
+  ];
+
+  // Dummy data for tire brands
+  const brands = [
+    {
+      name: "Michelin",
+      imageSrc: "/brands/logo_michelin.png",
+      href: "/category/michelin",
+    },
+    {
+      name: "Bridgestone",
+      imageSrc: "/brands/logo_bridgestone.png",
+      href: "/category/bridgestone",
+    },
+    {
+      name: "Continental",
+      imageSrc: "/brands/logo_continental.png",
+      href: "/category/continental",
+    },
+    {
+      name: "Toyo",
+      imageSrc: "/brands/logo_toyo.png",
+      href: "/category/toyo",
+    },
+    {
+      name: "Cooper",
+      imageSrc: "/brands/logo_cooper.png",
+      href: "/category/cooper",
+    },
+    {
+      name: "Firestone",
+      imageSrc: "/brands/logo_firestone.png",
+      href: "/category/firestone",
+    },
+    {
+      name: "Hercules",
+      imageSrc: "/brands/logo_hercules.png",
+      href: "/category/hercules",
     },
   ];
 
@@ -202,7 +402,6 @@ const HomeScreen = () => {
                 href={category.href}
                 imageSrc={category.imageSrc}
                 description={category.description}
-                backgroundColor={category.backgroundColor}
               />
             ))}
           </div>
@@ -223,6 +422,9 @@ const HomeScreen = () => {
                 price={product.price}
                 imageSrc={product.imageSrc}
                 href={product.href}
+                specs={product.specs}
+                rating={product.rating}
+                reviews={product.reviews}
               />
             ))}
           </div>
@@ -246,6 +448,9 @@ const HomeScreen = () => {
                 price={tire.price}
                 imageSrc={tire.imageSrc}
                 href={tire.href}
+                specs={tire.specs}
+                rating={tire.rating}
+                reviews={tire.reviews}
               />
             ))}
           </div>
@@ -283,6 +488,28 @@ const HomeScreen = () => {
                 <p className="text-muted-foreground">Our dedicated team is always here to help you with any queries.</p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Explore via Brands Section */}
+      <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
+            Explore via Brands
+          </h2>
+          <p className="text-lg text-muted-foreground mb-12">
+            Shop from the most trusted tire and wheel brands in the industry
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            {brands.map((brand, index) => (
+              <BrandCard
+                key={index}
+                name={brand.name}
+                imageSrc={brand.imageSrc}
+                href={brand.href}
+              />
+            ))}
           </div>
         </div>
       </section>

@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Star, Snowflake, Sun, CloudRain, Zap } from "lucide-react";
+import { Star, Snowflake, Sun, CloudRain, Zap, Gauge, Calendar, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export interface ProductSpecs {
@@ -11,6 +11,14 @@ export interface ProductSpecs {
   loadSpeed?: string;
   season?: "All-Season" | "Summer" | "Winter" | "Performance" | "All-Terrain";
   type?: string;
+  treadwear?: string;
+  traction?: string;
+  temperature?: string;
+  warranty?: string;
+  utqg?: string;
+  construction?: string;
+  loadIndex?: string;
+  speedRating?: string;
 }
 
 interface ProductItemProps {
@@ -46,7 +54,7 @@ const ProductItem = ({
 
   return (
     <Link href={href} className="block h-full">
-      <Card className="relative h-full flex flex-col overflow-hidden rounded-xl shadow-sm hover:shadow-xl border border-gray-100 dark:border-gray-800 group cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-white dark:bg-card">
+      <Card className="relative h-full flex flex-col overflow-hidden rounded-xl shadow-sm hover:shadow-xl border border-gray-100 dark:border-gray-800 group cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-white dark:bg-card hover:bg-red-600 dark:hover:bg-red-600">
         <div className="relative p-4 flex-grow flex flex-col">
           {/* Season Badge */}
           {specs?.season && (
@@ -87,26 +95,53 @@ const ProductItem = ({
               <span className="text-xs text-muted-foreground ml-1">({reviews})</span>
             </div>
 
-            <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors group-hover:text-white">
               {name}
             </h4>
 
             {/* Specs Grid */}
             {specs && (
-              <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-muted-foreground mb-3 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-md">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-muted-foreground mb-3 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-md group-hover:bg-red-500/20 group-hover:text-red-50 transition-colors">
                 {specs.size && (
-                  <div className="col-span-2 font-mono font-medium text-foreground">
+                  <div className="col-span-2 font-mono font-medium text-foreground group-hover:text-white">
                     {specs.size}
                   </div>
                 )}
                 {specs.loadSpeed && <div>{specs.loadSpeed}</div>}
                 {specs.type && <div className="text-right">{specs.type}</div>}
+                
+                {/* Additional tire specifications */}
+                {(specs.loadIndex || specs.speedRating) && (
+                  <div className="col-span-2 flex items-center text-foreground group-hover:text-white">
+                    <Gauge className="h-3 w-3 mr-1" />
+                    {specs.loadIndex && <span className="mr-2">Load: {specs.loadIndex}</span>}
+                    {specs.speedRating && <span>Speed: {specs.speedRating}</span>}
+                  </div>
+                )}
+                
+                {/* UTQG Ratings */}
+                {(specs.treadwear || specs.traction || specs.temperature) && (
+                  <div className="col-span-2 flex flex-wrap items-center text-foreground group-hover:text-white">
+                    <Shield className="h-3 w-3 mr-1" />
+                    {specs.treadwear && <span className="mr-2">Treadwear: {specs.treadwear}</span>}
+                    {specs.traction && <span className="mr-2">Traction: {specs.traction}</span>}
+                    {specs.temperature && <span>Temp: {specs.temperature}</span>}
+                  </div>
+                )}
+                
+                {/* Warranty */}
+                {specs.warranty && (
+                  <div className="col-span-2 flex items-center text-foreground group-hover:text-white">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    Warranty: {specs.warranty}
+                  </div>
+                )}
               </div>
             )}
 
             <div className="mt-auto flex items-center justify-between">
-              <p className="text-lg font-bold text-foreground">{price}</p>
-              <span className="text-xs font-medium text-blue-600 dark:text-blue-400 group-hover:underline">
+              <p className="text-lg font-bold text-foreground group-hover:text-white">{price}</p>
+              <span className="text-xs font-medium text-blue-600 dark:text-blue-400 group-hover:underline group-hover:text-white">
                 View Details
               </span>
             </div>
