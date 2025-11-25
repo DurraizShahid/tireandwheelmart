@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ShoppingCart, Gauge, Shield, Calendar, Zap, Snowflake, Sun, CloudRain } from "lucide-react";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useCart } from "@/contexts/cart-context";
 
 interface ProductDetailScreenProps {
   productId: string;
@@ -56,6 +57,8 @@ interface Product {
 
 const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
   const router = useRouter();
+  const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
   // Enhanced product data with comprehensive specifications
   const allProducts: Record<string, Product> = {
@@ -737,7 +740,20 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
   }
 
   const handleAddToCart = () => {
-    toast.success(`${product.name} added to cart!`);
+    const product = allProducts[productId as keyof typeof allProducts];
+    if (!product) return;
+    
+    const priceNum = parseFloat(product.price.replace(/[$,]/g, ''));
+    
+    addToCart({
+      id: productId,
+      name: product.name,
+      price: priceNum,
+      quantity: quantity,
+      imageSrc: product.imageSrc,
+    });
+    
+    toast.success(`${quantity} x ${product.name} added to cart!`);
   };
 
   // Get season icon
@@ -793,13 +809,41 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
                 {product.description}
               </p>
 
+            <Button
+              className="w-full py-3 text-lg font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 shadow-lg flex items-center justify-center gap-2"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              Add to Cart
+            </Button>
+            
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+              <span className="text-sm font-medium text-muted-foreground">Quantity:</span>
               <Button
-                className="w-full py-3 text-lg font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 shadow-lg flex items-center justify-center gap-2"
-                onClick={handleAddToCart}
+                variant="outline"
+                size="sm"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="h-8 w-8 p-0"
               >
-                <ShoppingCart className="h-5 w-5" />
-                Add to Cart
+                −
               </Button>
+              <input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                className="w-12 h-8 text-center border rounded-md bg-background text-foreground"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setQuantity(quantity + 1)}
+                className="h-8 w-8 p-0"
+              >
+                +
+              </Button>
+            </div>
             </Card>
 
             {/* Key Specifications */}

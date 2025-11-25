@@ -3,12 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Search, ShoppingCart } from "lucide-react";
+import { Menu, Search, ShoppingCart, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CategoryDropdown } from "@/components/category-dropdown";
+import { useCart } from "@/contexts/cart-context";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -19,6 +20,7 @@ const navLinks = [
 
 const Header = () => {
   const pathname = usePathname();
+  const { getTotalItems } = useCart();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -66,7 +68,7 @@ const Header = () => {
           </Link>
         </nav>
 
-        {/* Desktop Search and Cart */}
+        {/* Desktop Search, Admin, and Cart */}
         <div className="hidden md:flex items-center space-x-4">
           <div className="relative">
             <Input
@@ -76,21 +78,32 @@ const Header = () => {
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           </div>
-          <Button variant="ghost" size="icon" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
-              3
-            </span> {/* Dummy cart count */}
-          </Button>
+          <Link href="/admin">
+            <Button variant="ghost" size="icon" className="relative">
+              <Shield className="h-5 w-5" />
+            </Button>
+          </Link>
+          <Link href="/cart">
+            <Button variant="ghost" size="icon" className="relative">
+              <ShoppingCart className="h-5 w-5" />
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs text-white font-bold">
+                  {getTotalItems()}
+                </span>
+              )}
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Navigation */}
         <div className="flex items-center md:hidden">
           <Button variant="ghost" size="icon" className="relative mr-2">
             <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
-              3
-            </span> {/* Dummy cart count */}
+            {getTotalItems() > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs text-white font-bold">
+                {getTotalItems()}
+              </span>
+            )}
           </Button>
           <Sheet>
             <SheetTrigger asChild>
@@ -117,6 +130,16 @@ const Header = () => {
                     {link.name}
                   </Link>
                 ))}
+                <Link
+                  href="/admin"
+                  className={cn(
+                    "text-lg font-medium transition-colors hover:text-primary flex items-center gap-2",
+                    pathname === "/admin" ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  <Shield className="h-4 w-4" />
+                  Admin
+                </Link>
               </nav>
               <div className="relative mt-6">
                 <Input
