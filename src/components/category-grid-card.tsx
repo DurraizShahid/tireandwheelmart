@@ -39,7 +39,7 @@ const CategoryGridCard = ({
             {description && (
               <p className={cn(
                 "text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2 group-hover:text-red-50 transition-colors duration-300",
-                backgroundColor === "bg-red-600" && "text-red-50 dark:text-red-50"
+                backgroundColor === "bg-red-600" && "text-red-50"
               )}>
                 {description}
               </p>

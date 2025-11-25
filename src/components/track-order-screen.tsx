@@ -23,9 +23,9 @@ const TrackOrderScreen = () => {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-12 min-h-[calc(100vh-128px)]"> {/* Adjusted min-h to account for header/footer */}
+    <div className="flex flex-col items-center bg-white text-foreground py-12 min-h-[calc(100vh-128px)]"> {/* Adjusted min-h to account for header/footer */}
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-md">
-        <PackageSearch className="h-16 w-16 text-blue-600 dark:text-blue-400 mx-auto mb-6" />
+        <PackageSearch className="h-16 w-16 text-blue-600 mx-auto mb-6" />
         <h1 className="text-4xl font-bold text-foreground mb-4">
           Track Your Order
         </h1>
@@ -42,7 +42,7 @@ const TrackOrderScreen = () => {
               placeholder="e.g., #123456789"
               value={orderId}
               onChange={(e) => setOrderId(e.target.value)}
-              className="w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-300"
+              className="w-full py-3 px-4 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-300"
             />
           </div>
           <Button

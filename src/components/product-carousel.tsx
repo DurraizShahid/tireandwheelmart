@@ -81,7 +81,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 items-center justify-center h-12 w-12 rounded-full bg-white/20 hover:bg-white/40 active:bg-white/50 transition-all duration-200 hover:scale-110 active:scale-95 backdrop-blur-sm border border-white/30 hover:border-white/60 shadow-lg hover:shadow-xl"
         aria-label="Scroll left"
       >
-        <ChevronLeft className="h-6 w-6 text-gray-800 dark:text-white" />
+        <ChevronLeft className="h-6 w-6 text-gray-800" />
       </button>
 
       {/* Carousel Container */}
@@ -107,7 +107,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 items-center justify-center h-12 w-12 rounded-full bg-white/20 hover:bg-white/40 active:bg-white/50 transition-all duration-200 hover:scale-110 active:scale-95 backdrop-blur-sm border border-white/30 hover:border-white/60 shadow-lg hover:shadow-xl"
         aria-label="Scroll right"
       >
-        <ChevronRight className="h-6 w-6 text-gray-800 dark:text-white" />
+        <ChevronRight className="h-6 w-6 text-gray-800" />
       </button>
     </div>
   );

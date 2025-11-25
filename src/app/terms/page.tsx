@@ -32,9 +32,9 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Products and Services</h2>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0">
-                <FileText className="h-10 w-10 text-blue-600 dark:text-blue-400 mb-4" />
+                <FileText className="h-10 w-10 text-blue-600 mb-4" />
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Product Information</h3>
@@ -104,9 +104,9 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Warranties and Disclaimers</h2>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-orange-50 to-orange-100">
               <CardContent className="p-0">
-                <AlertCircle className="h-10 w-10 text-orange-600 dark:text-orange-400 mb-4" />
+                <AlertCircle className="h-10 w-10 text-orange-600 mb-4" />
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   <strong>Product Warranties:</strong> All tires and wheels are covered by their respective manufacturer warranties.
                   We will assist you in processing warranty claims, but warranty terms are set by the manufacturers.
@@ -175,7 +175,7 @@ export default function TermsPage() {
             <p className="text-muted-foreground leading-relaxed mb-4">
               If you have questions about these Terms of Service, please contact us:
             </p>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-blue-50 to-blue-100">
               <CardContent className="p-0">
                 <p className="text-muted-foreground">
                   <strong>Email:</strong> legal@tireandwheel.com<br />
