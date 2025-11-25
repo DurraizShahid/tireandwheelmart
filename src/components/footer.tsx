@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Facebook, Instagram, Twitter } from "lucide-react"; // Import social media icons
+import { Facebook, Instagram, Twitter, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -54,6 +54,22 @@ const Footer = () => {
             <Link href="/shipping" className="text-sm hover:text-primary transition-colors">
               Shipping Info
             </Link>
+          </nav>
+        </div>
+
+        {/* Contact Info */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Contact Info</h3>
+          <nav className="flex flex-col gap-3">
+            <a href="tel:510-581-2200" className="text-sm hover:text-primary transition-colors flex items-center gap-2">
+              <Phone className="h-4 w-4" />
+              (510) 581-2200
+            </a>
+            <a href="https://maps.google.com/?q=24087+Mission+Blvd+Hayward+CA+94544" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary transition-colors flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              24087 Mission Blvd<br />
+              <span className="ml-6">Hayward, CA 94544</span>
+            </a>
           </nav>
         </div>
 

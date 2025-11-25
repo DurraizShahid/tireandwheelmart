@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,8 +51,8 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">Address</h3>
                       <p className="text-muted-foreground">
-                        123 Tire Street<br />
-                        Wheel City, WC 12345<br />
+                        24087 Mission Blvd<br />
+                        Hayward, CA 94544<br />
                         United States
                       </p>
                     </div>
@@ -63,8 +63,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">Phone</h3>
                       <p className="text-muted-foreground">
-                        (555) 123-4567<br />
-                        Toll Free: (800) 123-4567
+                        (510) 581-2200
                       </p>
                     </div>
                   </div>
@@ -76,18 +75,6 @@ export default function ContactPage() {
                       <p className="text-muted-foreground">
                         info@tireandwheel.com<br />
                         support@tireandwheel.com
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <Clock className="h-6 w-6 text-orange-600 dark:text-orange-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-1">Business Hours</h3>
-                      <p className="text-muted-foreground">
-                        Monday - Friday: 8:00 AM - 6:00 PM<br />
-                        Saturday: 9:00 AM - 4:00 PM<br />
-                        Sunday: Closed
                       </p>
                     </div>
                   </div>

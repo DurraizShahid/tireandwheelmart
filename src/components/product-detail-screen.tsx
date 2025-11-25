@@ -65,7 +65,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "1": { 
       name: "Michelin CrossClimate2", 
       price: "$250", 
-      imageSrc: "/images/tires_icon.webp", 
+      imageSrc: "/tires/Michelin CrossClimate2/mi_crossclimate2_suv_full.webp", 
       description: "Experience exceptional all-season performance with the Michelin CrossClimate2. Designed for year-round reliability in all weather conditions with superior traction and handling.", 
       specs: {
         size: "225/45R17",
@@ -91,7 +91,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "2": { 
       name: "Enkei RPF1 Alloy Wheels", 
       price: "$1200", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/Enkei RPF1 Alloy Wheels/enkei_rpf1_polished.webp", 
       description: "Lightweight forged alloy wheels designed for performance and style. Available in multiple sizes and finishes. Perfect for track and street use.", 
       specs: {
         rimSize: "17x8",
@@ -110,7 +110,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "3": { 
       name: "Bridgestone Blizzak WS90", 
       price: "$200", 
-      imageSrc: "/images/snowTire_icon.webp", 
+      imageSrc: "/tires/Bridgestone Blizzak WS90/bs_blizzak_ws90_full.webp",
       description: "The Bridgestone Blizzak WS90 provides exceptional winter traction with advanced tread compound technology for superior grip on snow and ice.", 
       specs: {
         size: "205/55R16",
@@ -136,7 +136,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "4": { 
       name: "OZ Racing Superturismo", 
       price: "$1800", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/OZ Racing Superturismo/oz_racing_superturismo.webp",
       description: "Premium Italian alloy wheels combining classic design with modern performance and durability. Available in various sizes and finishes.", 
       specs: {
         rimSize: "18x8.5",
@@ -155,7 +155,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "5": { 
       name: "Pirelli P Zero", 
       price: "$290", 
-      imageSrc: "/images/tires_icon.webp", 
+      imageSrc: "/tires/Pirelli P Zero/pzero.png",
       description: "The Pirelli P Zero is a high-performance tire, a benchmark for the ultra-high performance segment, characterized by an asymmetric tread pattern.", 
       specs: {
         size: "245/40R19",
@@ -181,7 +181,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "6": { 
       name: "Goodyear Eagle F1", 
       price: "$240", 
-      imageSrc: "/images/tires_icon.webp", 
+      imageSrc: "/tires/Goodyear Eagle F1/images.jpg",
       description: "Goodyear Eagle F1 Asymmetric 5 delivers outstanding wet and dry performance, offering superior braking and handling.", 
       specs: {
         size: "225/45R18",
@@ -207,7 +207,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "7": { 
       name: "Continental ExtremeContact", 
       price: "$250", 
-      imageSrc: "/images/tires_icon.webp", 
+      imageSrc: "/tires/Continental ExtremeContact/p3-conti.png",
       description: "The Continental ExtremeContact Sport is a summer ultra-high performance tire for passenger cars, offering precise handling and maximum grip.", 
       specs: {
         size: "235/40R18",
@@ -233,7 +233,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "8": { 
       name: "Michelin X-Ice Snow", 
       price: "$220", 
-      imageSrc: "/images/snowTire_icon.webp", 
+      imageSrc: "/tires/Michelin X-Ice Snow/500x_michelin_x-ice_snow.jpg",
       description: "Michelin X-Ice Snow offers excellent winter performance with enhanced grip on snow and ice, plus improved tread life.", 
       specs: {
         size: "215/60R16",
@@ -259,7 +259,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "9": { 
       name: "Continental WinterContact SI", 
       price: "$190", 
-      imageSrc: "/images/snowTire_icon.webp", 
+      imageSrc: "/tires/Continental WinterContact SI/wintercontactsi_white_top.webp",
       description: "The Continental WinterContact SI delivers reliable winter traction and handling in cold weather conditions with excellent snow and ice grip.", 
       specs: {
         size: "195/65R15",
@@ -285,7 +285,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "10": { 
       name: "Nokian Hakkapeliitta R3", 
       price: "$250", 
-      imageSrc: "/images/snowTire_icon.webp", 
+      imageSrc: "/tires/Nokian Hakkapeliitta R3/1.jpg",
       description: "Nokian Hakkapeliitta R3 is a premium winter tire offering superior grip on snow and ice with excellent handling characteristics.", 
       specs: {
         size: "225/50R17",
@@ -311,7 +311,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "11": { 
       name: "BBS CH-R Alloy Wheels", 
       price: "$2000", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/BBS CH-R Alloy Wheels/5.jpg", 
       description: "High-quality German alloy wheels featuring a sporty design and excellent build quality. Perfect for luxury and performance vehicles.", 
       specs: {
         rimSize: "19x8.5",
@@ -330,7 +330,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     "12": { 
       name: "Rotiform RSE Alloy Wheels", 
       price: "$1500", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/Rotiform RSE Alloy Wheels/9.jpg", 
       description: "Modern alloy wheels with a distinctive design, perfect for customizing your vehicle's appearance. Available in multiple finishes.", 
       specs: {
         rimSize: "18x8.5",
@@ -348,8 +348,8 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
     },
     "13": { 
       name: "Complete Tire & Wheel Package", 
-      price: "$1800", 
-      imageSrc: "/images/package_icon.webp", 
+      price: "$2500", 
+      imageSrc: "/tires/Complete Tire & Wheel Package/car-tires-e1467006521850.png", 
       description: "Complete package including 4 tires and 4 alloy wheels, ready for installation. Perfect for upgrading your vehicle with a complete wheel and tire set.", 
       specs: {
         size: "225/45R17",
@@ -369,35 +369,31 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
       ]
     },
     "14": { 
-      name: "Michelin Pilot Sport Cup 2", 
-      price: "$350", 
-      imageSrc: "/images/tires_icon.webp", 
-      description: "Track-focused performance tire designed for maximum grip and precision handling on both road and track. Ideal for performance enthusiasts.", 
+      name: "Winter Tire Package", 
+      price: "$900", 
+      imageSrc: "/tires/Winter Tire Package/rivian-r1t-r1s-wheel-and-overland-tire-package-r1000-aftermarket-wheels-stealth-gray_1200x.webp", 
+      description: "Complete winter tire package with steel wheels, ideal for seasonal tire changes.", 
       specs: {
-        size: "265/35R19",
-        loadSpeed: "98Y",
-        season: "Performance",
-        type: "Streetable Track & Competition",
-        treadwear: "200",
-        traction: "A",
-        temperature: "A",
-        warranty: "3 Years or 30,000 miles",
-        loadIndex: "98",
-        speedRating: "Y (186 mph)",
-        construction: "Radial"
+        size: "205/55R16",
+        loadSpeed: "91H",
+        season: "Winter",
+        type: "Studless Ice & Snow",
+        rimSize: "16x6.5",
+        boltPattern: "5x114.3",
+        offset: "40mm"
       },
       features: [
-        "Bi-compound technology for track performance",
-        "Cup 2 tread pattern for maximum grip",
-        "Heat-activated compounds for optimal performance",
-        "Enhanced steering response and feedback",
-        "Road-legal for daily driving"
+        "Complete winter setup with dedicated wheels",
+        "Easy seasonal tire changes",
+        "Steel wheels for durability in harsh conditions",
+        "All necessary hardware included",
+        "Professional installation available"
       ]
     },
     "15": { 
       name: "Pirelli P Zero Trofeo R", 
-      price: "$380", 
-      imageSrc: "/images/tires_icon.webp", 
+      price: "$320", 
+      imageSrc: "/tires/Pirelli P Zero Trofeo R/Trofeo R-02_i.webp",
       description: "Ultra-high performance tire optimized for track use with exceptional dry grip and handling capabilities. For serious track enthusiasts.", 
       specs: {
         size: "245/35R19",
@@ -421,85 +417,35 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
       ]
     },
     "16": { 
-      name: "Enkei RPF1 Alloy Wheels", 
-      price: "$1200", 
-      imageSrc: "/images/wheels_icon.webp", 
-      description: "Lightweight forged alloy wheels designed for performance and style. Available in multiple sizes and finishes.", 
+      name: "Michelin Pilot Sport Cup 2", 
+      price: "$280", 
+      imageSrc: "/tires/Michelin Pilot Sport Cup 2/4w-368_3528703112235_tire_michelin_pilot-sport-cup-2-r_325-slash-30-zr21-108y-xl_n0_a_main_5-quarterzoom_nopad.webp",
+      description: "Track-focused performance tire designed for maximum grip and precision handling on both road and track. Ideal for performance enthusiasts.", 
       specs: {
-        rimSize: "17x9",
-        boltPattern: "5x114.3",
-        offset: "35mm",
-        finish: "Silver with Gunmetal Lip"
+        size: "265/35R19",
+        loadSpeed: "98Y",
+        season: "Performance",
+        type: "Streetable Track & Competition",
+        treadwear: "200",
+        traction: "A",
+        temperature: "A",
+        warranty: "3 Years or 30,000 miles",
+        loadIndex: "98",
+        speedRating: "Y (186 mph)",
+        construction: "Radial"
       },
       features: [
-        "One-piece forged construction for strength and light weight",
-        "Flow forming process for optimal strength-to-weight ratio",
-        "TUV/JWL certified for safety and durability",
-        "Available in multiple sizes and finishes",
-        "Direct fit for many popular vehicles"
+        "Bi-compound technology for track performance",
+        "Cup 2 tread pattern for maximum grip",
+        "Heat-activated compounds for optimal performance",
+        "Enhanced steering response and feedback",
+        "Road-legal for daily driving"
       ]
     },
     "17": { 
-      name: "OZ Racing Superturismo", 
-      price: "$1800", 
-      imageSrc: "/images/wheels_icon.webp", 
-      description: "Premium Italian alloy wheels combining classic design with modern performance and durability.", 
-      specs: {
-        rimSize: "18x8",
-        boltPattern: "5x112",
-        offset: "40mm",
-        finish: "Black with Machined Accents"
-      },
-      features: [
-        "High-pressure die-cast aluminum construction",
-        "Classic 5-spoke design with modern aesthetics",
-        "TUV certified for European safety standards",
-        "Lightweight design for improved performance",
-        "Multiple finish options to match any vehicle"
-      ]
-    },
-    "18": { 
-      name: "BBS CH-R Alloy Wheels", 
-      price: "$2000", 
-      imageSrc: "/images/wheels_icon.webp", 
-      description: "High-quality German alloy wheels featuring a sporty design and excellent build quality.", 
-      specs: {
-        rimSize: "19x8.5",
-        boltPattern: "5x100",
-        offset: "38mm",
-        finish: "Bronze Bronze"
-      },
-      features: [
-        "Three-piece construction for customization",
-        "Forged center for lightweight strength",
-        "Flow formed barrels for optimal performance",
-        "TUV certified for safety standards",
-        "Available in multiple sizes and offsets"
-      ]
-    },
-    "19": { 
-      name: "Rotiform RSE Alloy Wheels", 
-      price: "$1500", 
-      imageSrc: "/images/wheels_icon.webp", 
-      description: "Modern alloy wheels with a distinctive design, perfect for customizing your vehicle's appearance.", 
-      specs: {
-        rimSize: "18x8.5",
-        boltPattern: "5x120",
-        offset: "45mm",
-        finish: "Gunmetal"
-      },
-      features: [
-        "Monoblock construction for clean aesthetics",
-        "Low-pressure casting for consistent quality",
-        "Multiple spoke designs available",
-        "JWL/VIA certified for safety compliance",
-        "Compatible with most modern vehicles"
-      ]
-    },
-    "20": { 
       name: "Steel Wheel Set (15 inch)", 
       price: "$400", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/steel Wheel Set (15 inch)/full_b6056fa1b2c4f87b93928efa9462e115_800x.webp",
       description: "Durable steel wheels perfect for winter use or as spare wheels. Built to last with excellent corrosion resistance.", 
       specs: {
         rimSize: "15x6",
@@ -515,10 +461,10 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Economical spare wheel option"
       ]
     },
-    "21": { 
+    "18": { 
       name: "Steel Wheel Set (16 inch)", 
       price: "$450", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/Steel Wheel Set (16 inch)/TFGRW012_NEW-02.jpg",
       description: "Heavy-duty steel wheels offering reliability and affordability for everyday driving.", 
       specs: {
         rimSize: "16x6.5",
@@ -534,10 +480,10 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Ideal for commercial vehicles"
       ]
     },
-    "22": { 
+    "19": { 
       name: "Steel Wheel Set (17 inch)", 
       price: "$500", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/Steel Wheel Set (17 inch)/steel-rim-x99139n-17-inch-5x1143-557505.webp",
       description: "Larger steel wheels providing strength and durability for larger vehicles.", 
       specs: {
         rimSize: "17x7",
@@ -553,54 +499,29 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Compatible with most tire sizes"
       ]
     },
-    "23": { 
-      name: "Complete Tire & Wheel Package", 
-      price: "$1800", 
-      imageSrc: "/images/package_icon.webp", 
-      description: "Complete package including 4 tires and 4 alloy wheels, ready for installation. Perfect for upgrading your vehicle.", 
+    "20": { 
+      name: "Wheel Spacers", 
+      price: "$80", 
+      imageSrc: "/tires/Wheel Spacers/images.jpeg",
+      description: "Precision-machined wheel spacers to adjust wheel offset and improve vehicle stance.", 
       specs: {
-        size: "225/45R17",
-        loadSpeed: "94V",
-        season: "All-Season",
-        type: "Grand Touring",
-        rimSize: "17x8",
+        thickness: "15mm",
         boltPattern: "5x114.3",
-        offset: "35mm"
+        centerBore: "67.1mm",
+        threadSize: "M12 x 1.5"
       },
       features: [
-        "Pre-selected compatible tire and wheel combination",
-        "Professional mounting and balancing included",
-        "Balanced performance and aesthetics",
-        "Cost savings compared to separate purchases",
-        "Ready for immediate installation"
+        "6061-T6 aluminum construction",
+        "Precision CNC machined for accuracy",
+        "Includes extended wheel studs",
+        "Improves vehicle stance and handling",
+        "TUV certified for safety compliance"
       ]
     },
-    "24": { 
-      name: "Winter Tire Package", 
-      price: "$1200", 
-      imageSrc: "/images/snowPackages_icon.webp", 
-      description: "Complete winter tire package with steel wheels, ideal for seasonal tire changes.", 
-      specs: {
-        size: "205/55R16",
-        loadSpeed: "91H",
-        season: "Winter",
-        type: "Studless Ice & Snow",
-        rimSize: "16x6.5",
-        boltPattern: "5x114.3",
-        offset: "40mm"
-      },
-      features: [
-        "Complete winter setup with dedicated wheels",
-        "Easy seasonal tire changes",
-        "Steel wheels for durability in harsh conditions",
-        "All necessary hardware included",
-        "Professional installation available"
-      ]
-    },
-    "25": { 
+    "21": { 
       name: "Performance Package", 
       price: "$2800", 
-      imageSrc: "/images/package_icon.webp", 
+      imageSrc: "/tires/Performance Package/PHOTO-2025-11-25-23-28-48.jpg",
       description: "Premium performance package featuring high-performance tires and lightweight alloy wheels.", 
       specs: {
         size: "245/40R18",
@@ -619,10 +540,10 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Track-capable setup"
       ]
     },
-    "26": { 
+    "22": { 
       name: "Wheel Lug Nuts Set", 
       price: "$50", 
-      imageSrc: "/images/wheels_icon.webp", 
+      imageSrc: "/tires/Wheel Lug Nuts Set/33531BBC.webp",
       description: "High-quality lug nuts for secure wheel mounting. Available in various finishes and thread sizes.", 
       specs: {
         threadSize: "M12 x 1.5",
@@ -637,29 +558,10 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Compatible with most vehicles"
       ]
     },
-    "27": { 
-      name: "Wheel Spacers", 
-      price: "$120", 
-      imageSrc: "/images/wheels_icon.webp", 
-      description: "Precision-machined wheel spacers to adjust wheel offset and improve vehicle stance.", 
-      specs: {
-        thickness: "15mm",
-        boltPattern: "5x114.3",
-        centerBore: "67.1mm",
-        threadSize: "M12 x 1.5"
-      },
-      features: [
-        "6061-T6 aluminum construction",
-        "Precision CNC machined for accuracy",
-        "Includes extended wheel studs",
-        "Improves vehicle stance and handling",
-        "TUV certified for safety compliance"
-      ]
-    },
-    "28": { 
+    "23": { 
       name: "Wheel Center Caps", 
-      price: "$30", 
-      imageSrc: "/images/wheels_icon.webp", 
+      price: "$35", 
+      imageSrc: "/tires/Wheel Center Caps/61EiMY6ZmJL.jpg",
       description: "Decorative center caps to complete your wheel's appearance. Available in multiple designs.", 
       specs: {
         size: "57mm",
@@ -674,10 +576,10 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Sold as a set of 4 center caps"
       ]
     },
-    "29": { 
+    "24": { 
       name: "Tire Pressure Monitoring System", 
       price: "$150", 
-      imageSrc: "/images/tires_icon.webp", 
+      imageSrc: "/tires/Tire Pressure Monitoring System/TPS10-4I.webp",
       description: "Wireless TPMS system to monitor tire pressure in real-time for safety and fuel efficiency.", 
       specs: {
         sensorType: "Indirect TPMS",
@@ -692,10 +594,10 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Compatible with most vehicles"
       ]
     },
-    "30": { 
+    "25": { 
       name: "Tire Valve Stems", 
       price: "$25", 
-      imageSrc: "/images/tires_icon.webp", 
+      imageSrc: "/tires/Tire Valve Stems/61wx-R63pFL.jpg", 
       description: "High-quality valve stems for proper tire inflation and pressure maintenance.", 
       specs: {
         type: "Rubber",
@@ -710,10 +612,10 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Sold as a set of 4 valve stems"
       ]
     },
-    "31": { 
+    "26": { 
       name: "Tire Repair Kit", 
       price: "$40", 
-      imageSrc: "/images/tires_icon.webp", 
+      imageSrc: "/tires/Tire Repair Kit/tire-plug-repair-kit-on-tire-1024x682.jpg", 
       description: "Complete tire repair kit for emergency flat tire repairs on the go.", 
       specs: {
         contents: "Plug strips, insertion tool, reamer, scissors",
@@ -727,6 +629,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
         "Professional-grade materials for reliable repairs"
       ]
     },
+
   };
 
   const product = allProducts[productId as keyof typeof allProducts];

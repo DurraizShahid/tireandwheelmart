@@ -75,7 +75,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "2",
         name: "Continental ExtremeContact",
         price: "$180",
-        imageSrc: "/tires/Continental ExtremeContact/conraj_ang_l.jpg",
+        imageSrc: "/tires/Continental ExtremeContact/p3-conti.png",
         description: "The Continental TrueContact Tour offers excellent all-season traction, long tread life, and a comfortable ride for everyday driving.",
         specs: { 
           size: "205/55R16", 
@@ -96,7 +96,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "3",
         name: "Goodyear Eagle F1",
         price: "$220",
-        imageSrc: "/tires/Goodyear Eagle F1/Eagle_F1_Asymmetric_All_Season_2614.png",
+        imageSrc: "/tires/Goodyear Eagle F1/images.jpg",
         description: "Goodyear Assurance WeatherReady delivers outstanding performance in dry, wet, and light snow conditions with superior braking and handling.",
         specs: { 
           size: "215/60R16", 
@@ -182,7 +182,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "7",
         name: "Goodyear Eagle F1",
         price: "$240",
-        imageSrc: "/tires/Goodyear Eagle F1/Eagle_F1_Supercar_58.png",
+        imageSrc: "/tires/Goodyear Eagle F1/images.jpg",
         description: "Goodyear Eagle F1 Asymmetric 5 delivers outstanding wet and dry performance, offering superior braking and handling.",
         specs: { 
           size: "225/40R18", 
@@ -247,7 +247,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "10",
         name: "Michelin X-Ice Snow",
         price: "$220",
-        imageSrc: "/tires/Michelin Pilot Sport Cup 2/4w-368_3528703112235_tire_michelin_pilot-sport-cup-2-r_325-slash-30-zr21-108y-xl_n0_a_main_5-quarterzoom_nopad.webp",
+        imageSrc: "/tires/Michelin X-Ice Snow/500x_michelin_x-ice_snow.jpg",
         description: "Michelin X-Ice Snow offers excellent winter performance with enhanced grip on snow and ice, plus improved tread life.",
         specs: { 
           size: "215/60R16", 
@@ -268,7 +268,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "11",
         name: "Continental WinterContact SI",
         price: "$190",
-        imageSrc: "/tires/Continental WinterContact SI/81xOxxc9V3L.jpg",
+        imageSrc: "/tires/Continental WinterContact SI/wintercontactsi_white_top.webp",
         description: "The Continental WinterContact SI delivers reliable winter traction and handling in cold weather conditions with excellent snow and ice grip.",
         specs: { 
           size: "195/65R15", 
@@ -333,7 +333,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "14",
         name: "Pirelli P Zero Trofeo R",
         price: "$380",
-        imageSrc: "/tires/Pirelli P Zero Trofeo R/PZ5_visorePDP_3-4.png",
+        imageSrc: "/tires/Pirelli P Zero Trofeo R/93811-new-pzero-trofeo-r-3-4-1505470089628.jpg",
         description: "Ultra-high performance tire optimized for track use with exceptional dry grip and handling capabilities.",
         specs: { 
           size: "245/35R19", 
@@ -409,7 +409,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "18",
         name: "BBS CH-R Alloy Wheels",
         price: "$2000",
-        imageSrc: "/tires/BBS CH-R Alloy Wheels/images.jpg",
+        imageSrc: "/tires/BBS CH-R Alloy Wheels/5.jpg",
         description: "High-quality German alloy wheels featuring a sporty design and excellent build quality.",
         specs: { 
           rimSize: "19x8.5", 
@@ -425,7 +425,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "19",
         name: "Rotiform RSE Alloy Wheels",
         price: "$1500",
-        imageSrc: "/tires/Rotiform RSE Alloy Wheels/images.jpg",
+        imageSrc: "/tires/Rotiform RSE Alloy Wheels/9.jpg",
         description: "Modern alloy wheels with a distinctive design, perfect for customizing your vehicle's appearance.",
         specs: { 
           rimSize: "18x8.5", 
@@ -443,7 +443,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "20",
         name: "Steel Wheel Set (15 inch)",
         price: "$400",
-        imageSrc: "/tires/steel Wheel Set (15 inch)/images.jpg",
+        imageSrc: "/tires/steel Wheel Set (15 inch)/full_b6056fa1b2c4f87b93928efa9462e115_800x.webp",
         description: "Durable steel wheels perfect for winter use or as spare wheels. Built to last with excellent corrosion resistance.",
         specs: { 
           rimSize: "15x6", 
@@ -459,7 +459,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "21",
         name: "Steel Wheel Set (16 inch)",
         price: "$450",
-        imageSrc: "/tires/Steel Wheel Set (16 inch)/images.jpg",
+        imageSrc: "/tires/Steel Wheel Set (16 inch)/TFGRW012_NEW-02.jpg",
         description: "Heavy-duty steel wheels offering reliability and affordability for everyday driving.",
         specs: { 
           rimSize: "16x6.5", 
@@ -475,7 +475,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "22",
         name: "Steel Wheel Set (17 inch)",
         price: "$500",
-        imageSrc: "/tires/Steel Wheel Set (17 inch)/images.jpg",
+        imageSrc: "/tires/Steel Wheel Set (17 inch)/steel-rim-x99139n-17-inch-5x1143-557505.webp",
         description: "Larger steel wheels providing strength and durability for larger vehicles.",
         specs: { 
           rimSize: "17x7", 
@@ -511,7 +511,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "24",
         name: "Winter Tire Package",
         price: "$1200",
-        imageSrc: "/tires/Winter Tire Package/images.jpg",
+        imageSrc: "/tires/Winter Tire Package/rivian-r1t-r1s-wheel-and-overland-tire-package-r1000-aftermarket-wheels-stealth-gray_1200x.webp",
         description: "Complete winter tire package with steel wheels, ideal for seasonal tire changes.",
         specs: { 
           size: "205/55R16", 
@@ -547,7 +547,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "26",
         name: "Wheel Lug Nuts Set",
         price: "$50",
-        imageSrc: "/tires/Wheel Lug Nuts Set/images.jpg",
+        imageSrc: "/tires/Wheel Lug Nuts Set/DirtyLifeLugNutSet_1024x.jpg",
         description: "High-quality lug nuts for secure wheel mounting. Available in various finishes and thread sizes.",
         specs: { 
           threadSize: "M12 x 1.5", 
@@ -561,7 +561,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "27",
         name: "Wheel Spacers",
         price: "$120",
-        imageSrc: "/tires/Wheel Spacers/images.jpg",
+        imageSrc: "/tires/Wheel Spacers/71Gpkkwl0KL._AC_UF1000,1000_QL80_.jpg",
         description: "Precision-machined wheel spacers to adjust wheel offset and improve vehicle stance.",
         specs: { 
           thickness: "15mm", 
@@ -576,7 +576,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "28",
         name: "Wheel Center Caps",
         price: "$30",
-        imageSrc: "/tires/Wheel Center Caps/images.jpg",
+        imageSrc: "/tires/Wheel Center Caps/713GmHNUoHL.jpg",
         description: "Decorative center caps to complete your wheel's appearance. Available in multiple designs.",
         specs: { 
           size: "57mm", 
@@ -592,7 +592,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "29",
         name: "Tire Pressure Monitoring System",
         price: "$150",
-        imageSrc: "/tires/Tire Pressure Monitoring System/images.jpg",
+        imageSrc: "/tires/Tire Pressure Monitoring System/71-htML6pbL._UL500_.jpg",
         description: "Wireless TPMS system to monitor tire pressure in real-time for safety and fuel efficiency.",
         specs: { 
           sensorType: "Indirect TPMS", 
@@ -606,7 +606,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "30",
         name: "Tire Valve Stems",
         price: "$25",
-        imageSrc: "/tires/Tire Valve Stems/images.jpg",
+        imageSrc: "/tires/Tire Valve Stems/snap-in-valves-passenger-light-truck.jpg",
         description: "High-quality valve stems for proper tire inflation and pressure maintenance.",
         specs: { 
           type: "Rubber", 
@@ -620,7 +620,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
         id: "31",
         name: "Tire Repair Kit",
         price: "$40",
-        imageSrc: "/tires/Tire Repair Kit/images.jpg",
+        imageSrc: "/tires/Tire Repair Kit/tire-plug-repair-kit-on-tire-1024x682.jpg",
         description: "Complete tire repair kit for emergency flat tire repairs on the go.",
         specs: { 
           contents: "Plug strips, insertion tool, reamer, scissors", 

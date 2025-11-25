@@ -67,7 +67,7 @@ const HomeScreen = () => {
       id: "3",
       name: "Goodyear Eagle F1",
       price: "$220",
-      imageSrc: "/tires/Goodyear Eagle F1/Eagle_F1_Asymmetric_All_Season_2614.png",
+      imageSrc: "/tires/Goodyear Eagle F1/images.jpg",
       href: "/product/3",
       specs: {
         size: "215/60R16",
@@ -155,7 +155,7 @@ const HomeScreen = () => {
       id: "7",
       name: "Goodyear Eagle F1",
       price: "$240",
-      imageSrc: "/tires/Goodyear Eagle F1/Eagle_F1_Supercar_58.png",
+      imageSrc: "/tires/Goodyear Eagle F1/images.jpg",
       href: "/product/7",
       specs: {
         size: "225/40R18",

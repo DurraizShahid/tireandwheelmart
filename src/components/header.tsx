@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, Search, ShoppingCart, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,17 @@ const navLinks = [
 
 const Header = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { getTotalItems } = useCart();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -70,14 +80,18 @@ const Header = () => {
 
         {/* Desktop Search, Admin, and Cart */}
         <div className="hidden md:flex items-center space-x-4">
-          <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <Input
               type="text"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="h-9 w-[200px] pl-9 pr-3 rounded-md bg-muted/50 border-muted focus:border-primary focus:ring-0"
             />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          </div>
+            <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2">
+              <Search className="h-4 w-4 text-muted-foreground" />
+            </button>
+          </form>
           <Link href="/admin">
             <Button variant="ghost" size="icon" className="relative">
               <Shield className="h-5 w-5" />
@@ -141,14 +155,18 @@ const Header = () => {
                   Admin
                 </Link>
               </nav>
-              <div className="relative mt-6">
+              <form onSubmit={handleSearch} className="relative mt-6">
                 <Input
                   type="text"
                   placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-9 pr-3 rounded-md bg-muted/50 border-muted focus:border-primary focus:ring-0"
                 />
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              </div>
+                <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2">
+                  <Search className="h-4 w-4 text-muted-foreground" />
+                </button>
+              </form>
             </SheetContent>
           </Sheet>
         </div>
