@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Categories", href: "/category/tires" }, // Link to a default category
-  { name: "About", href: "/about" }, // Placeholder
-  { name: "Contact", href: "/contact" }, // Placeholder
-  { name: "Track Order", href: "/track-order" }, // New Track Order link
+  { name: "Categories", href: "/category/all-season-tires" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+  { name: "Track Order", href: "/track-order" },
 ];
 
 const Header = () => {
@@ -24,7 +24,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="w-full flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary dark:text-primary-foreground">
+        <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-foreground">
           <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
           Tire&Wheel
         </Link>
@@ -79,7 +79,7 @@ const Header = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[250px] sm:w-[300px]">
-              <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary mb-6">
+              <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-foreground mb-6">
                 <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
                 Tire&Wheel
               </Link>

@@ -14,21 +14,39 @@ interface ProductDetailScreenProps {
 const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
   const router = useRouter();
 
-  // Dummy product data for demonstration
+  // Dummy product data for wheels and tires only
   const allProducts = {
-    "1": { name: "Michelin Pilot Sport 4S", price: "$250", imageSrc: "/images/tire1.png", description: "Experience exceptional grip and precision handling with the Michelin Pilot Sport 4S. Designed for ultimate performance on both road and track." },
-    "2": { name: "Pirelli P Zero", price: "$280", imageSrc: "/images/tire2.png", description: "The Pirelli P Zero is a high-performance tire, a benchmark for the ultra-high performance segment, characterized by an asymmetric tread pattern." },
-    "3": { name: "Goodyear Eagle F1", price: "$220", imageSrc: "/images/tire3.png", description: "Goodyear Eagle F1 Asymmetric 5 delivers outstanding wet and dry performance, offering superior braking and handling." },
-    "4": { name: "Continental ExtremeContact", price: "$230", imageSrc: "/images/tire4.png", description: "The Continental ExtremeContact Sport is a summer ultra-high performance tire for passenger cars, offering precise handling and maximum grip." },
-    "5": { name: "Brembo GT Kit", price: "$2500", imageSrc: "/images/brake1.png", description: "Upgrade to the Brembo GT Kit for unparalleled stopping power and track-ready performance. Includes calipers, rotors, and pads." },
-    "6": { name: "StopTech Sport Kit", price: "$1800", imageSrc: "/images/brake2.png", description: "The StopTech Sport Kit offers improved braking performance for street and occasional track use, featuring slotted rotors and performance pads." },
-    "7": { name: "EBC Yellowstuff Pads", price: "$150", imageSrc: "/images/brake3.png", description: "EBC Yellowstuff pads are high-performance street and track day brake pads, offering excellent bite from cold and fade resistance." },
-    "8": { name: "Ohlins Road & Track Coilovers", price: "$3200", imageSrc: "/images/suspension1.png", description: "Ohlins Road & Track Coilovers provide superior handling and comfort, allowing for precise adjustments for both street and track driving." },
-    "9": { name: "KW V3 Coilovers", price: "$2800", imageSrc: "/images/suspension2.png", description: "KW V3 Coilovers are state-of-the-art suspension systems, independently adjustable in compression and rebound damping for personalized driving dynamics." },
-    "10": { name: "Bilstein B16 PSS10", price: "$2000", imageSrc: "/images/suspension3.png", description: "The Bilstein B16 PSS10 coilover kit offers 10-stage damping adjustment and ride height adjustment for optimal performance and comfort." },
-    "11": { name: "APR Stage 1 ECU Tune", price: "$700", imageSrc: "/images/engine1.png", description: "Unlock hidden power with the APR Stage 1 ECU Tune, providing significant gains in horsepower and torque without additional hardware." },
-    "12": { name: "K&N Cold Air Intake", price: "$350", imageSrc: "/images/engine2.png", description: "Improve engine performance and sound with the K&N Cold Air Intake system, designed for increased airflow and filtration." },
-    "13": { name: "Akrapovic Exhaust System", price: "$4000", imageSrc: "/images/engine3.png", description: "Experience a thrilling exhaust note and weight reduction with the Akrapovic Exhaust System, crafted from premium materials for ultimate performance." },
+    "1": { name: "Michelin CrossClimate2", price: "$250", imageSrc: "/images/tires_icon.webp", description: "Experience exceptional all-season performance with the Michelin CrossClimate2. Designed for year-round reliability in all weather conditions with superior traction and handling." },
+    "2": { name: "Enkei RPF1 Alloy Wheels", price: "$1200", imageSrc: "/images/wheels_icon.webp", description: "Lightweight forged alloy wheels designed for performance and style. Available in multiple sizes and finishes. Perfect for track and street use." },
+    "3": { name: "Bridgestone Blizzak WS90", price: "$200", imageSrc: "/images/snowTire_icon.webp", description: "The Bridgestone Blizzak WS90 provides exceptional winter traction with advanced tread compound technology for superior grip on snow and ice." },
+    "4": { name: "OZ Racing Superturismo", price: "$1800", imageSrc: "/images/wheels_icon.webp", description: "Premium Italian alloy wheels combining classic design with modern performance and durability. Available in various sizes and finishes." },
+    "5": { name: "Pirelli P Zero", price: "$290", imageSrc: "/images/tires_icon.webp", description: "The Pirelli P Zero is a high-performance tire, a benchmark for the ultra-high performance segment, characterized by an asymmetric tread pattern." },
+    "6": { name: "Goodyear Eagle F1", price: "$240", imageSrc: "/images/tires_icon.webp", description: "Goodyear Eagle F1 Asymmetric 5 delivers outstanding wet and dry performance, offering superior braking and handling." },
+    "7": { name: "Continental ExtremeContact", price: "$250", imageSrc: "/images/tires_icon.webp", description: "The Continental ExtremeContact Sport is a summer ultra-high performance tire for passenger cars, offering precise handling and maximum grip." },
+    "8": { name: "Michelin X-Ice Snow", price: "$220", imageSrc: "/images/snowTire_icon.webp", description: "Michelin X-Ice Snow offers excellent winter performance with enhanced grip on snow and ice, plus improved tread life." },
+    "9": { name: "Continental WinterContact SI", price: "$190", imageSrc: "/images/snowTire_icon.webp", description: "The Continental WinterContact SI delivers reliable winter traction and handling in cold weather conditions with excellent snow and ice grip." },
+    "10": { name: "Nokian Hakkapeliitta R3", price: "$250", imageSrc: "/images/snowTire_icon.webp", description: "Nokian Hakkapeliitta R3 is a premium winter tire offering superior grip on snow and ice with excellent handling characteristics." },
+    "11": { name: "BBS CH-R Alloy Wheels", price: "$2000", imageSrc: "/images/wheels_icon.webp", description: "High-quality German alloy wheels featuring a sporty design and excellent build quality. Perfect for luxury and performance vehicles." },
+    "12": { name: "Rotiform RSE Alloy Wheels", price: "$1500", imageSrc: "/images/wheels_icon.webp", description: "Modern alloy wheels with a distinctive design, perfect for customizing your vehicle's appearance. Available in multiple finishes." },
+    "13": { name: "Complete Tire & Wheel Package", price: "$1800", imageSrc: "/images/package_icon.webp", description: "Complete package including 4 tires and 4 alloy wheels, ready for installation. Perfect for upgrading your vehicle with a complete wheel and tire set." },
+    "14": { name: "Michelin Pilot Sport Cup 2", price: "$350", imageSrc: "/images/tires_icon.webp", description: "Track-focused performance tire designed for maximum grip and precision handling on both road and track. Ideal for performance enthusiasts." },
+    "15": { name: "Pirelli P Zero Trofeo R", price: "$380", imageSrc: "/images/tires_icon.webp", description: "Ultra-high performance tire optimized for track use with exceptional dry grip and handling capabilities. For serious track enthusiasts." },
+    "16": { name: "Enkei RPF1 Alloy Wheels", price: "$1200", imageSrc: "/images/wheels_icon.webp", description: "Lightweight forged alloy wheels designed for performance and style. Available in multiple sizes and finishes." },
+    "17": { name: "OZ Racing Superturismo", price: "$1800", imageSrc: "/images/wheels_icon.webp", description: "Premium Italian alloy wheels combining classic design with modern performance and durability." },
+    "18": { name: "BBS CH-R Alloy Wheels", price: "$2000", imageSrc: "/images/wheels_icon.webp", description: "High-quality German alloy wheels featuring a sporty design and excellent build quality." },
+    "19": { name: "Rotiform RSE Alloy Wheels", price: "$1500", imageSrc: "/images/wheels_icon.webp", description: "Modern alloy wheels with a distinctive design, perfect for customizing your vehicle's appearance." },
+    "20": { name: "Steel Wheel Set (15 inch)", price: "$400", imageSrc: "/images/wheels_icon.webp", description: "Durable steel wheels perfect for winter use or as spare wheels. Built to last with excellent corrosion resistance." },
+    "21": { name: "Steel Wheel Set (16 inch)", price: "$450", imageSrc: "/images/wheels_icon.webp", description: "Heavy-duty steel wheels offering reliability and affordability for everyday driving." },
+    "22": { name: "Steel Wheel Set (17 inch)", price: "$500", imageSrc: "/images/wheels_icon.webp", description: "Larger steel wheels providing strength and durability for larger vehicles." },
+    "23": { name: "Complete Tire & Wheel Package", price: "$1800", imageSrc: "/images/package_icon.webp", description: "Complete package including 4 tires and 4 alloy wheels, ready for installation. Perfect for upgrading your vehicle." },
+    "24": { name: "Winter Tire Package", price: "$1200", imageSrc: "/images/snowPackages_icon.webp", description: "Complete winter tire package with steel wheels, ideal for seasonal tire changes." },
+    "25": { name: "Performance Package", price: "$2800", imageSrc: "/images/package_icon.webp", description: "Premium performance package featuring high-performance tires and lightweight alloy wheels." },
+    "26": { name: "Wheel Lug Nuts Set", price: "$50", imageSrc: "/images/wheels_icon.webp", description: "High-quality lug nuts for secure wheel mounting. Available in various finishes and thread sizes." },
+    "27": { name: "Wheel Spacers", price: "$120", imageSrc: "/images/wheels_icon.webp", description: "Precision-machined wheel spacers to adjust wheel offset and improve vehicle stance." },
+    "28": { name: "Wheel Center Caps", price: "$30", imageSrc: "/images/wheels_icon.webp", description: "Decorative center caps to complete your wheel's appearance. Available in multiple designs." },
+    "29": { name: "Tire Pressure Monitoring System", price: "$150", imageSrc: "/images/tires_icon.webp", description: "Wireless TPMS system to monitor tire pressure in real-time for safety and fuel efficiency." },
+    "30": { name: "Tire Valve Stems", price: "$25", imageSrc: "/images/tires_icon.webp", description: "High-quality valve stems for proper tire inflation and pressure maintenance." },
+    "31": { name: "Tire Repair Kit", price: "$40", imageSrc: "/images/tires_icon.webp", description: "Complete tire repair kit for emergency flat tire repairs on the go." },
   };
 
   const product = allProducts[productId as keyof typeof allProducts];
@@ -48,7 +66,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
   return (
     <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-primary dark:text-primary-foreground mb-8 text-center">
+        <h1 className="text-4xl font-bold text-foreground mb-8 text-center">
           {product.name}
         </h1>
 
@@ -68,7 +86,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
           {/* Product Details */}
           <section className="bg-white dark:bg-card p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex justify-between items-baseline mb-4">
-              <h2 className="text-3xl font-bold text-primary dark:text-primary-foreground">{product.name}</h2>
+              <h2 className="text-3xl font-bold text-foreground">{product.name}</h2>
               <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">{product.price}</p>
             </div>
             <p className="text-base text-muted-foreground mb-8 leading-relaxed">

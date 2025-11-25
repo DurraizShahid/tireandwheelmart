@@ -10,23 +10,23 @@ const Footer = () => {
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Company Info / Logo */}
         <div className="col-span-full md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
-          <Link href="/" className="flex items-center gap-2 text-3xl font-bold text-primary dark:text-primary-foreground mb-4">
+          <Link href="/" className="flex items-center gap-2 text-3xl font-bold text-foreground mb-4">
             <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
             Tire&Wheel
           </Link>
           <p className="text-sm leading-relaxed max-w-xs">
-            Your trusted source for high-quality automotive parts and accessories.
+            Your trusted source for high-quality wheels, tires, and wheel accessories.
           </p>
         </div>
 
         {/* Quick Links */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <h3 className="text-lg font-semibold text-primary dark:text-primary-foreground mb-4">Quick Links</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Quick Links</h3>
           <nav className="flex flex-col gap-2">
             <Link href="/" className="text-sm hover:text-primary transition-colors">
               Home
             </Link>
-            <Link href="/category/tires" className="text-sm hover:text-primary transition-colors">
+            <Link href="/category/all-season-tires" className="text-sm hover:text-primary transition-colors">
               Shop Categories
             </Link>
             <Link href="/about" className="text-sm hover:text-primary transition-colors">
@@ -40,7 +40,7 @@ const Footer = () => {
 
         {/* Customer Service */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <h3 className="text-lg font-semibold text-primary dark:text-primary-foreground mb-4">Customer Service</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Customer Service</h3>
           <nav className="flex flex-col gap-2">
             <Link href="/track-order" className="text-sm hover:text-primary transition-colors">
               Track Order
@@ -59,7 +59,7 @@ const Footer = () => {
 
         {/* Follow Us */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <h3 className="text-lg font-semibold text-primary dark:text-primary-foreground mb-4">Follow Us</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Follow Us</h3>
           <div className="flex gap-4">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
               <Facebook className="h-6 w-6" />

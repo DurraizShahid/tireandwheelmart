@@ -47,7 +47,7 @@ const TestimonialCard = ({
           </AvatarFallback>
         </Avatar>
         <div>
-          <CardTitle className="text-xl font-semibold text-primary dark:text-primary-foreground">
+          <CardTitle className="text-xl font-semibold text-foreground">
             {author}
           </CardTitle>
           <p className="text-sm text-muted-foreground">{title}</p>

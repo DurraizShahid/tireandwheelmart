@@ -17,7 +17,7 @@ const MobileHeader = ({ title, leftAction, rightAction, className }: MobileHeade
       <div className="w-8 flex justify-start">
         {leftAction}
       </div>
-      <h1 className="text-2xl font-bold text-primary dark:text-primary-foreground truncate max-w-[calc(100%-8rem)] text-center">
+      <h1 className="text-2xl font-bold text-foreground truncate max-w-[calc(100%-8rem)] text-center">
         {title}
       </h1>
       <div className="w-8 flex justify-end">

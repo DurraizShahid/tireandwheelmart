@@ -5,6 +5,8 @@ import Link from "next/link"; // Import Link
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
+import { ArrowUpRight } from "lucide-react"; // Import ArrowUpRight
+
 interface ProductCardProps {
   title: string;
   description: string;
@@ -34,11 +36,14 @@ const ProductCard = ({
         ></div>
         <CardContent className="relative z-10 p-6 flex flex-col justify-between h-full">
           <div className="flex items-center justify-between mb-4">
-            <Icon className={cn("h-8 w-8", accentColor.replace('bg-', 'text-'))} />
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Explore</span>
+            <Icon className="h-8 w-8 text-red-600" />
+            <div className="flex items-center gap-1">
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-red-600 transition-colors">Explore</span>
+              <ArrowUpRight className="h-4 w-4 text-gray-500 dark:text-gray-400 group-hover:text-red-600 transition-colors" />
+            </div>
           </div>
           <div className="flex-grow">
-            <h3 className="text-2xl font-semibold text-primary dark:text-primary-foreground mb-1">{title}</h3>
+            <h3 className="text-2xl font-semibold text-foreground mb-1">{title}</h3>
             <p className="text-sm text-muted-foreground">{description}</p>
           </div>
           {imageSrc && (
