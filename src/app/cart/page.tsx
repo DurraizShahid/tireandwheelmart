@@ -18,7 +18,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[60vh] bg-white dark:bg-background flex flex-col items-center justify-center px-4">
+      <div className="min-h-[60vh] bg-white flex flex-col items-center justify-center px-4">
         <ShoppingCart className="h-16 w-16 text-gray-400 mb-4" />
         <h1 className="text-3xl font-bold text-foreground mb-2">Your cart is empty</h1>
         <p className="text-muted-foreground mb-8 text-center">Add some products to get started!</p>
@@ -33,7 +33,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -50,7 +50,7 @@ export default function CartPage() {
                   {items.map((item) => (
                     <div key={item.id} className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6">
                       {/* Product Image */}
-                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
                         <Image
                           src={item.imageSrc}
                           alt={item.name}
@@ -109,7 +109,7 @@ export default function CartPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => removeFromCart(item.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

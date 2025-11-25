@@ -320,7 +320,7 @@ const HomeScreen = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground">
+    <div className="flex flex-col items-center bg-white text-foreground">
       {/* Hero Section - Slideshow */}
       <HeaderSlideshow
         slides={[
@@ -374,7 +374,7 @@ const HomeScreen = () => {
       </section>
 
       {/* Remade Featured Categories Section */}
-      <section className="w-full bg-white dark:bg-background py-16">
+      <section className="w-full bg-white py-16">
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-center sm:text-left">
@@ -422,7 +422,7 @@ const HomeScreen = () => {
       </section>
 
       {/* Featured Tires Section */}
-      <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
+      <section className="w-full bg-gray-50 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
             Featured Tires
@@ -454,21 +454,21 @@ const HomeScreen = () => {
             Why Choose Tire&Wheel?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="p-6 flex flex-col items-center text-center shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 flex flex-col items-center text-center shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0 flex flex-col items-center">
                 <Truck className="h-12 w-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">Fast & Reliable Shipping</h3>
                 <p className="text-muted-foreground">Get your wheels and tires delivered quickly and safely to your doorstep.</p>
               </CardContent>
             </Card>
-            <Card className="p-6 flex flex-col items-center text-center shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 flex flex-col items-center text-center shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0 flex flex-col items-center">
                 <ShieldCheck className="h-12 w-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">Quality Guaranteed</h3>
                 <p className="text-muted-foreground">We source only the best wheels and tires from trusted manufacturers.</p>
               </CardContent>
             </Card>
-            <Card className="p-6 flex flex-col items-center text-center shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 flex flex-col items-center text-center shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0 flex flex-col items-center">
                 <Headset className="h-12 w-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">24/7 Customer Support</h3>
@@ -480,7 +480,7 @@ const HomeScreen = () => {
       </section>
 
       {/* Explore via Brands Section */}
-      <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
+      <section className="w-full bg-gray-50 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
             Explore via Brands
@@ -502,7 +502,7 @@ const HomeScreen = () => {
       </section>
 
       {/* What Our Customers Say Section */}
-      <section className="w-full bg-gray-50 dark:bg-gray-900 py-16">
+      <section className="w-full bg-gray-50 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
             What Our Customers Say

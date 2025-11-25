@@ -671,7 +671,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-4 sm:py-8">
+    <div className="flex flex-col items-center bg-white text-foreground py-4 sm:py-8">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4 sm:mb-8 text-center">
           {product.name}
@@ -679,7 +679,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 items-start max-w-7xl mx-auto">
           {/* Product Image */}
-          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[450px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[450px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
             <Image
               src={product.imageSrc}
               alt={product.name}
@@ -701,7 +701,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
               {/* Season Badge */}
               {product.specs?.season && (
                 <div className="mb-4">
-                  <Badge variant="secondary" className="flex items-center text-xs sm:text-sm font-medium bg-gray-100 dark:bg-gray-800 text-foreground">
+                  <Badge variant="secondary" className="flex items-center text-xs sm:text-sm font-medium bg-gray-100 text-foreground">
                     {getSeasonIcon(product.specs.season)}
                     {product.specs.season}
                   </Badge>
@@ -721,7 +721,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
             </Button>
             
             {/* Quantity Selector */}
-            <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 dark:bg-gray-800 p-2 sm:p-3 rounded-lg">
+            <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 p-2 sm:p-3 rounded-lg">
               <span className="text-xs sm:text-sm font-medium text-muted-foreground">Qty:</span>
               <Button
                 variant="outline"
@@ -751,7 +751,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
 
             {/* Key Specifications */}
             {(product.specs?.size || product.specs?.loadSpeed || product.specs?.loadIndex || product.specs?.speedRating) && (
-              <Card className="bg-white dark:bg-card p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
+              <Card className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100">
                 <CardHeader className="p-0 mb-4">
                   <CardTitle className="text-lg sm:text-xl font-bold text-foreground">Specifications</CardTitle>
                 </CardHeader>
@@ -759,7 +759,7 @@ const ProductDetailScreen = ({ productId }: ProductDetailScreenProps) => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {product.specs?.size && (
                       <div className="flex items-start sm:items-center gap-2">
-                        <Gauge className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5 sm:mt-0" />
+                        <Gauge className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 flex-shrink-0 mt-0.5 sm:mt-0" />
                         <div className="min-w-0">
                           <p className="text-xs sm:text-sm text-muted-foreground">Tire Size</p>
                           <p className="font-medium text-sm">{product.specs.size}</p>

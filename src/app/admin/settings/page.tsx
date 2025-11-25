@@ -234,7 +234,7 @@ export default function SettingsPage() {
             </Tabs>
 
             {/* Data Management */}
-            <Card className="border-orange-200 bg-orange-50 dark:bg-orange-950 dark:border-orange-900">
+            <Card className="border-orange-200 bg-orange-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Database className="h-5 w-5" />

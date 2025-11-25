@@ -37,7 +37,7 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[60vh] bg-white dark:bg-background flex flex-col items-center justify-center px-4">
+      <div className="min-h-[60vh] bg-white flex flex-col items-center justify-center px-4">
         <ShoppingCart className="h-16 w-16 text-gray-400 mb-4" />
         <h1 className="text-3xl font-bold text-foreground mb-2">Your cart is empty</h1>
         <p className="text-muted-foreground mb-8">Add items to checkout</p>
@@ -87,7 +87,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Steps Indicator */}
         {step !== "confirmation" && (
@@ -150,7 +150,7 @@ export default function CheckoutPage() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {step === "confirmation" ? (
-              <Card className="border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800">
+              <Card className="border-green-200 bg-green-50">
                 <CardContent className="p-8">
                   <div className="text-center mb-6">
                     <div className="w-16 h-16 rounded-full bg-green-600 text-white flex items-center justify-center mx-auto mb-4">
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
                     <p className="text-muted-foreground">Thank you for your purchase</p>
                   </div>
 
-                  <div className="bg-white dark:bg-background rounded-lg p-6 my-6">
+                  <div className="bg-white rounded-lg p-6 my-6">
                     <p className="text-sm text-muted-foreground mb-1">Order Number</p>
                     <p className="text-2xl font-bold text-foreground mb-6">ORD-2024-{Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
 
@@ -340,7 +340,7 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-lg text-sm text-foreground">
+                  <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm text-foreground">
                     <p className="font-medium mb-1">Demo Card Information</p>
                     <p>You can use any combination of numbers for testing purposes.</p>
                   </div>

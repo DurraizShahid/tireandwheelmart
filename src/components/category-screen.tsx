@@ -648,7 +648,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
   const currentCategoryTitle = categoryTitleMap[categorySlug] || "Category";
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
+    <div className="flex flex-col items-center bg-white text-foreground py-8">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold text-foreground mb-8 text-center">
           {currentCategoryTitle}
@@ -659,7 +659,7 @@ const CategoryScreen = ({ categorySlug }: CategoryScreenProps) => {
           <Input
             type="text"
             placeholder={`Search in ${currentCategoryTitle}...`}
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-300"
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-300"
           />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
         </div>

@@ -29,7 +29,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-12 min-h-[calc(100vh-128px)]">
+    <div className="flex flex-col items-center bg-white text-foreground py-12 min-h-[calc(100vh-128px)]">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-8 text-center">
           Contact Us
@@ -41,13 +41,13 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Contact Information */}
           <div className="space-y-6">
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0">
                 <h2 className="text-2xl font-bold text-foreground mb-6">Get in Touch</h2>
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
-                    <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
+                    <MapPin className="h-6 w-6 text-blue-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">Address</h3>
                       <p className="text-muted-foreground">
@@ -59,7 +59,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Phone className="h-6 w-6 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
+                    <Phone className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">Phone</h3>
                       <p className="text-muted-foreground">
@@ -69,7 +69,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Mail className="h-6 w-6 text-purple-600 dark:text-purple-400 mt-1 flex-shrink-0" />
+                    <Mail className="h-6 w-6 text-purple-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">Email</h3>
                       <p className="text-muted-foreground">
@@ -84,7 +84,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+          <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
             <CardContent className="p-0">
               <h2 className="text-2xl font-bold text-foreground mb-6">Send us a Message</h2>
               <form onSubmit={handleSubmit} className="space-y-4">

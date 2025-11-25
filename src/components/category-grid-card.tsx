@@ -19,12 +19,12 @@ const CategoryGridCard = ({
   href,
   imageSrc,
   description,
-  backgroundColor = "bg-gray-100 dark:bg-gray-800", // Default light gray background
+  backgroundColor = "bg-gray-100", // Default light gray background
 }: CategoryGridCardProps) => {
   return (
     <Link href={href} className="block h-full">
       <Card className={cn(
-        "relative overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700 group cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:bg-red-600",
+        "relative overflow-hidden rounded-lg shadow-md border border-gray-200 group cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:bg-red-600",
         backgroundColor
       )}>
         <CardContent className="relative z-10 p-3 sm:p-5 flex flex-col sm:flex-row items-center justify-between h-full min-h-[120px] sm:min-h-[160px] gap-2 sm:gap-0">
@@ -32,7 +32,7 @@ const CategoryGridCard = ({
           <div className="flex-1 pr-0 sm:pr-4 flex flex-col justify-center">
             <h3 className={cn(
               "text-sm sm:text-lg md:text-xl font-bold text-foreground uppercase leading-tight mb-1 sm:mb-2 group-hover:text-white transition-colors duration-300",
-              backgroundColor === "bg-red-600" && "text-white dark:text-white"
+              backgroundColor === "bg-red-600" && "text-white"
             )}>
               {title}
             </h3>

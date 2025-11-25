@@ -259,7 +259,7 @@ const SearchContent = () => {
 const SearchPage = () => {
   return (
     <Suspense fallback={
-      <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-8">
+      <div className="flex flex-col items-center bg-white text-foreground py-8">
         <div className="text-center py-12">
           <p className="text-lg text-muted-foreground">Loading...</p>
         </div>

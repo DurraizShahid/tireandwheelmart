@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function PrivacyPage() {
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-12 min-h-[calc(100vh-128px)]">
+    <div className="flex flex-col items-center bg-white text-foreground py-12 min-h-[calc(100vh-128px)]">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-8 text-center">
           Privacy Policy
@@ -13,7 +13,7 @@ export default function PrivacyPage() {
           Last Updated: {new Date().toLocaleDateString()}
         </p>
 
-        <div className="prose prose-lg dark:prose-invert max-w-none space-y-8">
+        <div className="prose prose-lg max-w-none space-y-8">
           <section>
             <p className="text-muted-foreground leading-relaxed">
               At Tire&Wheel, we are committed to protecting your privacy. This Privacy Policy explains how we collect,
@@ -85,9 +85,9 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Information Sharing</h2>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0">
-                <Lock className="h-10 w-10 text-blue-600 dark:text-blue-400 mb-4" />
+                <Lock className="h-10 w-10 text-blue-600 mb-4" />
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   We do not sell your personal information. We may share your information only in the following circumstances:
                 </p>
@@ -103,9 +103,9 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Data Security</h2>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-green-50 to-green-100">
               <CardContent className="p-0">
-                <Shield className="h-10 w-10 text-green-600 dark:text-green-400 mb-4" />
+                <Shield className="h-10 w-10 text-green-600 mb-4" />
                 <p className="text-muted-foreground leading-relaxed">
                   We implement appropriate technical and organizational security measures to protect your personal information
                   against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over
@@ -164,7 +164,7 @@ export default function PrivacyPage() {
             <p className="text-muted-foreground leading-relaxed mb-4">
               If you have questions or concerns about this Privacy Policy or our data practices, please contact us:
             </p>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-blue-50 to-blue-100">
               <CardContent className="p-0">
                 <p className="text-muted-foreground">
                   <strong>Email:</strong> privacy@tireandwheel.com<br />

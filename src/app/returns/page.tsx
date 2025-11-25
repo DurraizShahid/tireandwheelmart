@@ -4,13 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function ReturnsPage() {
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-12 min-h-[calc(100vh-128px)]">
+    <div className="flex flex-col items-center bg-white text-foreground py-12 min-h-[calc(100vh-128px)]">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-8 text-center">
           Returns & Refunds
         </h1>
 
-        <div className="prose prose-lg dark:prose-invert max-w-none space-y-8">
+        <div className="prose prose-lg max-w-none space-y-8">
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Return Policy</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
@@ -20,9 +20,9 @@ export default function ReturnsPage() {
           </section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-green-50 to-green-100">
               <CardContent className="p-0">
-                <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400 mb-4" />
+                <CheckCircle className="h-10 w-10 text-green-600 mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">Eligible for Return</h3>
                 <ul className="text-muted-foreground space-y-2 text-sm">
                   <li>• Unused tires in original packaging</li>
@@ -34,9 +34,9 @@ export default function ReturnsPage() {
               </CardContent>
             </Card>
 
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-red-50 to-red-100">
               <CardContent className="p-0">
-                <AlertCircle className="h-10 w-10 text-red-600 dark:text-red-400 mb-4" />
+                <AlertCircle className="h-10 w-10 text-red-600 mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">Not Eligible for Return</h3>
                 <ul className="text-muted-foreground space-y-2 text-sm">
                   <li>• Tires or wheels that have been mounted</li>
@@ -116,10 +116,10 @@ export default function ReturnsPage() {
 
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Refund Information</h2>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0 space-y-4">
                 <div className="flex items-start gap-4">
-                  <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
+                  <Clock className="h-6 w-6 text-blue-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-1">Processing Time</h3>
                     <p className="text-muted-foreground">
@@ -129,7 +129,7 @@ export default function ReturnsPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <Package className="h-6 w-6 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
+                  <Package className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-1">Shipping Costs</h3>
                     <p className="text-muted-foreground">

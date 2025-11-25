@@ -45,7 +45,7 @@ const Header = () => {
         <nav className="hidden md:flex flex-grow justify-center items-center space-x-6">
           <Link
             href="/"
-            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium ${
               pathname === "/" ? "text-red-600" : ""
             }`}
           >
@@ -53,7 +53,7 @@ const Header = () => {
           </Link>
           <Link
             href="/about"
-            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium ${
               pathname === "/about" ? "text-red-600" : ""
             }`}
           >
@@ -62,7 +62,7 @@ const Header = () => {
           <CategoryDropdown />
           <Link
             href="/contact"
-            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium ${
               pathname === "/contact" ? "text-red-600" : ""
             }`}
           >
@@ -70,7 +70,7 @@ const Header = () => {
           </Link>
           <Link
             href="/track-order"
-            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium ${
               pathname === "/track-order" ? "text-red-600" : ""
             }`}
           >

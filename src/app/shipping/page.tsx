@@ -4,19 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function ShippingPage() {
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-12 min-h-[calc(100vh-128px)]">
+    <div className="flex flex-col items-center bg-white text-foreground py-12 min-h-[calc(100vh-128px)]">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-8 text-center">
           Shipping Information
         </h1>
 
-        <div className="prose prose-lg dark:prose-invert max-w-none space-y-8">
+        <div className="prose prose-lg max-w-none space-y-8">
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Shipping Options</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
+              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-blue-50 to-blue-100">
                 <CardContent className="p-0">
-                  <Truck className="h-10 w-10 text-blue-600 dark:text-blue-400 mb-4" />
+                  <Truck className="h-10 w-10 text-blue-600 mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">Standard Shipping</h3>
                   <p className="text-muted-foreground mb-2">
                     <strong>Delivery Time:</strong> 5-7 business days
@@ -30,9 +30,9 @@ export default function ShippingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20">
+              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-green-50 to-green-100">
                 <CardContent className="p-0">
-                  <Package className="h-10 w-10 text-green-600 dark:text-green-400 mb-4" />
+                  <Package className="h-10 w-10 text-green-600 mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">Express Shipping</h3>
                   <p className="text-muted-foreground mb-2">
                     <strong>Delivery Time:</strong> 2-3 business days
@@ -46,9 +46,9 @@ export default function ShippingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
+              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-purple-50 to-purple-100">
                 <CardContent className="p-0">
-                  <Clock className="h-10 w-10 text-purple-600 dark:text-purple-400 mb-4" />
+                  <Clock className="h-10 w-10 text-purple-600 mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">Overnight Shipping</h3>
                   <p className="text-muted-foreground mb-2">
                     <strong>Delivery Time:</strong> Next business day
@@ -62,9 +62,9 @@ export default function ShippingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+              <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-orange-50 to-orange-100">
                 <CardContent className="p-0">
-                  <MapPin className="h-10 w-10 text-orange-600 dark:text-orange-400 mb-4" />
+                  <MapPin className="h-10 w-10 text-orange-600 mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">Local Pickup</h3>
                   <p className="text-muted-foreground mb-2">
                     <strong>Available:</strong> At our store location
@@ -147,7 +147,7 @@ export default function ShippingPage() {
 
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Shipping Locations</h2>
-            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <Card className="p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0">
                 <p className="text-muted-foreground mb-4">
                   We currently ship to all 50 states within the United States. Shipping costs are calculated at checkout

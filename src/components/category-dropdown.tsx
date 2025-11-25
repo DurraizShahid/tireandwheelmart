@@ -73,7 +73,7 @@ export const CategoryDropdown = () => {
       {/* Desktop Dropdown - Hidden on mobile */}
       <div className="hidden md:block relative group">
         <button
-          className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
@@ -85,7 +85,7 @@ export const CategoryDropdown = () => {
         {isOpen && (
           <>
             {/* Dropdown */}
-            <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 w-[1200px]" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
+            <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 w-[1200px]" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
               <div className="p-6">
                 <div className="flex gap-6">
                   {/* First Grid: 2x2 (All-Season, Summer, Winter, Performance) */}
@@ -241,7 +241,7 @@ export const CategoryDropdown = () => {
                     category.bgColor === "bg-red-600" ? "bg-red-600 text-white" : "text-foreground"
                   }`}
                 >
-                  <div className="relative w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  <div className="relative w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                     <Image
                       src={category.image}
                       alt={category.title}

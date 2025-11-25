@@ -100,7 +100,7 @@ export default function FAQPage() {
   ];
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-background text-foreground py-12 min-h-[calc(100vh-128px)]">
+    <div className="flex flex-col items-center bg-white text-foreground py-12 min-h-[calc(100vh-128px)]">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
           Frequently Asked Questions
@@ -135,7 +135,7 @@ export default function FAQPage() {
           ))}
         </div>
 
-        <div className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
+        <div className="mt-12 p-6 bg-blue-50 rounded-lg text-center">
           <p className="text-lg font-semibold text-foreground mb-2">
             Still have questions?
           </p>
