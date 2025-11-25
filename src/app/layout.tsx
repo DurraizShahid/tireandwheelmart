@@ -34,8 +34,10 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-          enableSystem
+          themes={["light"]}
+          enableSystem={false}
           disableTransitionOnChange
+          forcedTheme="light"
         >
           <CartProvider>
             <Header /> {/* Render the Header */}
