@@ -22,35 +22,37 @@ const TestimonialCard = ({
   rating = 5, // Default to 5 stars
 }: TestimonialCardProps) => {
   return (
-    <Card className="flex flex-col justify-between h-full p-6 shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
-      <CardContent className="p-0 mb-4 flex-grow">
-        <div className="flex items-center mb-3">
+    <Card className="flex flex-col h-full p-4 shadow-md border-none bg-gradient-to-br from-gray-50 to-gray-100">
+      <CardContent className="p-0 mb-3 flex-grow">
+        <div className="flex items-center mb-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
               className={cn(
-                "h-5 w-5",
+                "h-4 w-4",
                 i < rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
               )}
             />
           ))}
         </div>
-        <p className="text-lg italic text-muted-foreground leading-relaxed">
+        <p className="text-sm italic text-muted-foreground leading-relaxed">
           &ldquo;{quote}&rdquo;
         </p>
       </CardContent>
-      <CardHeader className="p-0 flex flex-row items-center gap-4">
-        <Avatar className="h-12 w-12">
-          <AvatarImage src={avatarSrc} alt={author} />
-          <AvatarFallback className="bg-blue-600 text-white text-lg font-semibold">
-            {author.split(" ").map((n) => n[0]).join("")}
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <CardTitle className="text-xl font-semibold text-foreground">
-            {author}
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">{title}</p>
+      <CardHeader className="p-0">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={avatarSrc} alt={author} />
+            <AvatarFallback className="bg-blue-600 text-white text-sm font-semibold">
+              {author.split(" ").map((n) => n[0]).join("")}
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-left">
+            <CardTitle className="text-base font-semibold text-foreground">
+              {author}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">{title}</p>
+          </div>
         </div>
       </CardHeader>
     </Card>

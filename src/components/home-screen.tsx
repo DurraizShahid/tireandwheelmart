@@ -1,7 +1,21 @@
 "use client";
 
-import React from "react";
-import { Car, Circle, Package, Truck, ShieldCheck, Headset, Snowflake, Sun } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { 
+  Car, 
+  Circle, 
+  Package, 
+  Truck, 
+  ShieldCheck, 
+  Headset, 
+  Snowflake, 
+  Sun,
+  TrendingUp,
+  Wrench,
+  MapPin,
+  Users
+} from "lucide-react";
+import { Marquee } from "@/components/ui/marquee";
 import ProductCard from "@/components/product-card";
 import ProductItem from "@/components/product-item";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +25,62 @@ import CategoryGridCard from "@/components/category-grid-card";
 import BrandCard from "@/components/brand-card";
 import HeaderSlideshow from "@/components/header-slideshow";
 import ProductCarousel from "@/components/product-carousel";
+
+const CountUp = ({ end, duration = 2000, suffix = "" }: { end: number | string; duration?: number; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const startTime = Date.now();
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      if (typeof end === 'number') {
+        setCount(Math.floor(progress * end));
+      } else {
+        // For strings like "Top 500" or "6M+", we just display them as-is
+        setCount(0); // This will be overridden in the render
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    animate();
+  }, [isVisible, end, duration]);
+
+  // If end is a string, just display it
+  if (typeof end === 'string') {
+    return <div ref={elementRef}>{end}{suffix}</div>;
+  }
+
+  return <div ref={elementRef}>{count.toLocaleString()}{suffix}</div>;
+};
 
 const HomeScreen = () => {
   // Product images for wheel and tire categories
@@ -483,7 +553,7 @@ const HomeScreen = () => {
       <section className="w-full bg-gray-50 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Explore via Brands
+            BEST PRICE GUARANTEE ON ALL BRANDS
           </h2>
           <p className="text-lg text-muted-foreground mb-12">
             Shop from the most trusted tire and wheel brands in the industry
@@ -503,21 +573,109 @@ const HomeScreen = () => {
 
       {/* What Our Customers Say Section */}
       <section className="w-full bg-gray-50 py-16">
-        <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
-            What Our Customers Say
+        <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-left mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+              <span className="font-light text-black">Customers love Us.</span>
+            </h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+              <span className="font-bold text-red-600">Discover why.</span>
+            </h2>
+            <div className="flex items-center mt-4">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className={`w-5 h-5 ${i < 4 ? 'text-yellow-400' : (i === 4 && 0.8 >= 0.5 ? 'text-yellow-400' : 'text-gray-300')}`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <span className="ml-2 text-lg font-semibold text-foreground">4.8</span>
+            </div>
+            <div className="flex items-center mt-2">
+              <svg className="w-4 h-4 text-blue-500 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm text-muted-foreground">Rated by 160,900+ verified customers</span>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <div className="w-full md:w-2/3 lg:w-1/2">
+              <Marquee vertical pauseOnHover repeat={3} className="h-[500px]">
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className="mb-8 last:mb-0">
+                    <TestimonialCard
+                      quote={testimonial.quote}
+                      author={testimonial.author}
+                      title={testimonial.title}
+                      avatarSrc={testimonial.avatarSrc}
+                      rating={testimonial.rating}
+                    />
+                  </div>
+                ))}
+              </Marquee>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Shop with Confidence Section */}
+      <section className="w-full py-16 bg-white">
+        <div className="px-0 sm:px-0 lg:px-0 max-w-full mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+            Shop with confidence
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard
-                key={index}
-                quote={testimonial.quote}
-                author={testimonial.author}
-                title={testimonial.title}
-                avatarSrc={testimonial.avatarSrc}
-                rating={testimonial.rating}
-              />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 px-4 sm:px-6 lg:px-8">
+            <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">
+              <div className="flex items-center mb-3">
+                <ShieldCheck className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
+                <div className="text-3xl md:text-4xl font-bold text-red-600">
+                  <CountUp end={98} suffix="%" />
+                </div>
+              </div>
+              <p className="text-muted-foreground">of customers approve</p>
+            </div>
+            <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">
+              <div className="flex items-center mb-3">
+                <TrendingUp className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
+                <div className="text-3xl md:text-4xl font-bold text-red-600">
+                  <CountUp end="Top 500" />
+                </div>
+              </div>
+              <p className="text-muted-foreground">fastest growing company in US</p>
+            </div>
+            <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">
+              <div className="flex items-center mb-3">
+                <Wrench className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
+                <div className="text-3xl md:text-4xl font-bold text-red-600">
+                  <CountUp end={20000} suffix="+" />
+                </div>
+              </div>
+              <p className="text-muted-foreground">certified installers</p>
+            </div>
+            <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">
+              <div className="flex items-center mb-3">
+                <MapPin className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
+                <div className="text-3xl md:text-4xl font-bold text-red-600">
+                  <CountUp end={7000} suffix="+" />
+                </div>
+              </div>
+              <p className="text-muted-foreground">local distributors</p>
+            </div>
+            <div className="text-left">
+              <div className="flex items-center mb-3">
+                <Users className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
+                <div className="text-3xl md:text-4xl font-bold text-red-600">
+                  <CountUp end={6000000} suffix="+" />
+                </div>
+              </div>
+              <p className="text-muted-foreground">customers served</p>
+            </div>
           </div>
         </div>
       </section>
