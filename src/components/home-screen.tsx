@@ -606,19 +606,36 @@ const HomeScreen = () => {
           </div>
           <div className="flex justify-end">
             <div className="w-full md:w-2/3 lg:w-1/2">
-              <Marquee vertical pauseOnHover repeat={3} className="h-[500px]">
-                {testimonials.map((testimonial, index) => (
-                  <div key={index} className="mb-8 last:mb-0">
-                    <TestimonialCard
-                      quote={testimonial.quote}
-                      author={testimonial.author}
-                      title={testimonial.title}
-                      avatarSrc={testimonial.avatarSrc}
-                      rating={testimonial.rating}
-                    />
-                  </div>
-                ))}
-              </Marquee>
+              <div className="relative flex h-[500px] w-full flex-row items-center justify-center overflow-hidden">
+                <Marquee pauseOnHover vertical className="[--duration:20s]">
+                  {testimonials.slice(0, Math.ceil(testimonials.length / 2)).map((testimonial, index) => (
+                    <div key={index} className="mb-4 last:mb-0 min-h-[200px]">
+                      <TestimonialCard
+                        quote={testimonial.quote}
+                        author={testimonial.author}
+                        title={testimonial.title}
+                        avatarSrc={testimonial.avatarSrc}
+                        rating={testimonial.rating}
+                      />
+                    </div>
+                  ))}
+                </Marquee>
+                <Marquee reverse pauseOnHover vertical className="[--duration:20s]">
+                  {testimonials.slice(Math.ceil(testimonials.length / 2)).map((testimonial, index) => (
+                    <div key={index} className="mb-4 last:mb-0 min-h-[200px]">
+                      <TestimonialCard
+                        quote={testimonial.quote}
+                        author={testimonial.author}
+                        title={testimonial.title}
+                        avatarSrc={testimonial.avatarSrc}
+                        rating={testimonial.rating}
+                      />
+                    </div>
+                  ))}
+                </Marquee>
+                <div className="from-gray-50 pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b"></div>
+                <div className="from-gray-50 pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t"></div>
+              </div>
             </div>
           </div>
         </div>
