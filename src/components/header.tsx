@@ -10,6 +10,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CategoryDropdown } from "@/components/category-dropdown";
 import { useCart } from "@/contexts/cart-context";
+import SearchSuggestions from "@/components/search-suggestions";
+import SearchModal from "@/components/search-modal";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -23,13 +25,25 @@ const Header = () => {
   const router = useRouter();
   const { getTotalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
       setSearchQuery("");
+      setShowSuggestions(false);
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setShowSuggestions(true);
+  };
+
+  const handleInputFocus = () => {
+    setShowSuggestions(true);
   };
 
   return (
@@ -80,18 +94,14 @@ const Header = () => {
 
         {/* Desktop Search, Admin, and Cart */}
         <div className="hidden md:flex items-center space-x-4">
-          <form onSubmit={handleSearch} className="relative">
-            <Input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-9 w-[200px] pl-9 pr-3 rounded-md bg-muted/50 border-muted focus:border-primary focus:ring-0"
-            />
-            <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2">
-              <Search className="h-4 w-4 text-muted-foreground" />
-            </button>
-          </form>
+          <button
+            onClick={() => setSearchModalOpen(true)}
+            className="relative w-[200px] h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors"
+          >
+            <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
+            <span className="text-sm text-muted-foreground">Search...</span>
+          </button>
+          <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
           <Link href="/admin">
             <Button variant="ghost" size="icon" className="relative">
               <Shield className="h-5 w-5" />
@@ -155,18 +165,14 @@ const Header = () => {
                   Admin
                 </Link>
               </nav>
-              <form onSubmit={handleSearch} className="relative mt-6">
-                <Input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 rounded-md bg-muted/50 border-muted focus:border-primary focus:ring-0"
-                />
-                <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2">
-                  <Search className="h-4 w-4 text-muted-foreground" />
-                </button>
-              </form>
+              <button
+                onClick={() => setSearchModalOpen(true)}
+                className="relative w-full h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors mt-6"
+              >
+                <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
+                <span className="text-sm text-muted-foreground">Search...</span>
+              </button>
+              <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
             </SheetContent>
           </Sheet>
         </div>

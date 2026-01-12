@@ -6,199 +6,48 @@ import ProductItem from "@/components/product-item";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { allProducts, searchProducts } from "@/data/products";
 
 const SearchContent = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-
-  // All products from product-detail-screen
-  const allProducts = [
-    {
-      id: "1",
-      name: "Michelin CrossClimate2",
-      price: "$250",
-      imageSrc: "/tires/Michelin CrossClimate2/mi_crossclimate2_suv_full.webp",
-      category: "all-season",
-    },
-    {
-      id: "2",
-      name: "Continental ExtremeContact",
-      price: "$180",
-      imageSrc: "/tires/Continental ExtremeContact/conraj_ang_l.jpg",
-      category: "all-season",
-    },
-    {
-      id: "3",
-      name: "Goodyear Assurance WeatherReady",
-      price: "$200",
-      imageSrc: "/tires/Goodyear Eagle F1/images.jpg",
-      category: "all-season",
-    },
-    {
-      id: "4",
-      name: "Bridgestone Blizzak WS90",
-      price: "$230",
-      imageSrc: "/tires/Bridgestone Blizzak WS90/bs_blizzak_ws90_full.webp",
-      category: "all-season",
-    },
-    {
-      id: "5",
-      name: "Michelin Pilot Sport 4S",
-      price: "$290",
-      imageSrc: "/tires/Michelin Pilot Sport 4S/pss_fiche.webp",
-      category: "summer",
-    },
-    {
-      id: "6",
-      name: "Goodyear Eagle F1",
-      price: "$240",
-      imageSrc: "/tires/Goodyear Eagle F1/images.jpg",
-      category: "summer",
-    },
-    {
-      id: "7",
-      name: "Pirelli P Zero",
-      price: "$280",
-      imageSrc: "/tires/Pirelli P Zero/pzero.png",
-      category: "summer",
-    },
-    {
-      id: "8",
-      name: "Continental ExtremeContact Sport",
-      price: "$250",
-      imageSrc: "/tires/Continental ExtremeContact/p3-conti.png",
-      category: "summer",
-    },
-    {
-      id: "9",
-      name: "Michelin X-Ice Snow",
-      price: "$220",
-      imageSrc: "/tires/Michelin X-Ice Snow/500x_michelin_x-ice_snow.jpg",
-      category: "winter",
-    },
-    {
-      id: "10",
-      name: "Continental WinterContact SI",
-      price: "$190",
-      imageSrc: "/tires/Continental WinterContact SI/wintercontactsi_white_top.webp",
-      category: "winter",
-    },
-    {
-      id: "11",
-      name: "Nokian Hakkapeliitta R3",
-      price: "$250",
-      imageSrc: "/tires/Nokian Hakkapeliitta R3/1.jpg",
-      category: "winter",
-    },
-    {
-      id: "12",
-      name: "BBS CH-R Alloy Wheels",
-      price: "$2000",
-      imageSrc: "/tires/BBS CH-R Alloy Wheels/5.jpg",
-      category: "alloy-wheels",
-    },
-    {
-      id: "13",
-      name: "Rotiform RSE Alloy Wheels",
-      price: "$1500",
-      imageSrc: "/tires/Rotiform RSE Alloy Wheels/9.jpg",
-      category: "alloy-wheels",
-    },
-    {
-      id: "14",
-      name: "Enkei RPF1 Alloy Wheels",
-      price: "$1200",
-      imageSrc: "/tires/Enkei RPF1 Alloy Wheels/ENKEI-RPF1-BK-131-WEB.jpg",
-      category: "alloy-wheels",
-    },
-    {
-      id: "15",
-      name: "Pirelli P Zero Trofeo R",
-      price: "$320",
-      imageSrc: "/tires/Pirelli P Zero Trofeo R/Trofeo R-02_i.webp",
-      category: "performance",
-    },
-    {
-      id: "16",
-      name: "Michelin Pilot Sport Cup 2",
-      price: "$280",
-      imageSrc: "/tires/Michelin Pilot Sport Cup 2/4w-368_3528703112235_tire_michelin_pilot-sport-cup-2-r_325-slash-30-zr21-108y-xl_n0_a_main_5-quarterzoom_nopad.webp",
-      category: "performance",
-    },
-    {
-      id: "17",
-      name: "Steel Wheel Set (15 inch)",
-      price: "$400",
-      imageSrc: "/tires/steel Wheel Set (15 inch)/full_b6056fa1b2c4f87b93928efa9462e115_800x.webp",
-      category: "steel-wheels",
-    },
-    {
-      id: "18",
-      name: "Steel Wheel Set (16 inch)",
-      price: "$450",
-      imageSrc: "/tires/Steel Wheel Set (16 inch)/TFGRW012_NEW-02.jpg",
-      category: "steel-wheels",
-    },
-    {
-      id: "19",
-      name: "Steel Wheel Set (17 inch)",
-      price: "$500",
-      imageSrc: "/tires/Steel Wheel Set (17 inch)/steel-rim-x99139n-17-inch-5x1143-557505.webp",
-      category: "steel-wheels",
-    },
-    {
-      id: "20",
-      name: "Wheel Spacers",
-      price: "$80",
-      imageSrc: "/tires/Wheel Spacers/71Gpkkwl0KL._AC_UF1000,1000_QL80_.jpg",
-      category: "wheel-accessories",
-    },
-    {
-      id: "21",
-      name: "Wheel Lug Nuts Set",
-      price: "$50",
-      imageSrc: "/tires/Wheel Lug Nuts Set/DirtyLifeLugNutSet_1024x.jpg",
-      category: "wheel-accessories",
-    },
-    {
-      id: "22",
-      name: "Wheel Center Caps",
-      price: "$35",
-      imageSrc: "/tires/Wheel Center Caps/713GmHNUoHL.jpg",
-      category: "wheel-accessories",
-    },
-    {
-      id: "23",
-      name: "Tire Pressure Monitoring System",
-      price: "$150",
-      imageSrc: "/tires/Tire Pressure Monitoring System/TPS10-4I.webp",
-      category: "tire-accessories",
-    },
-    {
-      id: "24",
-      name: "Tire Valve Stems",
-      price: "$25",
-      imageSrc: "/tires/Tire Valve Stems/61wx-R63pFL.jpg",
-      category: "tire-accessories",
-    },
-    {
-      id: "25",
-      name: "Tire Repair Kit",
-      price: "$40",
-      imageSrc: "/tires/Tire Repair Kit/tire-plug-repair-kit-on-tire-1024x682.jpg",
-      category: "tire-accessories",
-    },
-  ];
+  const vehicle = searchParams.get("vehicle") || "";
+  const size = searchParams.get("size") || "";
+  const brand = searchParams.get("brand") || "";
+  const type = searchParams.get("type") || "";
 
   const searchResults = useMemo(() => {
-    if (!query.trim()) return allProducts;
+    let results = allProducts;
 
-    const lowerQuery = query.toLowerCase();
-    return allProducts.filter((product) =>
-      product.name.toLowerCase().includes(lowerQuery) ||
-      product.category.toLowerCase().includes(lowerQuery)
-    );
-  }, [query]);
+    // Apply text query filter if provided
+    if (query.trim()) {
+      results = searchProducts(query);
+    }
+
+    // Apply additional filters
+    if (brand) {
+      results = results.filter((product) =>
+        product.name.toLowerCase().includes(brand.toLowerCase())
+      );
+    }
+
+    if (type) {
+      const typeLower = type.toLowerCase().replace(/\s+/g, "-");
+      results = results.filter((product) =>
+        product.category.toLowerCase().includes(typeLower)
+      );
+    }
+
+    if (size) {
+      // This would need to match against product specs in a real implementation
+      // For now, we'll just filter by name containing the size
+      results = results.filter((product) =>
+        product.name.toLowerCase().includes(size.toLowerCase())
+      );
+    }
+
+    return results;
+  }, [query, vehicle, size, brand, type]);
 
   return (
     <div className="flex flex-col items-center bg-white text-foreground py-8">
@@ -217,9 +66,11 @@ const SearchContent = () => {
             />
           </div>
 
-          {query && (
+          {(query || brand || type || size || vehicle) && (
             <p className="text-center text-lg text-muted-foreground mb-8">
-              Found <span className="font-semibold text-foreground">{searchResults.length}</span> result{searchResults.length !== 1 ? "s" : ""} for "<span className="font-semibold">{query}</span>"
+              Found <span className="font-semibold text-foreground">{searchResults.length}</span> result{searchResults.length !== 1 ? "s" : ""}
+              {query && ` for "${query}"`}
+              {(brand || type || size || vehicle) && " matching your filters"}
             </p>
           )}
 
