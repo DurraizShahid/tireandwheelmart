@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Webpack config for component tagger (only works with webpack, not Turbopack)
+  // Use "npm run dev:webpack" to enable this, or "npm run dev" for Turbopack
   webpack: (config) => {
     if (process.env.NODE_ENV === "development") {
       config.module.rules.push({
@@ -11,12 +13,6 @@ const nextConfig: NextConfig = {
       });
     }
     return config;
-  },
-  // Turbopack configuration
-  // Note: @dyad-sh/nextjs-webpack-component-tagger is Webpack-specific
-  // and won't work with Turbopack. This config is added to resolve the warning.
-  turbo: {
-    // Add Turbopack-specific configuration here if needed
   },
 };
 
