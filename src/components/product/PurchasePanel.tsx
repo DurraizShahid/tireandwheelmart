@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Heart, GitCompare, Truck, ShieldCheck, CreditCard } from "lucide-react";
+import { ShoppingCart, Truck, ShieldCheck, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { QuantitySelector } from "@/components/cart/QuantitySelector";
 import { useCart } from "@/contexts/cart-context";
+import { WishlistButton } from "@/components/wishlist/WishlistButton";
+import { CompareButton } from "@/components/compare/CompareButton";
 import { toast } from "sonner";
 import type { Product } from "@/lib/catalog-types";
 
@@ -72,12 +74,8 @@ export function PurchasePanel({ product }: PurchasePanelProps) {
 
       {/* Wishlist + Compare */}
       <div className="flex gap-3">
-        <Button variant="ghost" size="sm" className="flex-1 text-muted-foreground" disabled>
-          <Heart className="h-4 w-4 mr-1.5" /> Wishlist
-        </Button>
-        <Button variant="ghost" size="sm" className="flex-1 text-muted-foreground" disabled>
-          <GitCompare className="h-4 w-4 mr-1.5" /> Compare
-        </Button>
+        <WishlistButton product={product} variant="button" />
+        <CompareButton product={product} variant="button" />
       </div>
 
       <Separator />

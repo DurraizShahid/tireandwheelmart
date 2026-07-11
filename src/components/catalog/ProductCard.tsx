@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ShoppingCart, Heart, Eye } from "lucide-react";
+import { Star, ShoppingCart, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { Product, BadgeType, ViewMode } from "@/lib/catalog-types";
 import { formatPrice, getProductBadges } from "@/lib/catalog-helpers";
+import { WishlistButton } from "@/components/wishlist/WishlistButton";
+import { CompareButton } from "@/components/compare/CompareButton";
 
 interface ProductCardProps {
   product: Product;
@@ -75,14 +77,8 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
 
         {/* Action buttons overlay */}
         <div className="absolute top-2 right-2 z-10 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Button
-            variant="secondary"
-            size="icon"
-            className="h-8 w-8 bg-white/90 backdrop-blur-sm hover:bg-white shadow-sm"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-          >
-            <Heart className="h-4 w-4 text-muted-foreground hover:text-red-500" />
-          </Button>
+          <WishlistButton product={product} />
+          <CompareButton product={product} />
         </div>
 
         {/* Quick add to cart overlay */}

@@ -13,6 +13,9 @@ import { CategoryDropdown } from "@/components/category-dropdown";
 import { useCart } from "@/contexts/cart-context";
 import { CartBadge } from "@/components/cart/CartBadge";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { WishlistBadge } from "@/components/wishlist/WishlistBadge";
+import { WishlistDrawer } from "@/components/wishlist/WishlistDrawer";
+import { CompareBar } from "@/components/compare/CompareBar";
 import SearchSuggestions from "@/components/search-suggestions";
 import SearchModal from "@/components/search-modal";
 
@@ -111,6 +114,7 @@ const Header = () => {
               <Shield className="h-5 w-5" />
             </Button>
           </Link>
+          <WishlistBadge />
           <CartBadge />
           <div className="flex items-center gap-2">
             <Show when="signed-out">
@@ -129,6 +133,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div className="flex items-center md:hidden">
+          <WishlistBadge className="mr-1" />
           <CartBadge className="mr-2" />
           <Sheet>
             <SheetTrigger asChild>
@@ -194,6 +199,8 @@ const Header = () => {
         </div>
       </div>
       <CartDrawer />
+      <WishlistDrawer />
+      <CompareBar />
     </header>
   );
 };

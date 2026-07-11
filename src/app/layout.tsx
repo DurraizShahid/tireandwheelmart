@@ -5,6 +5,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CartProvider } from "@/contexts/cart-context";
+import { WishlistProvider } from "@/contexts/wishlist-context";
+import { CompareProvider } from "@/contexts/compare-context";
 import Header from "@/components/header"; // Import the new Header
 import Footer from "@/components/footer"; // Import the new Footer
 
@@ -42,12 +44,16 @@ export default function RootLayout({
           forcedTheme="light"
           >
           <CartProvider>
+          <WishlistProvider>
+          <CompareProvider>
           <Header /> {/* Render the Header */}
           <main className="flex-grow"> {/* Main content area */}
           {children}
           </main>
           <Toaster />
           <Footer /> {/* Render the Footer */}
+          </CompareProvider>
+          </WishlistProvider>
           </CartProvider>
           </ThemeProvider>
         </ClerkProvider>
