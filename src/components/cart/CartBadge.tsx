@@ -12,7 +12,7 @@ export function CartBadge({ className }: CartBadgeProps) {
   const { itemCount, openCart } = useCart();
 
   return (
-    <Button variant="ghost" size="icon" className={`relative ${className ?? ""}`} onClick={openCart} aria-label="Open cart">
+    <Button variant="ghost" size="icon" className={`relative ${className ?? ""}`} onClick={openCart} aria-label="Open cart" suppressHydrationWarning>
       <ShoppingCart className="h-5 w-5" />
       {itemCount > 0 && (
         <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] text-white font-bold">

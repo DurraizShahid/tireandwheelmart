@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Star, ThumbsUp, ShieldCheck, MessageSquare, Flag, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -14,51 +14,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { getServices } from "@/lib/services/service-registry";
+import type { ReviewData, RatingBreakdown } from "@/lib/services/review-service";
 import { WriteReviewDialog } from "./WriteReviewDialog";
-
-interface Review {
-  id: string;
-  author: string;
-  rating: number;
-  date: string;
-  verified: boolean;
-  title?: string;
-  content: string;
-  photos?: string[];
-  vehicle?: string;
-  tireSize?: string;
-  helpfulCount: number;
-  helpfulClicked?: boolean;
-}
 
 interface ProductReviewsProps {
   rating?: number;
   reviewCount?: number;
+  productId?: string;
 }
 
 type ReviewFilter = "all" | "5" | "4" | "3" | "2" | "1" | "photos" | "verified";
 type ReviewSort = "newest" | "oldest" | "highest" | "lowest" | "helpful";
-
-const mockReviews: Review[] = [
-  { id: "r1", author: "Michael T.", rating: 5, date: "2025-05-10", verified: true, title: "Outstanding performance", content: "Excellent tires! Put these on my BMW 3 Series and the difference is night and day. Quiet, comfortable, and incredible grip in the corners. Highly recommend for anyone looking for premium tires.", photos: [], vehicle: "BMW 3 Series", tireSize: "225/45R17", helpfulCount: 24 },
-  { id: "r2", author: "Sarah K.", rating: 4, date: "2025-04-28", verified: true, title: "Great all-around tires", content: "Great all-around performance tires. They handle well in both dry and wet conditions. Only minor complaint is road noise at highway speeds is slightly higher than expected. Overall very satisfied with the purchase.", vehicle: "Audi A4", tireSize: "245/40R18", helpfulCount: 18 },
-  { id: "r3", author: "David R.", rating: 5, date: "2025-04-15", verified: true, title: "Third set - still amazing", content: "Third set of these I've purchased. Consistently excellent quality and performance. The tread life is impressive and they handle beautifully in all conditions.", photos: [], vehicle: "Mercedes C300", tireSize: "235/40R18", helpfulCount: 31 },
-  { id: "r4", author: "James L.", rating: 4, date: "2025-04-02", verified: false, title: "Good value tires", content: "Good tires for the price. Installation was quick and shipping was fast. Would buy again. They perform well in dry conditions but I noticed some slipping in heavy rain.", vehicle: "Honda Accord", tireSize: "225/50R17", helpfulCount: 7 },
-  { id: "r5", author: "Emily W.", rating: 5, date: "2025-03-20", verified: true, title: "Perfect for my SUV", content: "Put these on my Toyota RAV4 and they transformed the driving experience. Quiet, smooth, and excellent traction. My family feels much safer on the road now.", vehicle: "Toyota RAV4", tireSize: "225/65R17", helpfulCount: 15, photos: [] },
-  { id: "r6", author: "Robert M.", rating: 3, date: "2025-03-05", verified: true, title: "Decent but not great", content: "They're okay for the price point. Good in dry conditions but I expected better wet weather performance. Will probably try a different brand next time.", vehicle: "Ford Mustang", tireSize: "255/40R19", helpfulCount: 9 },
-  { id: "r7", author: "Jennifer P.", rating: 5, date: "2025-02-18", verified: true, title: "Worth every penny", content: "Best tires I've ever owned. The difference in handling and ride comfort is remarkable. My mechanic even commented on how good they look. Five stars all around.", vehicle: "Lexus IS 350", tireSize: "225/40R18", helpfulCount: 22 },
-  { id: "r8", author: "Kevin B.", rating: 2, date: "2025-02-01", verified: false, title: "Not what I expected", content: "Had high hopes based on reviews but these wore out faster than expected. Tread depth after 15k miles is concerning. Will be looking into warranty claim.", helpfulCount: 5 },
-  { id: "r9", author: "Amanda C.", rating: 4, date: "2025-01-15", verified: true, title: "Solid performance tires", content: "Good upgrade from the stock tires on my Civic. Noticeably better grip in corners and the ride is still comfortable for daily driving.", vehicle: "Honda Civic", tireSize: "215/45R17", helpfulCount: 11 },
-  { id: "r10", author: "Thomas H.", rating: 5, date: "2025-01-02", verified: true, title: "Track-ready performance", content: "Took these to the track and they performed flawlessly. Excellent heat management and consistent lap times. Will definitely buy again.", vehicle: "Porsche 718", tireSize: "245/35R20", helpfulCount: 28, photos: [] },
-];
-
-const ratingBreakdown = [
-  { stars: 5, count: 42, percentage: 55 },
-  { stars: 4, count: 22, percentage: 29 },
-  { stars: 3, count: 8, percentage: 10 },
-  { stars: 2, count: 3, percentage: 4 },
-  { stars: 1, count: 2, percentage: 2 },
-];
 
 const filters: { label: string; value: ReviewFilter }[] = [
   { label: "All Reviews", value: "all" },
@@ -71,20 +38,36 @@ const filters: { label: string; value: ReviewFilter }[] = [
   { label: "Verified", value: "verified" },
 ];
 
-export function ProductReviews({ rating, reviewCount }: ProductReviewsProps) {
+export function ProductReviews({ rating, reviewCount, productId = "default" }: ProductReviewsProps) {
   const [activeFilter, setActiveFilter] = useState<ReviewFilter>("all");
   const [sort, setSort] = useState<ReviewSort>("newest");
   const [writeOpen, setWriteOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [helpfulMap, setHelpfulMap] = useState<Record<string, boolean>>({});
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [breakdown, setBreakdown] = useState<RatingBreakdown | null>(null);
 
-  const avgRating = rating ?? 4.5;
-  const totalReviews = reviewCount ?? mockReviews.length;
-  const recommendPercent = 82;
+  useEffect(() => {
+    setIsLoading(true);
+    setHasError(false);
+    getServices().review.getProductReviews(productId).then((r) => {
+      if (r.success) {
+        setReviews(r.data.reviews);
+        setBreakdown(r.data.breakdown);
+      } else {
+        setHasError(true);
+      }
+      setIsLoading(false);
+    });
+  }, [productId]);
+
+  const avgRating = rating ?? breakdown?.averageRating ?? 4.5;
+  const totalReviews = reviewCount ?? breakdown?.totalReviews ?? reviews.length;
+  const recommendPercent = breakdown?.recommendPercent ?? 82;
 
   const filteredReviews = useMemo(() => {
-    let result = [...mockReviews];
+    let result = [...reviews];
 
     switch (activeFilter) {
       case "5": result = result.filter((r) => r.rating === 5); break;
@@ -187,18 +170,21 @@ export function ProductReviews({ rating, reviewCount }: ProductReviewsProps) {
 
         {/* Rating breakdown */}
         <div className="sm:col-span-2 space-y-2">
-          {ratingBreakdown.map((row) => (
-            <div key={row.stars} className="flex items-center gap-3">
-              <span className="text-sm font-medium text-muted-foreground w-12 text-right">{row.stars} stars</span>
-              <div className="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-amber-400 rounded-full transition-all duration-500"
-                  style={{ width: `${row.percentage}%` }}
-                />
+          {breakdown && [5, 4, 3, 2, 1].map((s) => {
+            const row = breakdown.stars[s] ?? { count: 0, percentage: 0 };
+            return (
+              <div key={s} className="flex items-center gap-3">
+                <span className="text-sm font-medium text-muted-foreground w-12 text-right">{s} stars</span>
+                <div className="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                    style={{ width: `${row.percentage}%` }}
+                  />
+                </div>
+                <span className="text-sm text-muted-foreground w-8">{row.percentage}%</span>
               </div>
-              <span className="text-sm text-muted-foreground w-8">{row.percentage}%</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { Pagination } from "@/components/catalog/Pagination";
 import { FilterSidebar } from "@/components/catalog/FilterSidebar";
@@ -15,7 +15,7 @@ import { Breadcrumb } from "@/components/catalog/Breadcrumb";
 import { EmptyState } from "@/components/catalog/EmptyState";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useShop } from "@/lib/shop-utils";
-import { generateMockProducts } from "@/lib/mock-products";
+import { getServices } from "@/lib/services/service-registry";
 import type { CategoryConfig, Product } from "@/lib/catalog-types";
 
 interface CategoryPageTemplateProps {
@@ -25,7 +25,19 @@ interface CategoryPageTemplateProps {
 
 export function CategoryPageTemplate({ config, products: providedProducts }: CategoryPageTemplateProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const products = providedProducts ?? generateMockProducts().filter((p) => p.category === config.slug);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (providedProducts) {
+      setAllProducts(providedProducts);
+    } else {
+      getServices().product.getProducts({ categories: [config.slug] }).then((r) => {
+        if (r.success) setAllProducts(r.data.items);
+      });
+    }
+  }, [config.slug, providedProducts]);
+
+  const products = providedProducts ?? allProducts;
 
   const {
     paginatedProducts,

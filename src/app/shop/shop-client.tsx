@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Breadcrumb } from "@/components/catalog/Breadcrumb";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { Pagination } from "@/components/catalog/Pagination";
 import { FilterSidebar } from "@/components/catalog/FilterSidebar";
 import { useShop } from "@/lib/shop-utils";
-import { generateMockProducts } from "@/lib/mock-products";
+import { getServices } from "@/lib/services/service-registry";
+import type { Product } from "@/lib/catalog-types";
 import { ShopHero } from "@/components/shop/ShopHero";
 import { ShopToolbar } from "@/components/shop/ShopToolbar";
 import { RecentlyViewed } from "@/components/shop/RecentlyViewed";
@@ -15,8 +16,13 @@ import { SeoContent } from "@/components/shop/SeoContent";
 
 export function ShopClient() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const products = useMemo(() => generateMockProducts(), []);
+  useEffect(() => {
+    getServices().product.getProducts().then((r) => {
+      if (r.success) setProducts(r.data.items);
+    });
+  }, []);
 
   const {
     paginatedProducts,

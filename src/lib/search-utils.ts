@@ -1,14 +1,10 @@
 import type { Product } from "./catalog-types";
-import { generateMockProducts } from "./mock-products";
+import { getServices } from "@/lib/services/service-registry";
 import { CATEGORIES } from "./catalog-constants";
 
-let cachedProducts: Product[] | null = null;
-
 export function getAllProducts(): Product[] {
-  if (!cachedProducts) {
-    cachedProducts = generateMockProducts();
-  }
-  return cachedProducts;
+  const { generateMockProducts } = require("@/lib/mock-products");
+  return generateMockProducts();
 }
 
 export function searchProducts(query: string): Product[] {
@@ -31,42 +27,24 @@ export function searchProductsFiltered(query: string, limit = 20): Product[] {
   return results.slice(0, limit);
 }
 
-export function getProductBySlugLocal(slug: string): Product | undefined { // unused
+export function getProductBySlugLocal(slug: string): Product | undefined {
   return getAllProducts().find((p) => p.slug === slug);
 }
 
-export function getProductByIdLocal(id: string): Product | undefined { // unused
+export function getProductByIdLocal(id: string): Product | undefined {
   return getAllProducts().find((p) => p.id === id);
 }
 
-const RECENT_SEARCHES_KEY = "tireandwheel_recent_searches";
-const MAX_RECENT = 8;
-
 export function getRecentSearches(): string[] {
-  try {
-    const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed.slice(0, MAX_RECENT);
-    }
-  } catch {}
-  return [];
+  return getServices().search.getRecentSearches();
 }
 
 export function addRecentSearch(query: string): void {
-  if (!query.trim()) return;
-  try {
-    const searches = getRecentSearches();
-    const filtered = searches.filter((s) => s.toLowerCase() !== query.toLowerCase());
-    filtered.unshift(query.trim());
-    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(filtered.slice(0, MAX_RECENT)));
-  } catch {}
+  getServices().search.addRecentSearch(query);
 }
 
 export function clearRecentSearches(): void {
-  try {
-    localStorage.removeItem(RECENT_SEARCHES_KEY);
-  } catch {}
+  getServices().search.clearRecentSearches();
 }
 
 export function getTrendingProducts(): Product[] {

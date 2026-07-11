@@ -100,6 +100,7 @@ const Header = () => {
         {/* Desktop Search, Admin, and Cart */}
         <div className="hidden md:flex items-center space-x-4">
           <button
+            suppressHydrationWarning
             onClick={() => setSearchModalOpen(true)}
             className="relative w-[200px] h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors"
             aria-label="Open search"
@@ -109,7 +110,7 @@ const Header = () => {
           </button>
           <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
           <Link href="/admin" aria-label="Admin panel">
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative" suppressHydrationWarning>
               <Shield className="h-5 w-5" />
             </Button>
           </Link>
@@ -186,6 +187,7 @@ const Header = () => {
                 </Show>
               </nav>
               <button
+                suppressHydrationWarning
                 onClick={() => setSearchModalOpen(true)}
                 className="relative w-full h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors mt-6"
                 aria-label="Open search"

@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Package } from "lucide-react";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
-import { generateMockProducts } from "@/lib/mock-products";
+import { getServices } from "@/lib/services/service-registry";
 import type { Product } from "@/lib/catalog-types";
 
 interface RelatedProductsProps {
@@ -11,12 +11,13 @@ interface RelatedProductsProps {
 }
 
 export function RelatedProducts({ product }: RelatedProductsProps) {
-  const related = useMemo(() => {
-    const all = generateMockProducts();
-    return all
-      .filter((p) => p.id !== product.id && (p.category === product.category || p.brand === product.brand))
-      .slice(0, 8);
-  }, [product.id, product.category, product.brand]);
+  const [related, setRelated] = useState<Product[]>([]);
+
+  useEffect(() => {
+    getServices().product.getRelatedProducts(product.id, 8).then((r) => {
+      if (r.success) setRelated(r.data);
+    });
+  }, [product.id]);
 
   if (related.length === 0) return null;
 
