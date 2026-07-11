@@ -17,12 +17,18 @@ const descriptions = [
   "Off-road capable with aggressive tread pattern. Mud and snow rated for year-round versatility.",
 ];
 
-function randomItem<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+const suffixes = ["Elite", "Pro", "Sport", "Ultra", "Performance", "Trail", "X-Treme", "Grand Touring", "Apex", "Enduro"];
+
+function seeded(s: number, n: number): number {
+  return ((s * 9301 + 49297 * n) % 233280) / 233280;
 }
 
-function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function pick<T>(arr: T[], seed: number): T {
+  return arr[Math.floor(seeded(seed, arr.length) * arr.length)];
+}
+
+function range(min: number, max: number, seed: number): number {
+  return min + Math.floor(seeded(Math.floor(seed / 1000), seed % 1000) * (max - min + 1));
 }
 
 function makeSlug(name: string): string {
@@ -37,14 +43,18 @@ export function generateMockProducts(): Product[] {
     const isWheel = cat.slug.includes("wheel");
     const isAccessory = cat.slug.includes("accessory");
     const isPackage = cat.slug === "packages";
-    const count = randomInt(6, 14);
+    const catSeed = cat.slug.charCodeAt(0) * 1000 + cat.slug.length;
+    const count = range(6, 14, catSeed);
 
     for (let i = 0; i < count; i++) {
-      const brand = randomItem(brands);
-      const name = `${brand} ${cat.title} ${isAccessory ? randomItem(tireAccessories) : ["Elite", "Pro", "Sport", "Ultra", "Performance", "Trail", "X-Treme", "Grand Touring", "Apex", "Enduro"][i % 10]}`;
-      const hasCompare = Math.random() < 0.3;
-      const price = randomInt(isWheel ? 8000 : isAccessory ? 1500 : isPackage ? 12000 : 6000, isWheel ? 45000 : isAccessory ? 8000 : isPackage ? 35000 : 25000) / 100;
-      const comparePrice = hasCompare ? price * (1 + randomInt(10, 30) / 100) : undefined;
+      const base = catSeed + i * 7;
+      const brand = pick(brands, base);
+      const name = `${brand} ${cat.title} ${isAccessory ? pick(tireAccessories, base + 1) : suffixes[i % 10]}`;
+      const hasCompare = seeded(base + 2, 37) < 0.3;
+      const minPrice = isWheel ? 8000 : isAccessory ? 1500 : isPackage ? 12000 : 6000;
+      const maxPrice = isWheel ? 45000 : isAccessory ? 8000 : isPackage ? 35000 : 25000;
+      const price = range(minPrice, maxPrice, base + 3) / 100;
+      const comparePrice = hasCompare ? Math.round(price * (1 + range(10, 30, base + 4) / 100) * 100) / 100 : undefined;
       const imgIndex = (i % 4) + 1;
 
       const product: Product = {
@@ -55,27 +65,27 @@ export function generateMockProducts(): Product[] {
         price,
         comparePrice,
         discount: comparePrice ? Math.round((1 - price / comparePrice) * 100) : undefined,
-        images: [`/products/${cat.slug}-${imgIndex}.png`, `/products/${cat.slug}-${(i % 4) + 1}.png`],
-        description: randomItem(descriptions),
+        images: [`/products/${cat.slug}-${imgIndex}.svg`, `/products/${cat.slug}-${(i % 4) + 1}.svg`],
+        description: pick(descriptions, base + 5),
         specifications: {
-          season: randomItem(["Summer", "Winter", "All-Season", "Performance"]),
-          loadIndex: randomInt(85, 120).toString(),
-          speedRating: randomItem(["H", "V", "W", "Y", "Z"]),
-          treadwear: randomInt(300, 800).toString(),
-          traction: randomItem(["A", "AA"]),
-          temperature: randomItem(["A", "B"]),
+          season: pick(["Summer", "Winter", "All-Season", "Performance"], base + 6),
+          loadIndex: range(85, 120, base + 7).toString(),
+          speedRating: pick(["H", "V", "W", "Y", "Z"], base + 8),
+          treadwear: range(300, 800, base + 9).toString(),
+          traction: pick(["A", "AA"], base + 10),
+          temperature: pick(["A", "B"], base + 11),
         },
         brand,
-        size: isWheel ? randomItem(wheelSizes) : randomItem(tireSizes),
-        stock: Math.random() < 0.15 ? 0 : randomInt(1, 50),
-        rating: Math.round((3.5 + Math.random() * 1.5) * 10) / 10,
-        reviewCount: randomInt(0, 250),
+        size: isWheel ? pick(wheelSizes, base + 12) : pick(tireSizes, base + 12),
+        stock: seeded(base + 13, 17) < 0.15 ? 0 : range(1, 50, base + 14),
+        rating: Math.round((3.5 + seeded(base + 15, 19) * 1.5) * 10) / 10,
+        reviewCount: range(0, 250, base + 16),
         sku: `${cat.slug.toUpperCase().slice(0, 3)}-${String(id).padStart(4, "0")}`,
-        tags: [cat.slug, brand.toLowerCase(), Math.random() > 0.5 ? "sale" : "popular"].filter(Boolean),
-        featured: Math.random() < 0.2,
-        isNew: Math.random() < 0.15,
-        isBestSeller: Math.random() < 0.1,
-        createdAt: new Date(Date.now() - randomInt(0, 365) * 86400000).toISOString(),
+        tags: [cat.slug, brand.toLowerCase(), seeded(base + 17, 23) > 0.5 ? "sale" : "popular"],
+        featured: seeded(base + 18, 29) < 0.2,
+        isNew: seeded(base + 19, 31) < 0.15,
+        isBestSeller: seeded(base + 20, 37) < 0.1,
+        createdAt: new Date(Date.now() - range(0, 365, base + 21) * 86400000).toISOString(),
       };
       products.push(product);
       id++;
