@@ -9,7 +9,8 @@ export default clerkMiddleware(async (auth, request) => {
   if (isPublicRoute(request)) return;
 
   const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role;
+  const metadata = sessionClaims?.public_metadata as { role?: string } | undefined;
+  const role = metadata?.role ?? (sessionClaims?.publicMetadata as { role?: string } | undefined)?.role;
 
   // Protect admin routes — require signed-in user with admin role
   if (isAdminRoute(request)) {
