@@ -1,5 +1,4 @@
 import {ClerkProvider} from "@clerk/nextjs";
-import { shadcn } from "@clerk/ui/themes";
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google"; // Import Space_Grotesk
 import "./globals.css";
@@ -33,7 +32,7 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} font-sans antialiased flex flex-col min-h-screen`} // Apply Space Grotesk variable and font-sans
       >
-        <ClerkProvider appearance={{ theme: shadcn }}>
+        <ClerkProvider>
           <ThemeProvider
           attribute="class"
           defaultTheme="light"

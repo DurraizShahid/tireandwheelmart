@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, Search, ShoppingCart, Shield } from "lucide-react";
+import { Menu, Search, Shield } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CategoryDropdown } from "@/components/category-dropdown";
 import { useCart } from "@/contexts/cart-context";
+import { CartBadge } from "@/components/cart/CartBadge";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import SearchSuggestions from "@/components/search-suggestions";
 import SearchModal from "@/components/search-modal";
 
@@ -26,7 +28,6 @@ const Header = () => {
   const router = useRouter();
 
   if (pathname.startsWith("/admin")) return null;
-  const { getTotalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -110,16 +111,7 @@ const Header = () => {
               <Shield className="h-5 w-5" />
             </Button>
           </Link>
-          <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs text-white font-bold">
-                  {getTotalItems()}
-                </span>
-              )}
-            </Button>
-          </Link>
+          <CartBadge />
           <div className="flex items-center gap-2">
             <Show when="signed-out">
               <SignInButton mode="modal">
@@ -137,14 +129,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div className="flex items-center md:hidden">
-          <Button variant="ghost" size="icon" className="relative mr-2">
-            <ShoppingCart className="h-5 w-5" />
-            {getTotalItems() > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs text-white font-bold">
-                {getTotalItems()}
-              </span>
-            )}
-          </Button>
+          <CartBadge className="mr-2" />
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -208,6 +193,7 @@ const Header = () => {
           </Sheet>
         </div>
       </div>
+      <CartDrawer />
     </header>
   );
 };

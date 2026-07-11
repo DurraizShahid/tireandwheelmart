@@ -71,21 +71,26 @@ export const CategoryDropdown = () => {
   return (
     <>
       {/* Desktop Dropdown - Hidden on mobile */}
-      <div className="hidden md:block relative group">
+      <div
+        className="hidden md:block relative"
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
+      >
         <button
           className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
-          onMouseEnter={() => setIsOpen(true)}
-          onMouseLeave={() => setIsOpen(false)}
         >
           <span className="font-medium">Categories</span>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
         </button>
 
+        {/* Invisible bridge to prevent gap between button and dropdown */}
+        <div className="absolute h-4 left-0 right-0" style={{ top: '100%' }} />
+
         {/* Bento Grid Dropdown Menu */}
         {isOpen && (
           <>
             {/* Dropdown */}
-            <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 w-[1200px]" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
+            <div className="absolute left-1/2 -translate-x-1/2 mt-4 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 w-[1200px]">
               <div className="p-6">
                 <div className="flex gap-6">
                   {/* First Grid: 2x2 (All-Season, Summer, Winter, Performance) */}
