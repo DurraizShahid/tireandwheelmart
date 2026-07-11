@@ -31,8 +31,8 @@ const Footer = () => {
             <Link href="/" className="text-xs sm:text-sm hover:text-primary transition-colors">
               Home
             </Link>
-            <Link href="/category/all-season" className="text-xs sm:text-sm hover:text-primary transition-colors">
-              Shop Categories
+            <Link href="/shop" className="text-xs sm:text-sm hover:text-primary transition-colors">
+              Shop All Products
             </Link>
             <Link href="/about" className="text-xs sm:text-sm hover:text-primary transition-colors">
               About Us

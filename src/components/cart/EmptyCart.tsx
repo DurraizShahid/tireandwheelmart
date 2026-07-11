@@ -18,7 +18,7 @@ export function EmptyCart({ compact }: EmptyCartProps) {
       <p className="text-sm text-muted-foreground mb-6 max-w-xs">
         Looks like you haven&apos;t added anything yet. Browse our catalog to find the perfect tires and wheels.
       </p>
-      <Link href={compact ? "/" : "/category/all-season"}>
+      <Link href={compact ? "/" : "/shop"}>
         <Button>
           <ShoppingBag className="h-4 w-4 mr-2" />
           {compact ? "Continue Shopping" : "Start Shopping"}

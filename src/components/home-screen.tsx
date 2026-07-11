@@ -11,7 +11,6 @@ import {
   ShieldCheck,
   Headset,
   Snowflake,
-  Sun,
   TrendingUp,
   Wrench,
   MapPin,
@@ -26,6 +25,7 @@ import CategoryGridCard from "@/components/category-grid-card";
 import BrandCard from "@/components/brand-card";
 import HeaderSlideshow from "@/components/header-slideshow";
 import ProductCarousel from "@/components/product-carousel";
+import { getUrlSlug } from "@/lib/category-configs";
 
 interface DbProduct {
   id: string;
@@ -112,66 +112,66 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
       title: "All-Season Tires",
       imageSrc: "/categories/allseason.png",
       description: "Year-round performance for all weather conditions.",
-      href: "/category/all-season",
+      href: "/shop/all-season-tires",
     },
     {
       title: "Summer Tires",
       imageSrc: "/categories/summertires.png",
       description: "Superior dry and wet traction for warm weather.",
-      href: "/category/summer",
+      href: "/shop/summer-tires",
     },
     {
       title: "Winter Tires",
       imageSrc: "/categories/wintertires.png",
       description: "Advanced grip on snow and ice.",
-      href: "/category/winter",
+      href: "/shop/winter-tires",
     },
     {
       title: "Performance Tires",
       imageSrc: "/categories/performancetires.png",
       description: "Track-ready tires for maximum grip.",
-      href: "/category/performance",
+      href: "/shop/performance-tires",
     },
     {
       title: "Alloy Wheels",
       imageSrc: "/categories/alloywheels.webp",
       description: "Lightweight and stylish alloy wheels.",
-      href: "/category/alloy-wheels",
+      href: "/shop/alloy-wheels",
     },
     {
       title: "Steel Wheels",
       imageSrc: "/categories/steelwheels.png",
       description: "Durable and affordable steel wheels.",
-      href: "/category/steel-wheels",
+      href: "/shop/steel-wheels",
     },
     {
       title: "Tire & Wheel Packages",
       imageSrc: "/categories/tireandwheel.png",
       description: "Complete sets ready for installation.",
-      href: "/category/packages",
+      href: "/shop/tire-wheel-packages",
     },
     {
       title: "Wheel Accessories",
       imageSrc: "/categories/wheelaccessories.png",
       description: "Lug nuts, spacers, center caps, and more.",
-      href: "/category/wheel-accessories",
+      href: "/shop/wheel-accessories",
     },
     {
       title: "Tire Accessories",
       imageSrc: "/categories/tireaccessories.png",
       description: "TPMS sensors, valve stems, and repair kits.",
-      href: "/category/tire-accessories",
+      href: "/shop/tire-accessories",
     },
   ];
 
   const brands = [
-    { name: "Michelin", imageSrc: "/brands/logo_michelin.png", href: "/category/all-season" },
-    { name: "Bridgestone", imageSrc: "/brands/logo_bridgestone.png", href: "/category/all-season" },
-    { name: "Continental", imageSrc: "/brands/logo_continental.png", href: "/category/all-season" },
-    { name: "Toyo", imageSrc: "/brands/logo_toyo.png", href: "/category/all-season" },
-    { name: "Cooper", imageSrc: "/brands/logo_cooper.png", href: "/category/all-season" },
-    { name: "Firestone", imageSrc: "/brands/logo_firestone.png", href: "/category/all-season" },
-    { name: "Hercules", imageSrc: "/brands/logo_hercules.png", href: "/category/all-season" },
+    { name: "Michelin", imageSrc: "/brands/logo_michelin.png", href: "/shop/all-season-tires" },
+    { name: "Bridgestone", imageSrc: "/brands/logo_bridgestone.png", href: "/shop/all-season-tires" },
+    { name: "Continental", imageSrc: "/brands/logo_continental.png", href: "/shop/all-season-tires" },
+    { name: "Toyo", imageSrc: "/brands/logo_toyo.png", href: "/shop/all-season-tires" },
+    { name: "Cooper", imageSrc: "/brands/logo_cooper.png", href: "/shop/all-season-tires" },
+    { name: "Firestone", imageSrc: "/brands/logo_firestone.png", href: "/shop/all-season-tires" },
+    { name: "Hercules", imageSrc: "/brands/logo_hercules.png", href: "/shop/all-season-tires" },
   ];
 
   const testimonials = [
@@ -252,7 +252,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
               icon={Car}
               imageSrc={productImages.tires}
               accentColor="bg-blue-600"
-              href="/category/all-season"
+              href="/shop/all-season-tires"
             />
             <ProductCard
               title="Alloy Wheels"
@@ -260,7 +260,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
               icon={Circle}
               imageSrc={productImages.wheels}
               accentColor="bg-red-600"
-              href="/category/alloy-wheels"
+              href="/shop/alloy-wheels"
             />
             <ProductCard
               title="Winter Tires"
@@ -268,7 +268,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
               icon={Snowflake}
               imageSrc={productImages.snowTires}
               accentColor="bg-green-600"
-              href="/category/winter"
+              href="/shop/winter-tires"
             />
             <ProductCard
               title="Tire Packages"
@@ -276,7 +276,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
               icon={Package}
               imageSrc={productImages.packages}
               accentColor="bg-purple-600"
-              href="/category/packages"
+              href="/shop/tire-wheel-packages"
             />
           </ProductCarousel>
         </div>
@@ -329,7 +329,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
               })}
             </div>
             <Link
-              href="/category/all-season"
+              href="/shop"
               className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-300 shadow-lg"
             >
               View All Products
@@ -363,7 +363,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
               })}
             </div>
             <Link
-              href="/category/summer"
+              href="/shop/summer-tires"
               className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-300 shadow-lg"
             >
               View All Tires

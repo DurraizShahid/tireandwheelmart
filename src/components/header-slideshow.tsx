@@ -59,7 +59,7 @@ const HeaderSlideshow: React.FC<HeaderSlideshowProps> = ({ slides }) => {
           </p>
           <div className="flex justify-center gap-4">
             <Link
-              href="/category/all-season"
+              href="/shop"
               className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-300 shadow-lg"
             >
               Shop Now

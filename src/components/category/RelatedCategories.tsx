@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CATEGORIES } from "@/lib/catalog-constants";
+import { getUrlSlug } from "@/lib/category-configs";
 
 interface RelatedCategoriesProps {
   slugs: string[];
@@ -23,7 +24,7 @@ export function RelatedCategories({ slugs }: RelatedCategoriesProps) {
           {related.map((cat) => (
             <Link
               key={cat.slug}
-              href={`/category/${cat.slug}`}
+              href={`/shop/${getUrlSlug(cat.slug)}`}
               className="group flex items-center justify-between rounded-xl border p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all"
             >
               <div>

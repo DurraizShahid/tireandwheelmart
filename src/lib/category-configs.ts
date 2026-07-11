@@ -3,6 +3,30 @@ import type { CategoryConfig } from "./catalog-types";
 const tireBrands = ["Michelin", "Bridgestone", "Goodyear", "Pirelli", "Continental", "BFGoodrich"];
 const wheelBrands = ["Enkei", "BBS", "OZ Racing", "Konig", "Motegi", "American Racing"];
 
+export const URL_SLUG_MAP: Record<string, string> = {
+  "all-season-tires": "all-season",
+  "summer-tires": "summer",
+  "winter-tires": "winter",
+  "performance-tires": "performance",
+  "alloy-wheels": "alloy-wheels",
+  "steel-wheels": "steel-wheels",
+  "tire-wheel-packages": "packages",
+  "wheel-accessories": "wheel-accessories",
+  "tire-accessories": "tire-accessories",
+};
+
+export const CONFIG_TO_URL_SLUG: Record<string, string> = Object.fromEntries(
+  Object.entries(URL_SLUG_MAP).map(([url, config]) => [config, url])
+);
+
+export function getUrlSlug(configSlug: string): string {
+  return CONFIG_TO_URL_SLUG[configSlug] ?? configSlug;
+}
+
+export function getConfigKey(urlSlug: string): string | undefined {
+  return URL_SLUG_MAP[urlSlug];
+}
+
 export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
   "all-season": {
     name: "all-season",

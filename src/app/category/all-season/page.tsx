@@ -55,7 +55,7 @@ export default async function AllSeasonTiresPage() {
                 </a>
               </Button>
               <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
-                <Link href="/category/summer">Compare Summer Tires</Link>
+                <Link href="/shop/summer-tires">Compare Summer Tires</Link>
               </Button>
             </div>
           </div>

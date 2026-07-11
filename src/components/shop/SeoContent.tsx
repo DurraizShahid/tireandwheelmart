@@ -41,7 +41,7 @@ export function SeoContent({ category, categoryTitle, seoContent }: SeoContentPr
             {["All-Season Tires", "Summer Tires", "Winter Tires", "Performance Tires", "Alloy Wheels", "Steel Wheels"].map((cat) => (
               <Link
                 key={cat}
-                href={`/category/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                href={`/shop/${cat.toLowerCase().replace(/\s+/g, "-")}`}
                 className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
               >
                 {cat}

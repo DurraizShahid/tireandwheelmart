@@ -6,6 +6,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { CONFIG_TO_URL_SLUG } from "@/lib/category-configs";
 
 const categories = [
   {
@@ -98,7 +99,7 @@ export const CategoryDropdown = () => {
                     {categories.slice(0, 4).map((category) => (
                       <Link
                         key={category.slug}
-                        href={`/category/${category.slug}`}
+                        href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
                         onClick={() => {}}
                         className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
                       >
@@ -129,7 +130,7 @@ export const CategoryDropdown = () => {
                     {categories.slice(4, 6).map((category) => (
                       <Link
                         key={category.slug}
-                        href={`/category/${category.slug}`}
+                        href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
                         onClick={() => {}}
                         className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
                       >
@@ -162,7 +163,7 @@ export const CategoryDropdown = () => {
                       {categories.slice(6, 7).map((category) => (
                         <Link
                           key={category.slug}
-                          href={`/category/${category.slug}`}
+                          href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
                           onClick={() => {}}
                           className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
                         >
@@ -193,7 +194,7 @@ export const CategoryDropdown = () => {
                       {categories.slice(7, 9).map((category) => (
                         <Link
                           key={category.slug}
-                          href={`/category/${category.slug}`}
+                          href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
                           onClick={() => {}}
                           className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
                         >
@@ -240,7 +241,7 @@ export const CategoryDropdown = () => {
               {categories.map((category) => (
                 <Link
                   key={category.slug}
-                  href={`/category/${category.slug}`}
+                  href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
                   onClick={() => setIsMobileOpen(false)}
                   className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-red-600 hover:text-white ${
                     category.bgColor === "bg-red-600" ? "bg-red-600 text-white" : "text-foreground"
