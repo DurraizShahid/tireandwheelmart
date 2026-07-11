@@ -26,6 +26,8 @@ import BrandCard from "@/components/brand-card";
 import HeaderSlideshow from "@/components/header-slideshow";
 import ProductCarousel from "@/components/product-carousel";
 import { getUrlSlug } from "@/lib/category-configs";
+import { AnnouncementBar } from "@/components/promotions/AnnouncementBar";
+import { HomepageDeals } from "@/components/promotions/HomepageDeals";
 
 interface DbProduct {
   id: string;
@@ -228,6 +230,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
 
   return (
     <div className="flex flex-col items-center bg-white text-foreground">
+      <AnnouncementBar />
       {/* Hero Section */}
       <HeaderSlideshow
         slides={[
@@ -303,6 +306,8 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
           </div>
         </div>
       </section>
+
+      <HomepageDeals />
 
       {/* Featured Products */}
       {featuredProducts.length > 0 && (

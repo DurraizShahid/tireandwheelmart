@@ -11,6 +11,7 @@ import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { CompareButton } from "@/components/compare/CompareButton";
 import { toast } from "sonner";
 import type { Product } from "@/lib/catalog-types";
+import { ProductPromotions } from "@/components/promotions/ProductPromotions";
 
 interface PurchasePanelProps {
   product: Product;
@@ -77,6 +78,18 @@ export function PurchasePanel({ product }: PurchasePanelProps) {
         <WishlistButton product={product} variant="button" />
         <CompareButton product={product} variant="button" />
       </div>
+
+      <ProductPromotions
+        product={{
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          category: product.category,
+          brand: product.brand,
+          comparePrice: product.comparePrice,
+          quantity,
+        }}
+      />
 
       <Separator />
 

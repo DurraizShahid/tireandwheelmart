@@ -14,6 +14,7 @@ import { StepBillingInfo } from "@/components/checkout/StepBillingInfo";
 import { StepPayment } from "@/components/checkout/StepPayment";
 import { StepReviewOrder } from "@/components/checkout/StepReviewOrder";
 import { StepConfirmation } from "@/components/checkout/StepConfirmation";
+import { CheckoutPromotions } from "@/components/promotions/CheckoutPromotions";
 import { SHIPPING_METHODS } from "@/lib/checkout-types";
 
 export default function CheckoutPage() {
@@ -109,9 +110,14 @@ export default function CheckoutPage() {
               </div>
 
               {/* Order Summary sidebar */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 space-y-4">
                 <div className="hidden lg:block">
                   <OrderSummary shippingCost={shippingCost} />
+                  <CheckoutPromotions
+                    items={items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, brand: i.brand }))}
+                    subtotal={items.reduce((s, i) => s + i.price * i.quantity, 0)}
+                    className="bg-white rounded-xl border border-gray-100 p-4 mt-4"
+                  />
                 </div>
                 <div className="lg:hidden">
                   <div className="bg-white rounded-xl border border-gray-100 p-4">

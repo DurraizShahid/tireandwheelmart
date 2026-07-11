@@ -7,6 +7,7 @@ import type { ShippingService } from "./shipping-service";
 import type { PaymentService } from "./payment-service";
 import type { SearchService } from "./search-service";
 import type { WishlistService } from "./wishlist-service";
+import type { PromotionService } from "./promotion-service";
 
 import { createMockProductService } from "./product-service";
 import { createMockCartService } from "./cart-service";
@@ -17,6 +18,7 @@ import { createMockShippingService } from "./shipping-service";
 import { createMockPaymentService } from "./payment-service";
 import { createMockSearchService } from "./search-service";
 import { createMockWishlistService } from "./wishlist-service";
+import { createMockPromotionService } from "./promotion-service";
 
 export interface Services {
   product: ProductService;
@@ -28,6 +30,7 @@ export interface Services {
   payment: PaymentService;
   search: SearchService;
   wishlist: WishlistService;
+  promotion: PromotionService;
 }
 
 let instance: Services | null = null;
@@ -54,6 +57,7 @@ function buildServices(): Services {
     payment: useMock ? createMockPaymentService() : createMockPaymentService(),
     search: useMock ? createMockSearchService() : createMockSearchService(),
     wishlist: useMock ? createMockWishlistService() : createMockWishlistService(),
+    promotion: useMock ? createMockPromotionService() : createMockPromotionService(),
   };
 }
 

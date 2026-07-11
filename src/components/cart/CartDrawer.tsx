@@ -8,9 +8,10 @@ import { useCart } from "@/contexts/cart-context";
 import { CartItem } from "./CartItem";
 import { CartSummary } from "./CartSummary";
 import { EmptyCart } from "./EmptyCart";
+import { FreeShippingProgress } from "@/components/promotions/FreeShippingProgress";
 
 export function CartDrawer() {
-  const { items, cartOpen, closeCart, updateQuantity, removeFromCart } = useCart();
+  const { items, cartOpen, closeCart, updateQuantity, removeFromCart, subtotal } = useCart();
 
   return (
     <Sheet open={cartOpen} onOpenChange={(open) => !open && closeCart()}>
@@ -46,6 +47,7 @@ export function CartDrawer() {
             </div>
 
             <div className="border-t p-4 space-y-3">
+              <FreeShippingProgress subtotal={subtotal} />
               <CartSummary showCheckout={false} compact />
               <div className="flex gap-2">
                 <Link href="/cart" className="flex-1" onClick={closeCart}>

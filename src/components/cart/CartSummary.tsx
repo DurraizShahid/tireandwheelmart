@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/cart-context";
+import { CartPromotions } from "@/components/promotions/CartPromotions";
 
 interface CartSummaryProps {
   showCheckout?: boolean;
@@ -14,7 +15,7 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSummaryProps) {
-  const { subtotal, tax, shipping, total, formattedSubtotal, formattedTax, formattedShipping, formattedTotal, isApplyingCoupon, applyCoupon, appliedCoupon, discount, formattedDiscount } = useCart();
+  const { items, subtotal, tax, shipping, total, formattedSubtotal, formattedTax, formattedShipping, formattedTotal, isApplyingCoupon, applyCoupon, appliedCoupon, discount, formattedDiscount } = useCart();
   const [couponCode, setCouponCode] = useState("");
 
   const handleApplyCoupon = async () => {
@@ -62,6 +63,8 @@ export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSu
           <span className="text-green-600 font-medium">-{formattedDiscount}</span>
         </div>
       )}
+
+      <CartPromotions items={items} subtotal={subtotal} />
 
       <div className={compact ? "space-y-1.5" : "space-y-2"}>
         <div className="flex justify-between text-sm">
