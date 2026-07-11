@@ -39,6 +39,7 @@ export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSu
             onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
             className="h-9 text-sm"
             disabled={!!appliedCoupon}
+            aria-label="Promo code"
           />
           <Button
             variant="outline"

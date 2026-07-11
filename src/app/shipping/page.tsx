@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Shipping Information",
+  description: "Tire&Wheel Mart shipping policies, delivery times, and shipping rates for tires and wheels.",
+};
 import { Truck, Package, Clock, MapPin, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 

@@ -79,6 +79,9 @@ export const CategoryDropdown = () => {
       >
         <button
           className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
+          aria-label="Categories"
+          aria-haspopup="true"
+          aria-expanded={isOpen}
         >
           <span className="font-medium">Categories</span>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
@@ -230,7 +233,7 @@ export const CategoryDropdown = () => {
       {/* Mobile Drawer - Shown only on mobile */}
       <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <SheetTrigger asChild className="md:hidden">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" aria-label="Categories menu">
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>

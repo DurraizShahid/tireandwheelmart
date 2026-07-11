@@ -31,11 +31,11 @@ export function searchProductsFiltered(query: string, limit = 20): Product[] {
   return results.slice(0, limit);
 }
 
-export function getProductBySlugLocal(slug: string): Product | undefined {
+export function getProductBySlugLocal(slug: string): Product | undefined { // unused
   return getAllProducts().find((p) => p.slug === slug);
 }
 
-export function getProductByIdLocal(id: string): Product | undefined {
+export function getProductByIdLocal(id: string): Product | undefined { // unused
   return getAllProducts().find((p) => p.id === id);
 }
 

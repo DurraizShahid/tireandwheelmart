@@ -20,7 +20,7 @@ export function CartDrawer() {
             <ShoppingBag className="h-5 w-5" />
             Cart ({items.length})
           </SheetTitle>
-          <Button variant="ghost" size="icon" onClick={closeCart} className="h-8 w-8">
+          <Button variant="ghost" size="icon" onClick={closeCart} className="h-8 w-8" aria-label="Close cart">
             <X className="h-4 w-4" />
           </Button>
         </SheetHeader>

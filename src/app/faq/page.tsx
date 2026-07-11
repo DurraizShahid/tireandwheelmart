@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "FAQ",
+  description: "Frequently asked questions about tires, wheels, ordering, shipping, and returns at Tire&Wheel Mart.",
+};
 import {
   Accordion,
   AccordionContent,

@@ -52,6 +52,7 @@ export function CompareButton({ product, variant = "icon", className }: CompareB
         className
       )}
       onClick={handleClick}
+      aria-label={selected ? "Remove from compare" : isMaxReached ? "Compare is full (max 4)" : "Add to compare"}
       title={selected ? "Remove from compare" : isMaxReached ? "Compare is full (max 4)" : "Add to compare"}
     >
       <GitCompare

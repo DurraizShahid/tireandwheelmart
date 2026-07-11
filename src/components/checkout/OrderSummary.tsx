@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/cart-context";
 import { formatPrice } from "@/lib/catalog-helpers";
 import { cn } from "@/lib/utils";

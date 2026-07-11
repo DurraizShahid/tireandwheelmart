@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { toast } from "sonner";
 
 export interface WishlistItem {
@@ -90,6 +90,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     return items.some((i) => i.id === id);
   }, [items]);
 
+
   const clearWishlist = useCallback(() => {
     setItems([]);
     toast.success("Wishlist cleared");
@@ -99,22 +100,23 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const closeWishlist = useCallback(() => setWishlistOpen(false), []);
   const toggleWishlistDrawer = useCallback(() => setWishlistOpen((v) => !v), []);
 
+  const contextValue = useMemo(() => ({
+    items,
+    addToWishlist,
+    removeFromWishlist,
+    toggleWishlist,
+    isInWishlist,
+    clearWishlist,
+    wishlistCount: items.length,
+    wishlistOpen,
+    openWishlist,
+    closeWishlist,
+    toggleWishlistDrawer,
+  }), [items, addToWishlist, removeFromWishlist, toggleWishlist, isInWishlist,
+      clearWishlist, wishlistOpen, openWishlist, closeWishlist, toggleWishlistDrawer]);
+
   return (
-    <WishlistContext.Provider
-      value={{
-        items,
-        addToWishlist,
-        removeFromWishlist,
-        toggleWishlist,
-        isInWishlist,
-        clearWishlist,
-        wishlistCount: items.length,
-        wishlistOpen,
-        openWishlist,
-        closeWishlist,
-        toggleWishlistDrawer,
-      }}
-    >
+    <WishlistContext.Provider value={contextValue}>
       {children}
     </WishlistContext.Provider>
   );

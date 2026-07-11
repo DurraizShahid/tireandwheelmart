@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Returns & Refunds",
+  description: "Tire&Wheel Mart return and refund policy. hassle-free returns within 30 days of purchase.",
+};
 import { Package, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 

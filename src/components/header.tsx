@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, Search, Shield } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CategoryDropdown } from "@/components/category-dropdown";
@@ -103,12 +102,13 @@ const Header = () => {
           <button
             onClick={() => setSearchModalOpen(true)}
             className="relative w-[200px] h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors"
+            aria-label="Open search"
           >
             <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
             <span className="text-sm text-muted-foreground">Search...</span>
           </button>
           <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
-          <Link href="/admin">
+          <Link href="/admin" aria-label="Admin panel">
             <Button variant="ghost" size="icon" className="relative">
               <Shield className="h-5 w-5" />
             </Button>
@@ -188,6 +188,7 @@ const Header = () => {
               <button
                 onClick={() => setSearchModalOpen(true)}
                 className="relative w-full h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors mt-6"
+                aria-label="Open search"
               >
                 <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
                 <span className="text-sm text-muted-foreground">Search...</span>

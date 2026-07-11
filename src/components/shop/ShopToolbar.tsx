@@ -72,6 +72,8 @@ export function ShopToolbar({
           size="icon"
           onClick={() => onViewModeChange("grid")}
           className="h-10 w-10 rounded-r-none"
+          aria-label="Grid view"
+          aria-pressed={viewMode === "grid"}
         >
           <LayoutGrid className="h-4 w-4" />
         </Button>
@@ -80,6 +82,8 @@ export function ShopToolbar({
           size="icon"
           onClick={() => onViewModeChange("list")}
           className="h-10 w-10 rounded-l-none"
+          aria-label="List view"
+          aria-pressed={viewMode === "list"}
         >
           <List className="h-4 w-4" />
         </Button>

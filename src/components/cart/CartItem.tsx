@@ -50,6 +50,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove, compact }: CartItem
             size="sm"
             onClick={() => onRemove(item.id)}
             className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 h-8 w-8 p-0"
+            aria-label={`Remove ${item.name} from cart`}
           >
             <Trash2 className="h-4 w-4" />
           </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Star, X, Camera, Upload } from "lucide-react";
+import { Star, X, Upload } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,7 +119,12 @@ export function WriteReviewDialog({ open, onOpenChange }: WriteReviewDialogProps
           {/* Photo upload */}
           <div className="space-y-2">
             <Label>Photos</Label>
-            <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-blue-300 transition-colors cursor-pointer">
+            <div
+              className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-blue-300 transition-colors cursor-pointer"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); } }}
+            >
               <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Click to upload photos</p>
               <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 10MB each</p>

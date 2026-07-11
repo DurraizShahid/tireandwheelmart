@@ -47,40 +47,35 @@ export function CompareProvider({ children }: { children: ReactNode }) {
   }, [items, hydrated]);
 
   const addToCompare = useCallback((product: Product) => {
-    setItems((prev) => {
-      if (prev.some((i) => i.id === product.id)) return prev;
-      if (prev.length >= MAX_COMPARE_ITEMS) {
-        toast.error(`Maximum ${MAX_COMPARE_ITEMS} products for comparison`);
-        return prev;
-      }
-      toast.success(`Added "${product.name}" to compare`);
-      return [...prev, product];
-    });
-  }, []);
+    if (items.some((i) => i.id === product.id)) return;
+    if (items.length >= MAX_COMPARE_ITEMS) {
+      toast.error(`Maximum ${MAX_COMPARE_ITEMS} products for comparison`);
+      return;
+    }
+    toast.success(`Added "${product.name}" to compare`);
+    setItems([...items, product]);
+  }, [items]);
 
   const removeFromCompare = useCallback((id: string) => {
-    setItems((prev) => {
-      const item = prev.find((i) => i.id === id);
-      if (item) toast.success(`Removed "${item.name}" from compare`);
-      return prev.filter((i) => i.id !== id);
-    });
-  }, []);
+    const item = items.find((i) => i.id === id);
+    if (item) toast.success(`Removed "${item.name}" from compare`);
+    setItems(items.filter((i) => i.id !== id));
+  }, [items]);
 
   const toggleCompare = useCallback((product: Product) => {
-    setItems((prev) => {
-      const exists = prev.find((i) => i.id === product.id);
-      if (exists) {
-        toast.success(`Removed "${product.name}" from compare`);
-        return prev.filter((i) => i.id !== product.id);
-      }
-      if (prev.length >= MAX_COMPARE_ITEMS) {
-        toast.error(`Maximum ${MAX_COMPARE_ITEMS} products for comparison`);
-        return prev;
-      }
-      toast.success(`Added "${product.name}" to compare`);
-      return [...prev, product];
-    });
-  }, []);
+    const exists = items.find((i) => i.id === product.id);
+    if (exists) {
+      toast.success(`Removed "${product.name}" from compare`);
+      setItems(items.filter((i) => i.id !== product.id));
+      return;
+    }
+    if (items.length >= MAX_COMPARE_ITEMS) {
+      toast.error(`Maximum ${MAX_COMPARE_ITEMS} products for comparison`);
+      return;
+    }
+    toast.success(`Added "${product.name}" to compare`);
+    setItems([...items, product]);
+  }, [items]);
 
   const isInCompare = useCallback((id: string) => {
     return items.some((i) => i.id === id);

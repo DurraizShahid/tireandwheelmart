@@ -181,6 +181,8 @@ export default function ComparePage() {
                     "w-2.5 h-2.5 rounded-full transition-all",
                     i === clampedIndex ? "bg-blue-600 w-6" : "bg-gray-300"
                   )}
+                  aria-label={`Show product ${i + 1}`}
+                  aria-current={i === clampedIndex ? "true" : undefined}
                 />
               ))}
             </div>

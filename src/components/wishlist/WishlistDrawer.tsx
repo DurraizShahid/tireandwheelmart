@@ -60,7 +60,7 @@ export function WishlistDrawer() {
             <Heart className="h-5 w-5" />
             Wishlist ({items.length})
           </SheetTitle>
-          <Button variant="ghost" size="icon" onClick={closeWishlist} className="h-8 w-8">
+          <Button variant="ghost" size="icon" onClick={closeWishlist} className="h-8 w-8" aria-label="Close wishlist">
             <X className="h-4 w-4" />
           </Button>
         </SheetHeader>
@@ -105,7 +105,7 @@ export function WishlistDrawer() {
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7 text-muted-foreground hover:text-green-600"
-                        title="Move to cart"
+                        aria-label={`Move ${item.name} to cart`}
                         onClick={() => handleMoveToCart(item)}
                       >
                         <ShoppingCart className="h-3.5 w-3.5" />
@@ -114,7 +114,7 @@ export function WishlistDrawer() {
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7 text-muted-foreground hover:text-red-500"
-                        title="Remove"
+                        aria-label={`Remove ${item.name} from wishlist`}
                         onClick={() => removeFromWishlist(item.id)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />

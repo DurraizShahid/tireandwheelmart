@@ -1,14 +1,14 @@
 import type { CustomerInfo, ShippingAddress, BillingInfo, PaymentInfo, CheckoutFormData } from "./checkout-types";
 
-export function validateEmail(email: string): boolean {
+function validateEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-export function validatePhone(phone: string): boolean {
+function validatePhone(phone: string): boolean {
   return /^[\d\s\-+().]{7,20}$/.test(phone);
 }
 
-export function validatePostalCode(code: string): boolean {
+function validatePostalCode(code: string): boolean {
   return /^\d{5}(-\d{4})?$/.test(code);
 }
 
@@ -53,7 +53,7 @@ export function validatePaymentInfo(data: PaymentInfo): Record<string, string> {
   return errors;
 }
 
-export function canProceedToStep(formData: CheckoutFormData, step: string): boolean {
+export function canProceedToStep(formData: CheckoutFormData, step: string): boolean { // unused
   switch (step) {
     case "customer-info":
       return Object.keys(validateCustomerInfo(formData.customerInfo)).length === 0;

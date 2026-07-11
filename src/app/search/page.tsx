@@ -51,7 +51,7 @@ function SearchContent() {
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Search Results</h1>
-          <div className="flex items-center gap-3 max-w-md">
+          <div className="flex items-center gap-3 max-w-md" role="search">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -60,6 +60,7 @@ function SearchContent() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
+                aria-label="Search products"
               />
             </div>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { CreditCard, Wallet, Building, Banknote } from "lucide-react";
+import { CreditCard, Wallet, Building } from "lucide-react";
 import type { PaymentMethodType } from "@/lib/checkout-types";
 
 interface PaymentMethodCardProps {
@@ -26,6 +26,8 @@ export function PaymentMethodCard({ id, label, description, selected, onSelect }
     <button
       type="button"
       onClick={onSelect}
+      role="radio"
+      aria-checked={selected}
       className={cn(
         "w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all duration-200",
         selected

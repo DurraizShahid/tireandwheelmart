@@ -46,11 +46,11 @@ export function AdminHeader() {
           </Tooltip>
         </TooltipProvider>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
             <Bell className="h-5 w-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full" />
           </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" aria-label="Settings">
             <Settings className="h-5 w-5" />
           </Button>
           <UserButton />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Gauge, Thermometer, Snowflake, Sun, CloudRain, Zap, Shield, Ruler } from "lucide-react";
+import { Gauge, Thermometer, CloudRain, Zap, Shield, Ruler } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Product } from "@/lib/catalog-types";

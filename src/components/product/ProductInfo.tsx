@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Tag, Package, ChevronDown, ChevronUp } from "lucide-react";
+import { Star, Tag, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";

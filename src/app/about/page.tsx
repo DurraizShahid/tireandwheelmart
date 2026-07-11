@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import React from "react";
 import { ShieldCheck, Users, Award, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Learn about Tire&Wheel Mart's story, our commitment to quality, and why customers trust us for their tire and wheel needs.",
+};
 
 export default function AboutPage() {
   return (

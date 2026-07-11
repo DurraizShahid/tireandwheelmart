@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from "react";
 
 interface AdminContextType {
   sidebarCollapsed: boolean;
@@ -12,10 +12,12 @@ const AdminContext = createContext<AdminContextType | undefined>(undefined);
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const toggleSidebar = () => setSidebarCollapsed((prev) => !prev);
+  const toggleSidebar = useCallback(() => setSidebarCollapsed((prev) => !prev), []);
+
+  const contextValue = useMemo(() => ({ sidebarCollapsed, toggleSidebar }), [sidebarCollapsed, toggleSidebar]);
 
   return (
-    <AdminContext.Provider value={{ sidebarCollapsed, toggleSidebar }}>
+    <AdminContext.Provider value={contextValue}>
       {children}
     </AdminContext.Provider>
   );

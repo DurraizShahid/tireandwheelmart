@@ -86,13 +86,13 @@ const Footer = () => {
         <div className="col-span-1 sm:col-span-2 md:col-span-1 flex flex-col items-center sm:items-start text-center sm:text-left">
           <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">Follow Us</h3>
           <div className="flex gap-4">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Follow us on Facebook">
               <Facebook className="h-5 sm:h-6 w-5 sm:w-6" />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Follow us on Twitter">
               <Twitter className="h-5 sm:h-6 w-5 sm:w-6" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Follow us on Instagram">
               <Instagram className="h-5 sm:h-6 w-5 sm:w-6" />
             </a>
           </div>

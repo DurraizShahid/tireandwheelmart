@@ -26,6 +26,7 @@ export function FAQAccordion({ items, title = "Frequently Asked Questions" }: FA
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                   className="flex items-center justify-between w-full px-5 py-4 text-left hover:bg-muted/30 transition-colors"
+                  aria-expanded={openIndex === i}
                 >
                   <span className="font-medium text-foreground text-sm pr-4">{item.question}</span>
                   <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", openIndex === i && "rotate-180")} />

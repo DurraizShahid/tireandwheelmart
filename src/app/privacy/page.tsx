@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "Tire&Wheel Mart privacy policy. Learn how we collect, use, and protect your personal information.",
+};
 import { Shield, Lock, Eye, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 

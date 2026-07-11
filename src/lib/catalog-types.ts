@@ -53,7 +53,7 @@ export interface ProductFilters {
   search?: string;
 }
 
-export interface ProductQuery {
+export interface ProductQuery { // unused
   category?: string;
   subcategory?: string;
   sort?: SortOption;
@@ -78,7 +78,7 @@ export interface Category {
   subcategories?: { title: string; slug: string }[];
 }
 
-export interface ActiveFilterChip {
+export interface ActiveFilterChip { // unused
   label: string;
   onRemove: () => void;
 }

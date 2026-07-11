@@ -30,6 +30,7 @@ export function CheckoutProgress({ currentStep, onStepClick }: CheckoutProgressP
                   "flex items-center gap-2.5 group",
                   isCompleted ? "cursor-pointer" : "cursor-default"
                 )}
+                aria-label={`Go to step ${stepNum}: ${CHECKOUT_STEP_LABELS[s]}`}
               >
                 <div
                   className={cn(
@@ -73,7 +74,13 @@ export function CheckoutProgress({ currentStep, onStepClick }: CheckoutProgressP
           </span>
           <span className="text-sm text-muted-foreground">{CHECKOUT_STEP_LABELS[currentStep]}</span>
         </div>
-        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div
+          className="w-full h-2 bg-gray-100 rounded-full overflow-hidden"
+          role="progressbar"
+          aria-valuenow={currentIndex + 1}
+          aria-valuemin={1}
+          aria-valuemax={CHECKOUT_STEPS.length - 1}
+        >
           <div
             className="h-full bg-blue-600 rounded-full transition-all duration-500"
             style={{ width: `${((currentIndex) / (CHECKOUT_STEPS.length - 2)) * 100}%` }}

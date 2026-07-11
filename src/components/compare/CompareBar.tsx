@@ -5,7 +5,6 @@ import { X, GitCompare, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCompare } from "@/contexts/compare-context";
 import { cn } from "@/lib/utils";
-import { formatPrice } from "@/lib/catalog-helpers";
 
 export function CompareBar() {
   const { items, compareCount, removeFromCompare, clearCompare } = useCompare();
@@ -38,7 +37,7 @@ export function CompareBar() {
                   <button
                     onClick={() => removeFromCompare(product.id)}
                     className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity"
-                    title={`Remove ${product.name}`}
+                    aria-label={`Remove ${product.name} from comparison`}
                   >
                     <X className="h-3 w-3" />
                   </button>

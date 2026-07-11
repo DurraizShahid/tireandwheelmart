@@ -35,6 +35,7 @@ export function QuantitySelector({
         disabled={value <= min || disabled}
         onClick={onDecrease ?? (() => onChange(value - 1))}
         className={`${btnSize} p-0`}
+        aria-label="Decrease quantity"
       >
         <Minus className={iconSize} />
       </Button>
@@ -48,6 +49,7 @@ export function QuantitySelector({
           onChange(Math.max(min, max ? Math.min(val, max) : val));
         }}
         disabled={disabled}
+        aria-label="Quantity"
         className={`w-10 text-center border rounded-md bg-background text-foreground ${
           size === "sm" ? "h-7 text-xs" : "h-8 text-sm"
         }`}
@@ -58,6 +60,7 @@ export function QuantitySelector({
         disabled={(max !== undefined && value >= max) || disabled}
         onClick={onIncrease ?? (() => onChange(value + 1))}
         className={`${btnSize} p-0`}
+        aria-label="Increase quantity"
       >
         <Plus className={iconSize} />
       </Button>

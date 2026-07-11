@@ -58,6 +58,9 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onClick={() => setLightboxOpen(true)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setLightboxOpen(true); } }}
       >
         <Image
           src={safeImages[selectedIndex]}

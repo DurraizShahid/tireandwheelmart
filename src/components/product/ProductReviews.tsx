@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Star, ThumbsUp, ShieldCheck, MessageSquare, Flag, Camera, ChevronDown } from "lucide-react";
+import { Star, ThumbsUp, ShieldCheck, MessageSquare, Flag, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

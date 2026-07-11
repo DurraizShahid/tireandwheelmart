@@ -121,7 +121,7 @@ export const US_STATES = [
   "Wisconsin", "Wyoming",
 ];
 
-export const CANADA_PROVINCES = [
+export const CANADA_PROVINCES = [ // unused
   "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador",
   "Nova Scotia", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan",
 ];

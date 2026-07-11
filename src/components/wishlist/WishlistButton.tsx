@@ -68,6 +68,7 @@ export function WishlistButton({ product, variant = "icon", className }: Wishlis
         className
       )}
       onClick={handleClick}
+      aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
     >
       <Heart
         className={cn(

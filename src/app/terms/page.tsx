@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description: "Tire&Wheel Mart terms and conditions governing the use of our website and services.",
+};
 import { FileText, AlertCircle, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 

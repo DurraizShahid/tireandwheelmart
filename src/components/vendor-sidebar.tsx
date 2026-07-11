@@ -90,7 +90,7 @@ export function VendorSidebar({ collapsed }: { collapsed: boolean }) {
       <div className="lg:hidden flex items-center gap-2 mb-4">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="Toggle sidebar menu">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>

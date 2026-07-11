@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import type { Product } from "@/lib/catalog-types";
 import { Breadcrumb } from "@/components/catalog/Breadcrumb";
 import { getUrlSlug } from "@/lib/category-configs";
-import { formatPrice } from "@/lib/catalog-helpers";
 import { ProductGallery } from "./ProductGallery";
 import { ProductInfo } from "./ProductInfo";
 import { PurchasePanel } from "./PurchasePanel";

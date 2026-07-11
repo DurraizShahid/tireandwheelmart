@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/catalog-helpers";
 
 export interface CartItem {
   id: string;
@@ -51,10 +52,6 @@ const CART_STORAGE_KEY = "tireandwheel_cart";
 const TAX_RATE = 0.08;
 const SHIPPING_RATE = 15;
 const FREE_SHIPPING_THRESHOLD = 200;
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
-}
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -165,13 +162,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return items.reduce((total, item) => total + item.quantity, 0);
   }, [items]);
 
-  const subtotal = getTotalPrice();
-  const itemCount = getTotalItems();
-  const computedDiscount = discount;
-  const discountedSubtotal = Math.max(0, subtotal - computedDiscount);
-  const tax = discountedSubtotal * TAX_RATE;
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD || items.length === 0 ? 0 : SHIPPING_RATE;
-  const total = discountedSubtotal + tax + shipping;
+  const { subtotal, itemCount, computedDiscount, discountedSubtotal, tax, shipping, total } = useMemo(() => {
+    const sub = getTotalPrice();
+    const count = getTotalItems();
+    const compDisc = discount;
+    const discSub = Math.max(0, sub - compDisc);
+    const t = discSub * TAX_RATE;
+    const s = sub >= FREE_SHIPPING_THRESHOLD || items.length === 0 ? 0 : SHIPPING_RATE;
+    return {
+      subtotal: sub,
+      itemCount: count,
+      computedDiscount: compDisc,
+      discountedSubtotal: discSub,
+      tax: t,
+      shipping: s,
+      total: discSub + t + s,
+    };
+  }, [items, discount, getTotalPrice, getTotalItems]);
 
   const applyCoupon = useCallback(async (code: string): Promise<boolean> => {
     setIsApplyingCoupon(true);
@@ -192,38 +199,43 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return false;
   }, [subtotal]);
 
+  const contextValue = useMemo(() => ({
+    items,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    getTotalPrice,
+    getTotalItems,
+    cartOpen,
+    openCart,
+    closeCart,
+    toggleCart,
+    subtotal,
+    tax,
+    shipping,
+    total,
+    itemCount,
+    increaseQuantity,
+    decreaseQuantity,
+    formattedSubtotal: formatPrice(subtotal),
+    formattedTax: formatPrice(tax),
+    formattedShipping: formatPrice(shipping),
+    formattedTotal: formatPrice(total),
+    isApplyingCoupon,
+    applyCoupon,
+    appliedCoupon,
+    discount: computedDiscount,
+    formattedDiscount: formatPrice(computedDiscount),
+  }), [
+    items, addToCart, removeFromCart, updateQuantity, clearCart,
+    getTotalPrice, getTotalItems, cartOpen, openCart, closeCart, toggleCart,
+    subtotal, tax, shipping, total, itemCount, increaseQuantity, decreaseQuantity,
+    isApplyingCoupon, applyCoupon, appliedCoupon, computedDiscount,
+  ]);
+
   return (
-    <CartContext.Provider
-      value={{
-        items,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        getTotalPrice,
-        getTotalItems,
-        cartOpen,
-        openCart,
-        closeCart,
-        toggleCart,
-        subtotal,
-        tax,
-        shipping,
-        total,
-        itemCount,
-        increaseQuantity,
-        decreaseQuantity,
-        formattedSubtotal: formatPrice(subtotal),
-        formattedTax: formatPrice(tax),
-        formattedShipping: formatPrice(shipping),
-        formattedTotal: formatPrice(total),
-        isApplyingCoupon,
-        applyCoupon,
-        appliedCoupon,
-        discount: computedDiscount,
-        formattedDiscount: formatPrice(computedDiscount),
-      }}
-    >
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );

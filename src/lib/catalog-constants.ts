@@ -25,7 +25,7 @@ export const SORT_OPTIONS: { label: string; value: SortOption }[] = [
 
 export const DEFAULT_PAGE_SIZE = 12;
 
-export const TIER_SIZES = ["15", "16", "17", "18", "19", "20", "21", "22", "24", "26"];
+export const TIRE_SIZES = ["15", "16", "17", "18", "19", "20", "21", "22", "24", "26"];
 
 export const WHEEL_SIZES = ["15", "16", "17", "18", "19", "20", "21", "22", "24", "26"];
 

@@ -24,6 +24,7 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string;
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center justify-between w-full py-3 text-sm font-semibold text-foreground"
+        aria-expanded={open}
       >
         {title}
         <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} />
