@@ -307,28 +307,25 @@ export default function ComparePage() {
         </div>
 
         {/* Add to cart row (desktop) */}
-        <div className="hidden lg:block mt-8">
-          <div className="flex gap-4 justify-center">
-            {items.map((product) => (
-              <div key={product.id} className="flex-1 max-w-[220px]">
-                <Button
-                  className="w-full"
-                  size="sm"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={product.stock <= 0}
-                >
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
-                </Button>
-              </div>
-            ))}
-          </div>
+        <div className="hidden lg:grid mt-8" style={{ gridTemplateColumns: `160px repeat(${items.length}, 1fr)`, gap: '16px' }}>
+          <div />
+          {items.map((product) => (
+            <Button
+              key={product.id}
+              size="sm"
+              onClick={() => handleAddToCart(product)}
+              disabled={product.stock <= 0}
+            >
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
+            </Button>
+          ))}
         </div>
 
         {/* Continue shopping */}
-        <div className="mt-8 text-center">
+        <div className="mt-8" style={{ display: 'grid', gridTemplateColumns: `160px repeat(${items.length}, 1fr)`, gap: '16px' }}>
           <Link href="/shop">
-            <Button variant="outline">
+            <Button variant="outline" size="sm">
               <GitCompare className="h-4 w-4 mr-2" />
               Continue Shopping
             </Button>

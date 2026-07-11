@@ -1,142 +1,134 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import { Suspense, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import ProductItem from "@/components/product-item";
+import { Search } from "lucide-react";
+import { useShop } from "@/lib/shop-utils";
+import { getAllProducts } from "@/lib/search-utils";
+import { Breadcrumb } from "@/components/catalog/Breadcrumb";
+import { ProductGrid } from "@/components/catalog/ProductGrid";
+import { FilterSidebar } from "@/components/catalog/FilterSidebar";
+import { SortDropdown } from "@/components/catalog/SortDropdown";
+import { Pagination } from "@/components/catalog/Pagination";
+import { EmptyState } from "@/components/catalog/EmptyState";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 
-interface DbProduct {
-  id: string;
-  name: string;
-  slug: string;
-  price: number;
-  image_url: string;
-  brand: string | null;
-  description: string | null;
-  specs: Record<string, unknown>;
-}
-
-const SearchContent = () => {
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const brand = searchParams.get("brand") || "";
-  const type = searchParams.get("type") || "";
 
-  const [results, setResults] = useState<DbProduct[]>([]);
-  const [loading, setLoading] = useState(false);
+  const allProducts = useMemo(() => getAllProducts(), []);
+
+  const {
+    filteredProducts,
+    paginatedProducts,
+    pagination,
+    searchTerm,
+    filters,
+    sort,
+    viewMode,
+    page,
+    brands,
+    setSearchTerm,
+    setFilters,
+    setSort,
+    setPage,
+    clearFilters,
+  } = useShop({ products: allProducts });
 
   useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true);
-      let qb = supabase.from("products").select("*");
-
-      if (query.trim()) {
-        const term = `%${query}%`;
-        qb = qb.or(
-          `name.ilike.${term},brand.ilike.${term},description.ilike.${term}`
-        );
-      }
-
-      if (brand) {
-        qb = qb.ilike("brand", `%${brand}%`);
-      }
-
-      if (type) {
-        const typeSlug = type.toLowerCase().replace(/\s+/g, "-");
-        qb = qb.eq("categories.slug", typeSlug);
-      }
-
-      const { data, error } = await qb.order("name").limit(50);
-      if (!error && data) setResults(data);
-      setLoading(false);
-    };
-
-    fetchResults();
-  }, [query, brand, type]);
+    if (query && query !== searchTerm) {
+      setSearchTerm(query);
+    }
+  }, [query]);
 
   return (
-    <div className="flex flex-col items-center bg-white text-foreground py-8">
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-foreground mb-6 text-center">
-            Search Results
-          </h1>
+    <div className="min-h-screen bg-white py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <Breadcrumb items={[{ label: "Search" }]} className="mb-6" />
 
-          <div className="mb-8 max-w-md mx-auto">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              defaultValue={query}
-              className="w-full"
-            />
-          </div>
-
-          {(query || brand || type) && (
-            <p className="text-center text-lg text-muted-foreground mb-8">
-              Found{" "}
-              <span className="font-semibold text-foreground">
-                {results.length}
-              </span>{" "}
-              result{results.length !== 1 ? "s" : ""}
-              {query && ` for "${query}"`}
-              {(brand || type) && " matching your filters"}
-            </p>
-          )}
-
-          {loading ? (
-            <div className="text-center py-12">
-              <p className="text-lg text-muted-foreground">Searching...</p>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">Search Results</h1>
+          <div className="flex items-center gap-3 max-w-md">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
             </div>
-          ) : results.length > 0 ? (
-            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {results.map((product) => (
-                <ProductItem
-                  key={product.id}
-                  name={product.name}
-                  price={`$${product.price.toLocaleString()}`}
-                  imageSrc={product.image_url}
-                  href={`/product/${product.slug}`}
-                  specs={{}}
-                  rating={4.5}
-                  reviews={0}
-                />
-              ))}
-            </section>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-lg text-muted-foreground mb-6">
-                No products found matching your search.
-              </p>
-              <Link href="/">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Back to Home
-                </Button>
+          </div>
+        </div>
+
+        {!searchTerm && !query ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Search className="h-16 w-16 text-muted-foreground/30 mb-4" />
+            <h2 className="text-xl font-semibold text-foreground mb-2">Search our catalog</h2>
+            <p className="text-muted-foreground mb-6 max-w-md">
+              Find the perfect tires and wheels by searching by name, brand, or category.
+            </p>
+            <div className="flex gap-3">
+              <Link href="/shop">
+                <Button variant="outline">Browse All Products</Button>
               </Link>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <>
+            <p className="text-sm text-muted-foreground mb-6">
+              {filteredProducts.length === 0
+                ? `No results found for "${searchTerm || query}"`
+                : `Found ${filteredProducts.length} result${filteredProducts.length !== 1 ? "s" : ""} for "${searchTerm || query}"`}
+            </p>
+
+            <div className="flex flex-col lg:flex-row gap-8">
+              <FilterSidebar
+                filters={filters}
+                brands={brands}
+                onChange={setFilters}
+                onClear={clearFilters}
+              />
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-4">
+                  <SortDropdown value={sort} onChange={setSort} />
+                  <p className="text-sm text-muted-foreground">
+                    Page {pagination.page} of {pagination.totalPages}
+                  </p>
+                </div>
+
+                <ProductGrid
+                  products={paginatedProducts}
+                  viewMode={viewMode}
+                />
+
+                {pagination.totalPages > 1 && (
+                  <div className="mt-8">
+                    <Pagination pagination={pagination} onPageChange={setPage} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
-};
+}
 
-const SearchPage = () => {
+export default function SearchPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex flex-col items-center bg-white text-foreground py-8">
-          <div className="text-center py-12">
-            <p className="text-lg text-muted-foreground">Loading...</p>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
       <SearchContent />
     </Suspense>
   );
-};
-
-export default SearchPage;
+}

@@ -16,8 +16,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { WishlistBadge } from "@/components/wishlist/WishlistBadge";
 import { WishlistDrawer } from "@/components/wishlist/WishlistDrawer";
 import { CompareBar } from "@/components/compare/CompareBar";
-import SearchSuggestions from "@/components/search-suggestions";
-import SearchModal from "@/components/search-modal";
+import { SearchModal } from "@/components/search/SearchModal";
 
 const navLinks = [
   { name: "Home", href: "/" },
