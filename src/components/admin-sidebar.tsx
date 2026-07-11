@@ -12,6 +12,8 @@ import {
   ShoppingCart,
   Settings,
   BarChart3,
+  Tag,
+  Percent,
   LogOut,
   Menu,
 } from "lucide-react";
@@ -28,6 +30,8 @@ import {
 const adminLinks = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Products", href: "/admin/products", icon: Package },
+  { name: "Categories", href: "/admin/categories", icon: Tag },
+  { name: "Promotions", href: "/admin/promotions", icon: Percent },
   { name: "Suppliers", href: "/admin/suppliers", icon: Users },
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Customers", href: "/admin/customers", icon: Users },

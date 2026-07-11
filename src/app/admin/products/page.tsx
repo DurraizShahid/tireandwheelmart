@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 interface DbProduct {
   id: string;
@@ -23,18 +25,27 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<DbProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("id, name, sku, price, stock_quantity, in_stock, brand")
-        .order("name");
+  const fetchProducts = async () => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, name, sku, price, stock_quantity, in_stock, brand")
+      .order("name");
+    if (!error && data) setProducts(data);
+    setLoading(false);
+  };
 
-      if (!error && data) setProducts(data);
-      setLoading(false);
-    };
-    fetchProducts();
-  }, []);
+  useEffect(() => { fetchProducts(); }, []);
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      toast.success("Product deleted");
+      fetchProducts();
+    } else {
+      toast.error("Failed to delete product");
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-muted/30">
@@ -48,10 +59,12 @@ export default function ProductsPage() {
                 <h1 className="text-3xl font-bold tracking-tight">Products</h1>
                 <p className="text-muted-foreground">Manage your product inventory</p>
               </div>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Product
-              </Button>
+              <Link href="/admin/products/new">
+                <Button className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add Product
+                </Button>
+              </Link>
             </div>
 
             <Card>
@@ -102,11 +115,13 @@ export default function ProductsPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
-                              <Button variant="ghost" size="sm">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Trash2 className="h-4 w-4" />
+                              <Link href={`/admin/products/${product.id}/edit`}>
+                                <Button variant="ghost" size="sm">
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </Link>
+                              <Button variant="ghost" size="sm" onClick={() => handleDelete(product.id, product.name)}>
+                                <Trash2 className="h-4 w-4 text-red-600" />
                               </Button>
                             </div>
                           </TableCell>

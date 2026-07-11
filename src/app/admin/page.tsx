@@ -127,14 +127,14 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
+                  {[{ id: 1, amount: 120.5 }, { id: 2, amount: 89.99 }, { id: 3, amount: 234.0 }, { id: 4, amount: 67.5 }, { id: 5, amount: 445.0 }].map(({ id, amount }) => (
+                    <div key={id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
-                        <p className="font-medium">Order #{1000 + i}</p>
-                        <p className="text-sm text-muted-foreground">Customer #{i}</p>
+                        <p className="font-medium">Order #{1000 + id}</p>
+                        <p className="text-sm text-muted-foreground">Customer #{id}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">${(Math.random() * 500 + 50).toFixed(2)}</p>
+                        <p className="font-medium">${amount.toFixed(2)}</p>
                         <p className="text-sm text-green-600">Completed</p>
                       </div>
                     </div>
