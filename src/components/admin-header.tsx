@@ -1,6 +1,7 @@
 "use client";
 
 import { useAdmin } from "@/contexts/admin-context";
+import { UserButton } from "@clerk/nextjs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,16 +11,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bell, Settings } from "lucide-react";
+import { Bell, Settings, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function AdminHeader() {
-  const { logout } = useAdmin();
+  const { sidebarCollapsed, toggleSidebar } = useAdmin();
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
       <div className="flex h-16 items-center justify-between px-6">
-        <div className="flex-1" />
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={toggleSidebar}
+                variant="ghost"
+                size="icon"
+              >
+                {sidebarCollapsed ? (
+                  <PanelLeftOpen className="h-5 w-5" />
+                ) : (
+                  <PanelLeftClose className="h-5 w-5" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
@@ -28,27 +53,7 @@ export function AdminHeader() {
           <Button variant="ghost" size="icon">
             <Settings className="h-5 w-5" />
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-red-600 text-white font-bold">
-                    AD
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Admin User</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Preferences</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout}>
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UserButton />
         </div>
       </div>
     </header>

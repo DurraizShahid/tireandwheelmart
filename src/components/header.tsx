@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, Search, ShoppingCart, Shield } from "lucide-react";
+import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -23,6 +24,8 @@ const navLinks = [
 const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
+
+  if (pathname.startsWith("/admin")) return null;
   const { getTotalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -117,6 +120,19 @@ const Header = () => {
               )}
             </Button>
           </Link>
+          <div className="flex items-center gap-2">
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <Button variant="ghost" size="sm">Sign In</Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button size="sm">Sign Up</Button>
+              </SignUpButton>
+            </Show>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -164,6 +180,21 @@ const Header = () => {
                   <Shield className="h-4 w-4" />
                   Admin
                 </Link>
+                <Show when="signed-out">
+                  <div className="flex items-center gap-2 mt-2">
+                    <SignInButton mode="modal">
+                      <Button variant="ghost" size="sm">Sign In</Button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <Button size="sm">Sign Up</Button>
+                    </SignUpButton>
+                  </div>
+                </Show>
+                <Show when="signed-in">
+                  <div className="flex justify-center mt-2">
+                    <UserButton />
+                  </div>
+                </Show>
               </nav>
               <button
                 onClick={() => setSearchModalOpen(true)}

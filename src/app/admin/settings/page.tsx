@@ -1,7 +1,5 @@
 "use client";
 
-import { useAdmin } from "@/contexts/admin-context";
-import { AdminLogin } from "@/components/admin-login";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,12 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, Bell, Lock, Palette, Database } from "lucide-react";
 
 export default function SettingsPage() {
-  const { isLoggedIn } = useAdmin();
-
-  if (!isLoggedIn) {
-    return <AdminLogin />;
-  }
-
   return (
     <div className="flex min-h-screen bg-muted/30">
       <AdminSidebar />

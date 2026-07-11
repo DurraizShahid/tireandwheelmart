@@ -1,28 +1,40 @@
 "use client";
 
-import { useAdmin } from "@/contexts/admin-context";
-import { AdminLogin } from "@/components/admin-login";
+import { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
+interface DbProduct {
+  id: string;
+  name: string;
+  sku: string | null;
+  price: number;
+  stock_quantity: number;
+  in_stock: boolean;
+  brand: string | null;
+}
 
 export default function ProductsPage() {
-  const { isLoggedIn } = useAdmin();
+  const [products, setProducts] = useState<DbProduct[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!isLoggedIn) {
-    return <AdminLogin />;
-  }
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, name, sku, price, stock_quantity, in_stock, brand")
+        .order("name");
 
-  const products = [
-    { id: 1, name: "All-Season Tires", sku: "AST-001", price: "$120.00", stock: 45, status: "Active" },
-    { id: 2, name: "Winter Tires", sku: "WT-002", price: "$150.00", stock: 32, status: "Active" },
-    { id: 3, name: "Summer Tires", sku: "ST-003", price: "$110.00", stock: 28, status: "Active" },
-    { id: 4, name: "Alloy Wheels", sku: "AW-004", price: "$280.00", stock: 15, status: "Low Stock" },
-    { id: 5, name: "Car Floor Mats", sku: "CFM-005", price: "$45.00", stock: 0, status: "Out of Stock" },
-  ];
+      if (!error && data) setProducts(data);
+      setLoading(false);
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-muted/30">
@@ -31,7 +43,6 @@ export default function ProductsPage() {
         <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="space-y-6">
-            {/* Page Header */}
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">Products</h1>
@@ -43,11 +54,12 @@ export default function ProductsPage() {
               </Button>
             </div>
 
-            {/* Products Table */}
             <Card>
               <CardHeader>
                 <CardTitle>Product List</CardTitle>
-                <CardDescription>Total products: {products.length}</CardDescription>
+                <CardDescription>
+                  {loading ? "Loading..." : `Total products: ${products.length}`}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="rounded-lg border">
@@ -56,6 +68,7 @@ export default function ProductsPage() {
                       <TableRow>
                         <TableHead>Product Name</TableHead>
                         <TableHead>SKU</TableHead>
+                        <TableHead>Brand</TableHead>
                         <TableHead>Price</TableHead>
                         <TableHead>Stock</TableHead>
                         <TableHead>Status</TableHead>
@@ -66,20 +79,25 @@ export default function ProductsPage() {
                       {products.map((product) => (
                         <TableRow key={product.id}>
                           <TableCell className="font-medium">{product.name}</TableCell>
-                          <TableCell>{product.sku}</TableCell>
-                          <TableCell>{product.price}</TableCell>
-                          <TableCell>{product.stock}</TableCell>
+                          <TableCell>{product.sku ?? "—"}</TableCell>
+                          <TableCell>{product.brand ?? "—"}</TableCell>
+                          <TableCell>${product.price.toLocaleString()}</TableCell>
+                          <TableCell>{product.stock_quantity}</TableCell>
                           <TableCell>
                             <span
                               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                product.status === "Active"
+                                product.in_stock && product.stock_quantity > 10
                                   ? "bg-green-100 text-green-800"
-                                  : product.status === "Low Stock"
+                                  : product.in_stock
                                   ? "bg-yellow-100 text-yellow-800"
                                   : "bg-red-100 text-red-800"
                               }`}
                             >
-                              {product.status}
+                              {!product.in_stock
+                                ? "Out of Stock"
+                                : product.stock_quantity <= 10
+                                ? "Low Stock"
+                                : "Active"}
                             </span>
                           </TableCell>
                           <TableCell>

@@ -1,7 +1,5 @@
 "use client";
 
-import { useAdmin } from "@/contexts/admin-context";
-import { AdminLogin } from "@/components/admin-login";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,12 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 
 export default function OrdersPage() {
-  const { isLoggedIn } = useAdmin();
-
-  if (!isLoggedIn) {
-    return <AdminLogin />;
-  }
-
   const orders = [
     { id: 1001, customer: "John Doe", email: "john@example.com", total: "$234.56", status: "Delivered", date: "2024-01-15" },
     { id: 1002, customer: "Jane Smith", email: "jane@example.com", total: "$567.89", status: "Processing", date: "2024-01-16" },

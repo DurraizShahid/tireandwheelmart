@@ -1,10 +1,18 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
-import { searchProducts, allProducts } from "@/data/products";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
+
+interface Suggestion {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  brand: string | null;
+}
 
 interface SearchSuggestionsProps {
   query: string;
@@ -20,15 +28,27 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
   className,
 }) => {
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
-  const suggestions = useMemo(() => {
-    if (!query.trim() || query.length < 2) {
-      return allProducts.slice(0, 5); // Show first 5 products as suggestions when query is empty
-    }
-    return searchProducts(query).slice(0, 5); // Limit to 5 suggestions
-  }, [query]);
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      let qb = supabase
+        .from("products")
+        .select("id, name, slug, price, brand")
+        .limit(5);
 
-  // Close suggestions when clicking outside
+      if (query.trim() && query.length >= 2) {
+        const term = `%${query}%`;
+        qb = qb.or(`name.ilike.${term},brand.ilike.${term}`);
+      }
+
+      const { data } = await qb;
+      setSuggestions(data ?? []);
+    };
+
+    if (isOpen) fetchSuggestions();
+  }, [query, isOpen]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -38,14 +58,8 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
         onClose();
       }
     };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -62,7 +76,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
         {suggestions.map((product) => (
           <Link
             key={product.id}
-            href={`/product/${product.id}`}
+            href={`/product/${product.slug}`}
             onClick={onClose}
             className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
           >
@@ -71,12 +85,14 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
               <p className="text-sm font-medium text-foreground truncate">
                 {product.name}
               </p>
-              <p className="text-xs text-muted-foreground capitalize">
-                {product.category.replace("-", " ")}
-              </p>
+              {product.brand && (
+                <p className="text-xs text-muted-foreground">
+                  {product.brand}
+                </p>
+              )}
             </div>
             <span className="text-sm font-semibold text-foreground flex-shrink-0">
-              {product.price}
+              ${product.price.toLocaleString()}
             </span>
           </Link>
         ))}
@@ -88,7 +104,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
           >
             <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <span className="text-sm font-medium text-foreground">
-              View all results for "{query}"
+              View all results for &quot;{query}&quot;
             </span>
           </Link>
         )}

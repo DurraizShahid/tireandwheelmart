@@ -1,53 +1,61 @@
 "use client";
 
-import React, { useMemo, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductItem from "@/components/product-item";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { allProducts, searchProducts } from "@/data/products";
+import { supabase } from "@/lib/supabase";
+
+interface DbProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  image_url: string;
+  brand: string | null;
+  description: string | null;
+  specs: Record<string, unknown>;
+}
 
 const SearchContent = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const vehicle = searchParams.get("vehicle") || "";
-  const size = searchParams.get("size") || "";
   const brand = searchParams.get("brand") || "";
   const type = searchParams.get("type") || "";
 
-  const searchResults = useMemo(() => {
-    let results = allProducts;
+  const [results, setResults] = useState<DbProduct[]>([]);
+  const [loading, setLoading] = useState(false);
 
-    // Apply text query filter if provided
-    if (query.trim()) {
-      results = searchProducts(query);
-    }
+  useEffect(() => {
+    const fetchResults = async () => {
+      setLoading(true);
+      let qb = supabase.from("products").select("*");
 
-    // Apply additional filters
-    if (brand) {
-      results = results.filter((product) =>
-        product.name.toLowerCase().includes(brand.toLowerCase())
-      );
-    }
+      if (query.trim()) {
+        const term = `%${query}%`;
+        qb = qb.or(
+          `name.ilike.${term},brand.ilike.${term},description.ilike.${term}`
+        );
+      }
 
-    if (type) {
-      const typeLower = type.toLowerCase().replace(/\s+/g, "-");
-      results = results.filter((product) =>
-        product.category.toLowerCase().includes(typeLower)
-      );
-    }
+      if (brand) {
+        qb = qb.ilike("brand", `%${brand}%`);
+      }
 
-    if (size) {
-      // This would need to match against product specs in a real implementation
-      // For now, we'll just filter by name containing the size
-      results = results.filter((product) =>
-        product.name.toLowerCase().includes(size.toLowerCase())
-      );
-    }
+      if (type) {
+        const typeSlug = type.toLowerCase().replace(/\s+/g, "-");
+        qb = qb.eq("categories.slug", typeSlug);
+      }
 
-    return results;
-  }, [query, vehicle, size, brand, type]);
+      const { data, error } = await qb.order("name").limit(50);
+      if (!error && data) setResults(data);
+      setLoading(false);
+    };
+
+    fetchResults();
+  }, [query, brand, type]);
 
   return (
     <div className="flex flex-col items-center bg-white text-foreground py-8">
@@ -66,23 +74,31 @@ const SearchContent = () => {
             />
           </div>
 
-          {(query || brand || type || size || vehicle) && (
+          {(query || brand || type) && (
             <p className="text-center text-lg text-muted-foreground mb-8">
-              Found <span className="font-semibold text-foreground">{searchResults.length}</span> result{searchResults.length !== 1 ? "s" : ""}
+              Found{" "}
+              <span className="font-semibold text-foreground">
+                {results.length}
+              </span>{" "}
+              result{results.length !== 1 ? "s" : ""}
               {query && ` for "${query}"`}
-              {(brand || type || size || vehicle) && " matching your filters"}
+              {(brand || type) && " matching your filters"}
             </p>
           )}
 
-          {searchResults.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-lg text-muted-foreground">Searching...</p>
+            </div>
+          ) : results.length > 0 ? (
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {searchResults.map((product) => (
+              {results.map((product) => (
                 <ProductItem
                   key={product.id}
                   name={product.name}
-                  price={product.price}
-                  imageSrc={product.imageSrc}
-                  href={`/product/${product.id}`}
+                  price={`$${product.price.toLocaleString()}`}
+                  imageSrc={product.image_url}
+                  href={`/product/${product.slug}`}
                   specs={{}}
                   rating={4.5}
                   reviews={0}
@@ -109,13 +125,15 @@ const SearchContent = () => {
 
 const SearchPage = () => {
   return (
-    <Suspense fallback={
-      <div className="flex flex-col items-center bg-white text-foreground py-8">
-        <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground">Loading...</p>
+    <Suspense
+      fallback={
+        <div className="flex flex-col items-center bg-white text-foreground py-8">
+          <div className="text-center py-12">
+            <p className="text-lg text-muted-foreground">Loading...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <SearchContent />
     </Suspense>
   );

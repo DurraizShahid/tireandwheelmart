@@ -2,9 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Facebook, Instagram, Twitter, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <footer className="w-full border-t bg-background py-8 sm:py-12 mt-16 text-muted-foreground">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
@@ -26,7 +31,7 @@ const Footer = () => {
             <Link href="/" className="text-xs sm:text-sm hover:text-primary transition-colors">
               Home
             </Link>
-            <Link href="/category/all-season-tires" className="text-xs sm:text-sm hover:text-primary transition-colors">
+            <Link href="/category/all-season" className="text-xs sm:text-sm hover:text-primary transition-colors">
               Shop Categories
             </Link>
             <Link href="/about" className="text-xs sm:text-sm hover:text-primary transition-colors">

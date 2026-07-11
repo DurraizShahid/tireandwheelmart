@@ -3,21 +3,19 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface AdminContextType {
-  isLoggedIn: boolean;
-  login: () => void;
-  logout: () => void;
+  sidebarCollapsed: boolean;
+  toggleSidebar: () => void;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export function AdminProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const login = () => setIsLoggedIn(true);
-  const logout = () => setIsLoggedIn(false);
+  const toggleSidebar = () => setSidebarCollapsed((prev) => !prev);
 
   return (
-    <AdminContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AdminContext.Provider value={{ sidebarCollapsed, toggleSidebar }}>
       {children}
     </AdminContext.Provider>
   );

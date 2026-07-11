@@ -10,25 +10,25 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const categories = [
   {
     title: "All-Season Tires",
-    slug: "all-season-tires",
+    slug: "all-season",
     image: "/categories/allseason.png",
     bgColor: "bg-white",
   },
   {
     title: "Summer Tires",
-    slug: "summer-tires",
+    slug: "summer",
     image: "/categories/summertires.png",
     bgColor: "bg-red-600",
   },
   {
     title: "Winter Tires",
-    slug: "winter-tires",
+    slug: "winter",
     image: "/categories/wintertires.png",
     bgColor: "bg-black",
   },
   {
     title: "Performance Tires",
-    slug: "performance-tires",
+    slug: "performance",
     image: "/categories/performancetires.png",
     bgColor: "bg-white",
   },

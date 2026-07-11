@@ -1,7 +1,5 @@
 "use client";
 
-import { useAdmin } from "@/contexts/admin-context";
-import { AdminLogin } from "@/components/admin-login";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,12 +16,6 @@ const chartData = [
 ];
 
 export default function AdminDashboard() {
-  const { isLoggedIn } = useAdmin();
-
-  if (!isLoggedIn) {
-    return <AdminLogin />;
-  }
-
   return (
     <div className="flex min-h-screen bg-muted/30">
       <AdminSidebar />
