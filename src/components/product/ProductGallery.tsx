@@ -51,7 +51,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       {/* Main image */}
       <div
         ref={imageRef}
-        className="relative aspect-square rounded-2xl bg-gray-50 overflow-hidden cursor-crosshair group"
+        className="relative aspect-square rounded-2xl bg-white overflow-hidden cursor-crosshair group"
         onMouseEnter={() => setZoom(true)}
         onMouseLeave={() => setZoom(false)}
         onMouseMove={handleMouseMove}

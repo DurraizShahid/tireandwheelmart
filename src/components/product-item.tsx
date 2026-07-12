@@ -53,7 +53,7 @@ const ProductItem = ({
 
   return (
     <Link href={href} className="block h-full">
-      <Card className="relative h-full flex flex-col overflow-hidden rounded-xl shadow-sm hover:shadow-xl border border-gray-100 group cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-white hover:bg-red-600">
+      <Card className="relative h-full flex flex-col overflow-hidden rounded-xl shadow-none border border-gray-100 group cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-white hover:bg-red-600">
         <div className="relative p-4 flex-grow flex flex-col">
           {/* Season Badge */}
           {specs?.season && (
@@ -66,14 +66,14 @@ const ProductItem = ({
           )}
 
           {/* Image Area */}
-          <div className="relative w-full h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors">
+          <div className="relative w-full h-40 mb-4 flex items-center justify-center bg-white rounded-lg group-hover:bg-gray-100 transition-colors">
             <Image
               src={imageSrc}
               alt={name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               style={{ objectFit: "contain" }}
-              className="drop-shadow-md group-hover:scale-110 transition-transform duration-500 p-2"
+              className="group-hover:scale-110 transition-transform duration-500 p-2"
             />
           </div>
 

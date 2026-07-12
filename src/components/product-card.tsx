@@ -56,7 +56,7 @@ const ProductCard = ({
 
   return (
     <Link href={href} className="block flex-shrink-0"> {/* Wrap with Link */}
-      <Card className="relative overflow-hidden rounded-2xl shadow-xl border-none group cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-gray-50 to-gray-100 w-64 sm:w-80 md:w-96 h-80 sm:h-96 md:h-[420px]">
+      <Card className="relative overflow-hidden rounded-2xl shadow-xl border-none group cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-white w-64 sm:w-80 md:w-96 h-80 sm:h-96 md:h-[420px]">
         {/* Subtle accent color overlay */}
         <div
           className={cn(

@@ -27,7 +27,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'All-season tire with exceptional wet and dry braking performance. Designed for crossover, SUV, and sedan drivers.',
  250.00, 280.00, 'TIR-MIC-CC2-001',
  '/tires/Michelin CrossClimate2/mi_crossclimate2_suv_full.webp',
- 'a1000000-0000-0000-0000-000000000001', 'Michelin', true, 24, true,
+ 'a1000000-0000-0000-0000-000000000001', 'Michelin', true, 24, false,
  '{"width": 225, "aspect_ratio": 65, "rim_diameter": 17, "load_index": "102", "speed_rating": "H", "tire_type": "Passenger", "season": "All-Season", "runflat": false, "treadwear": 640, "traction": "A", "temperature": "A", "noise_level": "68 dB", "warranty_miles": 60000}'),
 
 -- Continental ExtremeContact
@@ -36,7 +36,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Premium all-season tire with excellent grip and long tread life. Features Continental Comfort Ride Technology.',
  180.00, 210.00, 'TIR-CON-EC-002',
  '/tires/Continental ExtremeContact/conraj_ang_l.jpg',
- 'a1000000-0000-0000-0000-000000000001', 'Continental', true, 32, false,
+ 'a1000000-0000-0000-0000-000000000001', 'Continental', true, 32, true,
  '{"width": 225, "aspect_ratio": 60, "rim_diameter": 16, "load_index": "98", "speed_rating": "V", "tire_type": "Passenger", "season": "All-Season", "runflat": false, "treadwear": 700, "traction": "A", "temperature": "A", "noise_level": "70 dB", "warranty_miles": 80000}'),
 
 -- Goodyear Assurance WeatherReady
@@ -54,7 +54,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Winter tire with Multi-Cell compound and NanoPro-Tech for superior ice grip and braking.',
  230.00, 260.00, 'TIR-BRI-BSW-004',
  '/tires/Bridgestone Blizzak WS90/bs_blizzak_ws90_full.webp',
- 'a1000000-0000-0000-0000-000000000001', 'Bridgestone', true, 20, false,
+ 'a1000000-0000-0000-0000-000000000001', 'Bridgestone', true, 20, true,
  '{"width": 225, "aspect_ratio": 60, "rim_diameter": 17, "load_index": "99", "speed_rating": "T", "tire_type": "Passenger", "season": "Winter", "runflat": false, "treadwear": 500, "traction": "B", "temperature": "B", "noise_level": "72 dB", "warranty_miles": 40000}'),
 
 -- Bridgestone Turanza QuietTrack
@@ -63,8 +63,8 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Ultra-quiet grand touring tire with adaptive contact patch for a smooth, comfortable ride.',
  270.00, 300.00, 'TIR-BRI-TQT-026',
  '/tires/Bridgestone Blizzak WS90/bs_blizzak_ws90_full.webp',
- 'a1000000-0000-0000-0000-000000000001', 'Bridgestone', true, 18, false,
- '{"width": 225, "aspect_ratio": 55, "rim_diameter": 17, "load_index": "97", "speed_rating": "V", "tire_type": "Passenger", "season": "All-Season", "runflat": false, "treadwear": 720, "traction": "A", "temperature": "A", "noise_level": "65 dB", "warranty_miles": 80000}'),
+ 'a1000000-0000-0000-0000-000000000001', 'Bridgestone', true, 18, true,
+  '{"width": 225, "aspect_ratio": 55, "rim_diameter": 17, "load_index": "97", "speed_rating": "V", "tire_type": "Passenger", "season": "All-Season", "runflat": false, "treadwear": 720, "traction": "A", "temperature": "A", "noise_level": "65 dB", "warranty_miles": 80000}'),
 
 -- Firestone Destination LE3
 ('b1000000-0000-0000-0000-000000000027',
@@ -122,7 +122,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Ultra-high performance summer tire with exceptional dry and wet grip. The benchmark for sports cars.',
  290.00, 330.00, 'TIR-MIC-PS4-005',
  '/tires/Michelin Pilot Sport 4S/pss_fiche.webp',
- 'a1000000-0000-0000-0000-000000000002', 'Michelin', true, 16, true,
+ 'a1000000-0000-0000-0000-000000000002', 'Michelin', true, 16, false,
  '{"width": 245, "aspect_ratio": 40, "rim_diameter": 18, "load_index": "97", "speed_rating": "Y", "tire_type": "Passenger", "season": "Summer", "runflat": false, "treadwear": 300, "traction": "AA", "temperature": "A", "noise_level": "72 dB", "warranty_miles": 0}'),
 
 -- Goodyear Eagle F1
@@ -131,7 +131,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Asymmetric summer performance tire with Active Braking technology for shorter stopping distances.',
  240.00, 270.00, 'TIR-GOO-EF1-006',
  '/tires/Goodyear Eagle F1/images.jpg',
- 'a1000000-0000-0000-0000-000000000002', 'Goodyear', true, 20, false,
+ 'a1000000-0000-0000-0000-000000000002', 'Goodyear', true, 20, true,
  '{"width": 245, "aspect_ratio": 45, "rim_diameter": 18, "load_index": "100", "speed_rating": "Y", "tire_type": "Passenger", "season": "Summer", "runflat": false, "treadwear": 280, "traction": "AA", "temperature": "A", "noise_level": "73 dB", "warranty_miles": 0}'),
 
 -- Pirelli P Zero
@@ -208,7 +208,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Premium winter tire with Flex-Ice compound for outstanding ice grip and snow traction.',
  220.00, 250.00, 'TIR-MIC-XIS-009',
  '/tires/Michelin X-Ice Snow/500x_michelin_x-ice_snow.jpg',
- 'a1000000-0000-0000-0000-000000000003', 'Michelin', true, 18, true,
+ 'a1000000-0000-0000-0000-000000000003', 'Michelin', true, 18, false,
  '{"width": 225, "aspect_ratio": 65, "rim_diameter": 17, "load_index": "102", "speed_rating": "T", "tire_type": "Passenger", "season": "Winter", "runflat": false, "treadwear": 450, "traction": "B", "temperature": "B", "noise_level": "71 dB", "warranty_miles": 40000, "three_peak_mountain_snowflake": true}'),
 
 -- Continental WinterContact SI
@@ -226,7 +226,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Premium Nordic winter tire with Cryo Crystal particles for unmatched ice grip.',
  250.00, 280.00, 'TIR-NOK-HR3-011',
  '/tires/Nokian Hakkapeliitta R3/1.jpg',
- 'a1000000-0000-0000-0000-000000000003', 'Nokian', true, 14, false,
+ 'a1000000-0000-0000-0000-000000000003', 'Nokian', true, 14, true,
  '{"width": 205, "aspect_ratio": 55, "rim_diameter": 16, "load_index": "91", "speed_rating": "R", "tire_type": "Passenger", "season": "Winter", "runflat": false, "treadwear": 400, "traction": "B", "temperature": "B", "noise_level": "72 dB", "warranty_miles": 0, "three_peak_mountain_snowflake": true, "studdable": true}'),
 
 -- Bridgestone Blizzak DM-V2
@@ -294,7 +294,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Track-focused performance tire with extreme dry grip. DOT-approved for street use.',
  320.00, 370.00, 'TIR-PIR-PZT-015',
  '/tires/Pirelli P Zero Trofeo R/Trofeo R-02_i.webp',
- 'a1000000-0000-0000-0000-000000000004', 'Pirelli', true, 8, true,
+ 'a1000000-0000-0000-0000-000000000004', 'Pirelli', true, 8, false,
  '{"width": 265, "aspect_ratio": 35, "rim_diameter": 19, "load_index": "98", "speed_rating": "Y", "tire_type": "Passenger", "season": "Summer", "runflat": false, "treadwear": 180, "traction": "AA", "temperature": "A", "noise_level": "76 dB", "warranty_miles": 0}'),
 
 -- Michelin Pilot Sport Cup 2
@@ -303,7 +303,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Track-day tire with dual-compound technology. Original equipment on Porsche 911 GT3 RS.',
  280.00, 330.00, 'TIR-MIC-PSC-016',
  '/tires/Michelin Pilot Sport Cup 2/4w-368_3528703112235_tire_michelin_pilot-sport-cup-2-r_325-slash-30-zr21-108y-xl_n0_a_main_5-quarterzoom_nopad.webp',
- 'a1000000-0000-0000-0000-000000000004', 'Michelin', true, 6, false,
+ 'a1000000-0000-0000-0000-000000000004', 'Michelin', true, 6, true,
  '{"width": 255, "aspect_ratio": 35, "rim_diameter": 19, "load_index": "96", "speed_rating": "Y", "tire_type": "Passenger", "season": "Summer", "runflat": false, "treadwear": 160, "traction": "AA", "temperature": "A", "noise_level": "77 dB", "warranty_miles": 0}'),
 
 -- Bridgestone Potenza S007A
@@ -352,7 +352,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Premium multi-spoke alloy wheel with flow-formed construction for lightweight strength.',
  2000.00, 2400.00, 'WHL-BBS-CHR-012',
  '/tires/BBS CH-R Alloy Wheels/5.jpg',
- 'a1000000-0000-0000-0000-000000000005', 'BBS', true, 4, true,
+ 'a1000000-0000-0000-0000-000000000005', 'BBS', true, 4, false,
  '{"diameter": 19, "width": 8.5, "bolt_pattern": "5x112", "offset": 45, "center_bore": 66.5, "finish": "Silver", "material": "Flow-Formed Aluminum", "weight_kg": 9.8, "load_rating_kg": 750}'),
 
 ('b1000000-0000-0000-0000-000000000013',
@@ -360,7 +360,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Clean five-spoke design with a concave profile. Perfect for stance and show builds.',
  1500.00, 1800.00, 'WHL-ROT-RSE-013',
  '/tires/Rotiform RSE Alloy Wheels/9.jpg',
- 'a1000000-0000-0000-0000-000000000005', 'Rotiform', true, 6, false,
+ 'a1000000-0000-0000-0000-000000000005', 'Rotiform', true, 6, true,
  '{"diameter": 18, "width": 9.5, "bolt_pattern": "5x114.3", "offset": 22, "center_bore": 73.1, "finish": "Matte Black", "material": "Cast Aluminum", "weight_kg": 10.5, "load_rating_kg": 700}'),
 
 ('b1000000-0000-0000-0000-000000000014',
@@ -368,7 +368,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Legendary lightweight racing wheel. One of the lightest production wheels available.',
  1200.00, 1500.00, 'WHL-ENK-RPF-014',
  '/tires/Enkei RPF1 Alloy Wheels/ENKEI-RPF1-BK-131-WEB.jpg',
- 'a1000000-0000-0000-0000-000000000005', 'Enkei', true, 8, false,
+ 'a1000000-0000-0000-0000-000000000005', 'Enkei', true, 8, true,
  '{"diameter": 17, "width": 8, "bolt_pattern": "5x114.3", "offset": 35, "center_bore": 73, "finish": "Matte Black", "material": "MAT Aluminum", "weight_kg": 5.9, "load_rating_kg": 650}'),
 
 ('b1000000-0000-0000-0000-000000000047',
@@ -408,7 +408,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Luxury multi-piece forged wheel. Hand-built in Italy for exotic and luxury vehicles.',
  3200.00, 3800.00, 'WHL-FOR-MAG-051',
  '/tires/Rotiform RSE Alloy Wheels/9.jpg',
- 'a1000000-0000-0000-0000-000000000005', 'Forgiato', true, 2, true,
+ 'a1000000-0000-0000-0000-000000000005', 'Forgiato', true, 2, false,
  '{"diameter": 20, "width": 10, "bolt_pattern": "5x112", "offset": 25, "center_bore": 66.5, "finish": "Brushed Silver", "material": "Forged Aluminum", "weight_kg": 11.2, "load_rating_kg": 800}'),
 
 ('b1000000-0000-0000-0000-000000000052',

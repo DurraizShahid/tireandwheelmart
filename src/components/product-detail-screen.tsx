@@ -103,14 +103,14 @@ const ProductDetailScreen = ({ product }: ProductDetailScreenProps) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 items-start max-w-7xl mx-auto">
           {/* Product Image */}
-          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[450px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[450px] rounded-2xl overflow-hidden bg-white flex items-center justify-center">
             <Image
               src={product.image_url}
               alt={product.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               style={{ objectFit: "contain" }}
-              className="drop-shadow-2xl"
+
             />
           </div>
 

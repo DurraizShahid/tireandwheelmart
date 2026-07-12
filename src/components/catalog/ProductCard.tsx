@@ -38,7 +38,7 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
       isGrid ? "flex flex-col" : "flex"
     )}>
       <div className={cn(
-        "relative bg-gray-50 overflow-hidden",
+        "relative bg-white overflow-hidden",
         isGrid ? "w-full aspect-square" : "w-48 h-48 shrink-0"
       )}>
         {/* Badges */}
