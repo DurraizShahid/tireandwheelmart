@@ -89,11 +89,6 @@ export default function OrderDetailPage() {
       .finally(() => setLoading(false));
   }, [params.id]);
 
-  const formatAddr = (a: OrderDetail["shippingAddress"]) => {
-    if (!a) return "N/A";
-    return [a.line1, a.line2, `${a.city}, ${a.state} ${a.postal_code}`, a.country].filter(Boolean).join(", ");
-  };
-
   if (loading) {
     return (
       <div className="flex min-h-screen bg-muted/30">

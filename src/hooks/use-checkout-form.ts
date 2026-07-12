@@ -11,6 +11,7 @@ import { useUser } from "@clerk/nextjs";
 export function useCheckoutForm() {
   const { clearCart, items, total: cartTotal, subtotal, tax, shipping } = useCart();
   const { user } = useUser();
+  const clerkUserId = user?.id;
   const [step, setStep] = useState<CheckoutStep>("customer-info");
   const [formData, setFormData] = useState<CheckoutFormData>(getDefaultCheckoutFormData());
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -140,7 +141,7 @@ export function useCheckoutForm() {
           tax,
           shipping_cost: shipping,
           total: cartTotal,
-          userId: user?.id,
+          userId: clerkUserId,
           shippingMethod: formData.shippingMethod,
           paymentMethod: formData.paymentInfo,
         }),
@@ -160,7 +161,7 @@ export function useCheckoutForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, items, cartTotal, subtotal, tax, shipping, clearCart]);
+  }, [formData, items, cartTotal, subtotal, tax, shipping, clerkUserId, clearCart]);
 
   const shippingCost = formData.shippingMethod?.cost ?? shippingMethods[0]?.cost ?? 0;
   const defaultShippingMethod = shippingMethods[0] ?? SHIPPING_METHODS[0];

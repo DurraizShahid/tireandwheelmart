@@ -74,7 +74,6 @@ export default function FeaturedDealsPage() {
 
       // Promos to add or update
       for (const id of draftIds) {
-        const show = !initialIds.has(id) || true;
         const order = draftOrders[id] ?? 0;
         items.push({ id, show_on_homepage: true, homepage_order: order });
       }
