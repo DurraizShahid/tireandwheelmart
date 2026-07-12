@@ -7,7 +7,8 @@ import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Edit, Trash2, Loader2, MoreHorizontal } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, MoreHorizontal, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { ADMIN_DEFAULTS } from "@/lib/admin-constants";
@@ -37,9 +38,20 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-  const totalPages = Math.max(1, Math.ceil(products.length / PAGE_SIZE));
-  const paginatedProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const filteredProducts = products.filter((p) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      p.name.toLowerCase().includes(q) ||
+      (p.sku && p.sku.toLowerCase().includes(q)) ||
+      (p.brand && p.brand.toLowerCase().includes(q))
+    );
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const paginatedProducts = filteredProducts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const fetchProducts = async () => {
     const { data, error } = await supabase
@@ -88,6 +100,16 @@ export default function ProductsPage() {
               </Link>
             </div>
 
+            <div className="relative max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, SKU, or brand..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                className="pl-9"
+              />
+            </div>
+
             <Card>
               <CardHeader>
                 <CardTitle>Product List</CardTitle>
@@ -96,7 +118,9 @@ export default function ProductsPage() {
                     ? "Loading..."
                     : products.length === 0
                     ? "No products"
-                    : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, products.length)} of ${products.length} products`}
+                    : search.trim()
+                    ? `${filteredProducts.length} result${filteredProducts.length !== 1 ? "s" : ""} for "${search}"`
+                    : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, filteredProducts.length)} of ${filteredProducts.length} products`}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -108,6 +132,8 @@ export default function ProductsPage() {
                   <p className="text-center text-red-600 py-8">{error}</p>
                 ) : products.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">No products found.</p>
+                ) : filteredProducts.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">No products match "{search}".</p>
                 ) : (
                   <>
                     <Table>
