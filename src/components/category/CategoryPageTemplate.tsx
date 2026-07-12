@@ -70,7 +70,10 @@ export function CategoryPageTemplate({ config, products: providedProducts }: Cat
         ctaSecondary={config.ctaSecondary}
       />
 
-      <FeaturedBrands brands={config.featuredBrands} />
+      <FeaturedBrands
+        brands={config.featuredBrands}
+        onBrandClick={(brand) => setFilters({ ...filters, brands: [brand] })}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Breadcrumb

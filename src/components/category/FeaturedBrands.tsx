@@ -2,9 +2,10 @@
 
 interface FeaturedBrandsProps {
   brands: string[];
+  onBrandClick?: (brand: string) => void;
 }
 
-export function FeaturedBrands({ brands }: FeaturedBrandsProps) {
+export function FeaturedBrands({ brands, onBrandClick }: FeaturedBrandsProps) {
   if (!brands.length) return null;
 
   return (
@@ -15,12 +16,13 @@ export function FeaturedBrands({ brands }: FeaturedBrandsProps) {
         </h2>
         <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
           {brands.map((brand) => (
-            <span
+            <button
               key={brand}
-              className="text-lg font-bold text-foreground/40 hover:text-foreground/70 transition-colors select-none"
+              onClick={() => onBrandClick?.(brand)}
+              className="text-lg font-bold text-foreground/40 hover:text-foreground transition-colors select-none cursor-pointer"
             >
               {brand}
-            </span>
+            </button>
           ))}
         </div>
       </div>
