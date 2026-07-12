@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, X, Clock, TrendingUp, ShoppingCart, Heart, GitCompare, ArrowRight, Star } from "lucide-react";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useSearch } from "@/hooks/use-search";
 import { useCart } from "@/contexts/cart-context";
@@ -208,9 +208,10 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
       <DialogContent
-        className="fixed top-[10%] left-1/2 -translate-x-1/2 w-full max-w-2xl max-h-[75vh] p-0 gap-0 border-0 shadow-2xl rounded-2xl overflow-hidden data-[state=closed]:slide-out-to-top-[8%] data-[state=open]:slide-in-from-top-[8%] sm:rounded-2xl"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[80vh] p-0 gap-0 border-0 shadow-2xl rounded-2xl overflow-hidden data-[state=closed]:slide-out-to-top-[8%] data-[state=open]:slide-in-from-top-[8%] sm:rounded-2xl"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
+        <DialogTitle className="sr-only">Search products</DialogTitle>
         {/* Search input */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
           <Search className="h-5 w-5 text-muted-foreground shrink-0" />
@@ -230,9 +231,6 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               <X className="h-4 w-4" />
             </button>
           )}
-          <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs text-muted-foreground bg-gray-100 rounded border border-gray-200 font-mono">
-            ESC
-          </kbd>
         </div>
 
         {/* Results / Suggestions */}

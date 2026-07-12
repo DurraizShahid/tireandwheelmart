@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
@@ -63,6 +63,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ open, onOpenChange }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-none w-full h-screen max-h-screen p-0 bg-[#DC2626] border-0 overflow-y-auto fixed inset-0 translate-x-0 translate-y-0 rounded-none [&>button]:hidden z-[100]">
+        <DialogTitle className="sr-only">Search</DialogTitle>
         <div className="relative w-full min-h-full flex flex-col text-white">
           {/* Close Button */}
           <button

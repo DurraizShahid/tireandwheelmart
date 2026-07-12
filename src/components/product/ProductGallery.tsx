@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 interface ProductGalleryProps {
@@ -140,6 +140,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       {/* Lightbox */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-5xl h-[90vh] p-0 bg-black/95 border-none">
+          <DialogTitle className="sr-only">{productName} - Image {selectedIndex + 1}</DialogTitle>
           <DialogClose className="absolute top-4 right-4 z-50 h-10 w-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center">
             <X className="h-5 w-5" />
           </DialogClose>

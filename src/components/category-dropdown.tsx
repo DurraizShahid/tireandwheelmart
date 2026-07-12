@@ -44,141 +44,61 @@ export const CategoryDropdown = () => {
 
         {/* Bento Grid Dropdown Menu */}
         {isOpen && (
-          <>
-            {/* Dropdown */}
-            <div className="absolute left-1/2 -translate-x-1/2 mt-4 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 w-[1200px]">
-              <div className="p-6">
-                <div className="flex gap-6">
-                  {/* First Grid: 2x2 (All-Season, Summer, Winter, Performance) */}
-                  <div className="grid grid-cols-2 gap-4 flex-1">
-                    {categories.slice(0, 4).map((category) => (
-                      <Link
-                        key={category.slug}
-                        href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
-                        onClick={() => {}}
-                        className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
-                      >
-                        {/* Left Side - Text */}
-                        <div className="flex-1 px-4 py-3 z-10">
-                          <h3 className={`font-bold text-sm line-clamp-2 ${
-                            category.bgColor === "bg-black" || category.bgColor === "bg-red-600" ? "text-white" : "text-gray-900"
-                          }`}>
-                            {category.title}
-                          </h3>
-                        </div>
-
-                        {/* Right Side - Image */}
-                        <div className="relative w-16 h-16 flex-shrink-0">
-                          <Image
-                            src={category.image}
-                            alt={category.title}
-                            fill
-                            className="object-contain group-hover/item:scale-110 transition-transform duration-300"
-                          />
-                        </div>
-                      </Link>
-                    ))}
+          <div className="absolute left-1/2 -translate-x-1/2 mt-4 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 w-[1100px] p-5">
+            {/* Row 1: 4 items */}
+            <div className="grid grid-cols-[1fr_1.2fr_1.8fr_1.2fr] gap-4 mb-4">
+              {categories.slice(0, 4).map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
+                  className={`group/item relative overflow-hidden rounded-xl hover:shadow-lg transition-all duration-300 cursor-pointer h-28 flex items-center ${category.bgColor}`}
+                >
+                  <div className="flex-1 px-4 py-3 z-10">
+                    <h3 className={`font-bold text-sm leading-tight ${
+                      category.bgColor === "bg-black" || category.bgColor === "bg-red-600" ? "text-white" : "text-gray-900"
+                    }`}>
+                      {category.title}
+                    </h3>
                   </div>
-
-                  {/* Second Grid: 1x2 (Alloy Wheels, Steel Wheels) */}
-                  <div className="grid grid-cols-1 gap-4 flex-1">
-                    {categories.slice(4, 6).map((category) => (
-                      <Link
-                        key={category.slug}
-                        href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
-                        onClick={() => {}}
-                        className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
-                      >
-                        {/* Left Side - Text */}
-                        <div className="flex-1 px-4 py-3 z-10">
-                          <h3 className={`font-bold text-sm line-clamp-2 ${
-                            category.bgColor === "bg-black" || category.bgColor === "bg-red-600" ? "text-white" : "text-gray-900"
-                          }`}>
-                            {category.title}
-                          </h3>
-                        </div>
-
-                        {/* Right Side - Image */}
-                        <div className="relative w-16 h-16 flex-shrink-0">
-                          <Image
-                            src={category.image}
-                            alt={category.title}
-                            fill
-                            className="object-contain group-hover/item:scale-110 transition-transform duration-300"
-                          />
-                        </div>
-                      </Link>
-                    ))}
+                  <div className="relative w-20 h-20 flex-shrink-0 mr-2">
+                    <Image
+                      src={category.image}
+                      alt={category.title}
+                      fill
+                      className="object-contain group-hover/item:scale-110 transition-transform duration-300"
+                    />
                   </div>
-
-                  {/* Third Grid: 2 rows (Top: Tire & Wheel, Bottom: Wheel & Tire Accessories) */}
-                  <div className="grid grid-cols-1 gap-4 flex-1">
-                    {/* Top: Tire & Wheel Packages */}
-                    <div className="grid grid-cols-1">
-                      {categories.slice(6, 7).map((category) => (
-                        <Link
-                          key={category.slug}
-                          href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
-                          onClick={() => {}}
-                          className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
-                        >
-                          {/* Left Side - Text */}
-                          <div className="flex-1 px-4 py-3 z-10">
-                            <h3 className={`font-bold text-sm line-clamp-2 ${
-                              category.bgColor === "bg-black" || category.bgColor === "bg-red-600" ? "text-white" : "text-gray-900"
-                            }`}>
-                              {category.title}
-                            </h3>
-                          </div>
-
-                          {/* Right Side - Image */}
-                          <div className="relative w-16 h-16 flex-shrink-0">
-                            <Image
-                              src={category.image}
-                              alt={category.title}
-                              fill
-                              className="object-contain group-hover/item:scale-110 transition-transform duration-300"
-                            />
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Bottom: Wheel Accessories & Tire Accessories */}
-                    <div className="grid grid-cols-2 gap-4">
-                      {categories.slice(7, 9).map((category) => (
-                        <Link
-                          key={category.slug}
-                          href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
-                          onClick={() => {}}
-                          className={`group/item relative overflow-hidden rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer h-24 col-span-1 flex items-center ${category.bgColor}`}
-                        >
-                          {/* Left Side - Text */}
-                          <div className="flex-1 px-4 py-3 z-10">
-                            <h3 className={`font-bold text-xs line-clamp-2 ${
-                              category.bgColor === "bg-black" || category.bgColor === "bg-red-600" ? "text-white" : "text-gray-900"
-                            }`}>
-                              {category.title}
-                            </h3>
-                          </div>
-
-                          {/* Right Side - Image */}
-                          <div className="relative w-16 h-16 flex-shrink-0">
-                            <Image
-                              src={category.image}
-                              alt={category.title}
-                              fill
-                              className="object-contain group-hover/item:scale-110 transition-transform duration-300"
-                            />
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                </Link>
+              ))}
             </div>
-          </>
+
+            {/* Row 2: 5 items */}
+            <div className="grid grid-cols-[0.8fr_0.9fr_1.6fr_1.1fr_1.1fr] gap-4">
+              {categories.slice(4, 9).map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/shop/${CONFIG_TO_URL_SLUG[category.slug] ?? category.slug}`}
+                  className={`group/item relative overflow-hidden rounded-xl hover:shadow-lg transition-all duration-300 cursor-pointer h-28 flex items-center ${category.bgColor}`}
+                >
+                  <div className="flex-1 px-3 py-3 z-10">
+                    <h3 className={`font-bold text-sm leading-tight ${
+                      category.bgColor === "bg-black" || category.bgColor === "bg-red-600" ? "text-white" : "text-gray-900"
+                    }`}>
+                      {category.title}
+                    </h3>
+                  </div>
+                  <div className="relative w-16 h-16 flex-shrink-0 mr-2">
+                    <Image
+                      src={category.image}
+                      alt={category.title}
+                      fill
+                      className="object-contain group-hover/item:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
