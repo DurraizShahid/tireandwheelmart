@@ -4,16 +4,19 @@ import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import type { CheckoutStep, CheckoutFormData, CustomerInfo, ShippingAddress, ShippingMethod, BillingInfo, PaymentInfo } from "@/lib/checkout-types";
 import { CHECKOUT_STEPS, SHIPPING_METHODS } from "@/lib/checkout-types";
-import { getDefaultCheckoutFormData, validateCustomerInfo, validateShippingAddress, validateBillingInfo, validatePaymentInfo, generateOrderNumber } from "@/lib/checkout-utils";
+import { getDefaultCheckoutFormData, validateCustomerInfo, validateShippingAddress, validateBillingInfo, validatePaymentInfo } from "@/lib/checkout-utils";
 import { useCart } from "@/contexts/cart-context";
+import { useUser } from "@clerk/nextjs";
 
 export function useCheckoutForm() {
-  const { clearCart } = useCart();
+  const { clearCart, items, total: cartTotal, subtotal, tax, shipping } = useCart();
+  const { user } = useUser();
   const [step, setStep] = useState<CheckoutStep>("customer-info");
   const [formData, setFormData] = useState<CheckoutFormData>(getDefaultCheckoutFormData());
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
+  const [orderSummary, setOrderSummary] = useState<{ subtotal: number; tax: number; shipping: number; total: number } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>(SHIPPING_METHODS);
 
@@ -117,18 +120,47 @@ export function useCheckoutForm() {
     }
   }, [currentIndex]);
 
-  const submitOrder = useCallback(() => {
+  const submitOrder = useCallback(async () => {
     setIsSubmitting(true);
     setErrors({});
-    setTimeout(() => {
-      const num = generateOrderNumber();
-      setOrderNumber(num);
+    try {
+      const orderItems = items.map((i) => ({
+        id: i.id,
+        quantity: i.quantity,
+        price: i.price,
+        name: i.name,
+      }));
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formData,
+          items: orderItems,
+          subtotal,
+          tax,
+          shipping_cost: shipping,
+          total: cartTotal,
+          userId: user?.id,
+          shippingMethod: formData.shippingMethod,
+          paymentMethod: formData.paymentInfo,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to place order");
+      }
+      const data = await res.json();
+      setOrderNumber(data.orderNumber);
+      setOrderSummary({ subtotal, tax, shipping, total: cartTotal });
       clearCart();
       setStep("confirmation");
-      setIsSubmitting(false);
       toast.success("Order placed successfully!");
-    }, 1500);
-  }, [clearCart]);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to place order");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [formData, items, cartTotal, subtotal, tax, shipping, clearCart]);
 
   const shippingCost = formData.shippingMethod?.cost ?? shippingMethods[0]?.cost ?? 0;
   const defaultShippingMethod = shippingMethods[0] ?? SHIPPING_METHODS[0];
@@ -141,6 +173,7 @@ export function useCheckoutForm() {
     isTransitioning,
     isSubmitting,
     orderNumber,
+    orderSummary,
     currentIndex,
     shippingCost,
     defaultShippingMethod,

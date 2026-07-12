@@ -22,7 +22,7 @@ export default function CheckoutPage() {
   const { isSignedIn } = useUser();
   const { items } = useCart();
   const {
-    step, formData, errors, isTransitioning, isSubmitting, orderNumber, shippingCost,
+    step, formData, errors, isTransitioning, isSubmitting, orderNumber, orderSummary, shippingCost,
     updateCustomerInfo, updateShippingAddress, updateShippingMethod, updateBillingInfo, updatePaymentInfo,
     goToStep, goNext, goBack, submitOrder, shippingMethods,
   } = useCheckoutForm();
@@ -54,6 +54,9 @@ export default function CheckoutPage() {
               shippingMethodLabel={shippingMethod.label}
               estimatedDays={shippingMethod.estimatedDays}
               shippingCost={shippingCost}
+              subtotal={orderSummary?.subtotal ?? 0}
+              tax={orderSummary?.tax ?? 0}
+              total={orderSummary?.total ?? 0}
             />
           </div>
         </div>

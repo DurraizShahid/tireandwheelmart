@@ -4,9 +4,7 @@ import Link from "next/link";
 import { CheckCircle, ShoppingBag, Truck, FileText, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/catalog-helpers";
-import { useCart } from "@/contexts/cart-context";
 
 interface Props {
   orderNumber: string;
@@ -14,17 +12,15 @@ interface Props {
   shippingMethodLabel: string;
   estimatedDays: string;
   shippingCost: number;
+  subtotal: number;
+  tax: number;
+  total: number;
 }
 
-export function StepConfirmation({ orderNumber, customerEmail, estimatedDays, shippingCost }: Props) {
-  const { items } = useCart();
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const tax = Math.max(0, subtotal) * 0.08;
-  const total = subtotal + tax + shippingCost;
+export function StepConfirmation({ orderNumber, customerEmail, estimatedDays, shippingCost, subtotal, tax, total }: Props) {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Success header */}
       <div className="text-center py-6">
         <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5 animate-in zoom-in-50 duration-500">
           <CheckCircle className="h-10 w-10 text-green-600" />
@@ -33,7 +29,6 @@ export function StepConfirmation({ orderNumber, customerEmail, estimatedDays, sh
         <p className="text-muted-foreground">Thank you for your purchase. Your order is being processed.</p>
       </div>
 
-      {/* Order details */}
       <Card className="border-green-100 bg-green-50/30">
         <CardContent className="p-6 space-y-5">
           <div className="text-center sm:text-left">
@@ -41,7 +36,7 @@ export function StepConfirmation({ orderNumber, customerEmail, estimatedDays, sh
             <p className="text-xl font-bold text-foreground font-mono">{orderNumber}</p>
           </div>
 
-          <Separator />
+          <div className="border-t" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div className="flex items-start gap-3">
@@ -60,17 +55,11 @@ export function StepConfirmation({ orderNumber, customerEmail, estimatedDays, sh
             </div>
           </div>
 
-          <Separator />
+          <div className="border-t" />
 
           <div className="space-y-2 text-sm">
             <p className="font-semibold text-foreground mb-2">Order Summary</p>
-            {items.map((item) => (
-              <div key={item.id} className="flex justify-between">
-                <span className="text-muted-foreground">{item.name} × {item.quantity}</span>
-                <span className="font-medium">{formatPrice(item.price * item.quantity)}</span>
-              </div>
-            ))}
-            <Separator />
+            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="font-medium">{formatPrice(subtotal)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span>{shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>{formatPrice(tax)}</span></div>
             <div className="flex justify-between text-lg font-bold pt-1">
@@ -81,7 +70,6 @@ export function StepConfirmation({ orderNumber, customerEmail, estimatedDays, sh
         </CardContent>
       </Card>
 
-      {/* Action buttons */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Link href="/" className="flex-1">
           <Button className="w-full h-12">

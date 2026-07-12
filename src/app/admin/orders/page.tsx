@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, ExternalLink } from "lucide-react";
 
 interface Order {
   id: string;
+  order_number: string | null;
   status: string;
   total: number;
   created_at: string;
@@ -80,7 +83,7 @@ export default function OrdersPage() {
                           <TableHead>Total</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Date</TableHead>
-                          
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -89,8 +92,8 @@ export default function OrdersPage() {
                             ? [order.customers.first_name, order.customers.last_name].filter(Boolean).join(" ") || order.customers.email
                             : "Unknown";
                           return (
-                            <TableRow key={order.id}>
-                              <TableCell className="font-medium">#{order.id.slice(0, 8)}</TableCell>
+                            <TableRow key={order.id} className="group">
+                              <TableCell className="font-medium">#{order.order_number ?? order.id.slice(0, 8)}</TableCell>
                               <TableCell>{name}</TableCell>
                               <TableCell className="font-semibold">${Number(order.total).toFixed(2)}</TableCell>
                               <TableCell>
@@ -99,6 +102,13 @@ export default function OrdersPage() {
                                 </Badge>
                               </TableCell>
                               <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                              <TableCell className="text-right">
+                                <Link href={`/admin/orders/${order.id}`}>
+                                  <Button variant="outline" size="sm" className="gap-1">
+                                    View <ExternalLink className="h-3 w-3" />
+                                  </Button>
+                                </Link>
+                              </TableCell>
                             </TableRow>
                           );
                         })}
