@@ -203,9 +203,11 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
 
   const toProductItemProps = (p: DbProduct) => {
     const specs = p.specs ?? {};
-    const size = specs.width
+    const size = specs.rim_diameter
       ? `${specs.width}/${specs.aspect_ratio}R${specs.rim_diameter}`
-      : undefined;
+      : specs.diameter
+        ? `${specs.width}x${specs.diameter}`
+        : undefined;
     return {
       name: p.name,
       price: `$${p.price.toLocaleString()}`,
