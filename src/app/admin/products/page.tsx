@@ -133,7 +133,7 @@ export default function ProductsPage() {
                 ) : products.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">No products found.</p>
                 ) : filteredProducts.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">No products match "{search}".</p>
+                  <p className="text-center text-muted-foreground py-8">No products match &quot;{search}&quot;.</p>
                 ) : (
                   <>
                     <Table>
