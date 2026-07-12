@@ -34,7 +34,7 @@ export function ShopHero({
                 Browse Collection <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-base" asChild>
+            <Button size="lg" className="border border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white px-8 py-6 text-base" asChild>
               <Link href="/shop/all-season-tires">
                 <Search className="mr-2 h-5 w-5" /> Find My Size
               </Link>
