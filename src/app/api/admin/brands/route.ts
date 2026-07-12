@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
       website_url: website_url || null,
       description: description || null,
       display_order: display_order ?? 0,
+      is_active: true,
     })
     .select()
     .single();

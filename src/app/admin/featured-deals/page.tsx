@@ -2,41 +2,55 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, ArrowUpDown, GripVertical, Loader2, Sparkles } from "lucide-react";
+import { ExternalLink, ArrowUpDown, GripVertical, Loader2, Sparkles, Save } from "lucide-react";
 import { toast } from "sonner";
+import { revalidateHomepage } from "@/lib/actions/revalidate";
 import type { Promotion } from "@/lib/supabase/types";
 
 export default function FeaturedDealsPage() {
-  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [allPromotions, setAllPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  // Draft state: which promos are on homepage, and their order
+  const [draftIds, setDraftIds] = useState<Set<string>>(new Set());
+  const [draftOrders, setDraftOrders] = useState<Record<string, number>>({});
+
+  // Track initial state to detect changes
+  const [initialIds, setInitialIds] = useState<Set<string>>(new Set());
+  const [initialOrders, setInitialOrders] = useState<Record<string, number>>({});
 
   const fetchData = useCallback(async () => {
     const [featuredRes, allRes] = await Promise.all([
-      supabase
-        .from("promotions")
-        .select("*")
-        .eq("show_on_homepage", true)
-        .order("homepage_order"),
-      supabase
-        .from("promotions")
-        .select("*")
-        .order("name"),
+      fetch("/api/admin/featured-deals"),
+      fetch("/api/admin/promotions"),
     ]);
 
-    if (featuredRes.error) setError(featuredRes.error.message);
-    else if (featuredRes.data) setPromotions(featuredRes.data);
+    if (!featuredRes.ok || !allRes.ok) {
+      toast.error("Failed to load data");
+      setLoading(false);
+      return;
+    }
 
-    if (!allRes.error && allRes.data) setAllPromotions(allRes.data);
+    const featured: Promotion[] = await featuredRes.json();
+    const all: Promotion[] = await allRes.json();
+
+    setAllPromotions(all);
+
+    const ids = new Set(featured.map((p) => p.id));
+    const orders: Record<string, number> = {};
+    featured.forEach((p) => { orders[p.id] = p.homepage_order; });
+
+    setDraftIds(ids);
+    setDraftOrders(orders);
+    setInitialIds(new Set(ids));
+    setInitialOrders({ ...orders });
     setLoading(false);
   }, []);
 
@@ -44,64 +58,120 @@ export default function FeaturedDealsPage() {
     fetchData();
   }, [fetchData]);
 
-  const toggleHomepage = async (promo: Promotion, show: boolean) => {
-    const { error: updateErr } = await supabase
-      .from("promotions")
-      .update({
-        show_on_homepage: show,
-        homepage_order: show ? (promotions.length > 0 ? Math.max(...promotions.map((p) => p.homepage_order)) + 1 : 0) : 0,
-      })
-      .eq("id", promo.id);
-
-    if (updateErr) {
-      toast.error(updateErr.message);
-      return;
+  const hasChanges = () => {
+    if (draftIds.size !== initialIds.size) return true;
+    for (const id of draftIds) {
+      if (!initialIds.has(id)) return true;
+      if (draftOrders[id] !== initialOrders[id]) return true;
     }
-
-    toast.success(show ? `"${promo.name}" added to homepage` : `"${promo.name}" removed from homepage`);
-    fetchData();
+    return false;
   };
 
-  const updateOrder = async (id: string, order: number) => {
-    const { error: updateErr } = await supabase
-      .from("promotions")
-      .update({ homepage_order: order })
-      .eq("id", id);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const items: Array<{ id: string; show_on_homepage: boolean; homepage_order: number }> = [];
 
-    if (updateErr) {
-      toast.error(updateErr.message);
-      return;
+      // Promos to add or update
+      for (const id of draftIds) {
+        const show = !initialIds.has(id) || true;
+        const order = draftOrders[id] ?? 0;
+        items.push({ id, show_on_homepage: true, homepage_order: order });
+      }
+
+      // Promos to remove
+      for (const id of initialIds) {
+        if (!draftIds.has(id)) {
+          items.push({ id, show_on_homepage: false, homepage_order: 0 });
+        }
+      }
+
+      if (items.length === 0) {
+        toast.info("No changes to save");
+        setSaving(false);
+        return;
+      }
+
+      const res = await fetch("/api/admin/featured-deals", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to save");
+      }
+
+      setInitialIds(new Set(draftIds));
+      setInitialOrders({ ...draftOrders });
+      revalidateHomepage();
+      toast.success("Featured deals saved");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to save");
+    } finally {
+      setSaving(false);
     }
-
-    setPromotions((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, homepage_order: order } : p)).sort((a, b) => a.homepage_order - b.homepage_order)
-    );
   };
 
-  const moveUp = async (index: number) => {
+  const addToHomepage = (promo: Promotion) => {
+    const nextOrder = draftIds.size > 0
+      ? Math.max(...Array.from(draftIds).map((id) => draftOrders[id] ?? 0)) + 1
+      : 0;
+    setDraftIds((prev) => new Set(prev).add(promo.id));
+    setDraftOrders((prev) => ({ ...prev, [promo.id]: nextOrder }));
+  };
+
+  const removeFromHomepage = (id: string) => {
+    setDraftIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const updateOrder = (id: string, order: number) => {
+    setDraftOrders((prev) => ({ ...prev, [id]: order }));
+  };
+
+  const swapOrder = (indexA: number, indexB: number) => {
+    const sorted = Array.from(draftIds)
+      .map((id) => ({ id, order: draftOrders[id] ?? 0 }))
+      .sort((a, b) => a.order - b.order);
+
+    if (indexA < 0 || indexB >= sorted.length) return;
+
+    const idA = sorted[indexA].id;
+    const idB = sorted[indexB].id;
+    const orderA = draftOrders[idA] ?? 0;
+    const orderB = draftOrders[idB] ?? 0;
+
+    setDraftOrders((prev) => ({ ...prev, [idA]: orderB, [idB]: orderA }));
+  };
+
+  const moveUp = (index: number) => {
     if (index === 0) return;
-    const current = promotions[index];
-    const prev = promotions[index - 1];
-    await Promise.all([
-      updateOrder(current.id, prev.homepage_order),
-      updateOrder(prev.id, current.homepage_order),
-    ]);
-    fetchData();
+    swapOrder(index, index - 1);
   };
 
-  const moveDown = async (index: number) => {
-    if (index === promotions.length - 1) return;
-    const current = promotions[index];
-    const next = promotions[index + 1];
-    await Promise.all([
-      updateOrder(current.id, next.homepage_order),
-      updateOrder(next.id, current.homepage_order),
-    ]);
-    fetchData();
+  const moveDown = (index: number) => {
+    const sorted = Array.from(draftIds)
+      .map((id) => ({ id, order: draftOrders[id] ?? 0 }))
+      .sort((a, b) => a.order - b.order);
+    if (index >= sorted.length - 1) return;
+    swapOrder(index, index + 1);
   };
+
+  const sortedHomepageIds = Array.from(draftIds)
+    .map((id) => ({ id, order: draftOrders[id] ?? 0 }))
+    .sort((a, b) => a.order - b.order);
+
+  const homepagePromotions = sortedHomepageIds
+    .map(({ id }) => allPromotions.find((p) => p.id === id))
+    .filter((p): p is Promotion => p !== undefined);
 
   const availablePromotions = allPromotions.filter(
-    (p) => !promotions.some((fp) => fp.id === p.id) && p.is_active
+    (p) => !draftIds.has(p.id) && p.is_active
   );
 
   const formatValue = (p: Promotion) => {
@@ -127,19 +197,36 @@ export default function FeaturedDealsPage() {
                   Manage which deals appear on the homepage and their display order
                 </p>
               </div>
-              <Link href="/admin/promotions/new">
-                <Button className="gap-2">
-                  Create New Promotion
+              <div className="flex items-center gap-2">
+                <Button
+                  size="lg"
+                  className="gap-2"
+                  onClick={handleSave}
+                  disabled={saving || !hasChanges()}
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  {saving ? "Saving..." : "Save Changes"}
                 </Button>
-              </Link>
+                <Link href="/admin/promotions/new">
+                  <Button variant="outline" className="gap-2">
+                    Create New Promotion
+                  </Button>
+                </Link>
+              </div>
             </div>
+
+            {hasChanges() && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800">
+                You have unsaved changes. Click &ldquo;Save Changes&rdquo; to apply them.
+              </div>
+            )}
 
             <Card>
               <CardHeader>
-                <CardTitle>Homepage Deals ({promotions.length})</CardTitle>
+                <CardTitle>Homepage Deals ({draftIds.size})</CardTitle>
                 <CardDescription>
-                  These promotions are displayed in the &ldquo;Featured Deals&rdquo; section on the homepage.
-                  Drag to reorder or toggle visibility.
+                  These promotions will be displayed in the &ldquo;Featured Deals&rdquo; section on the homepage.
+                  Changes are saved when you click &ldquo;Save Changes&rdquo;.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -147,14 +234,11 @@ export default function FeaturedDealsPage() {
                   <div className="flex items-center justify-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
-                ) : error ? (
-                  <div className="text-center py-12 text-red-600">{error}</div>
-                ) : promotions.length === 0 ? (
+                ) : homepagePromotions.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-muted-foreground mb-4">No featured deals configured yet</p>
                     <p className="text-sm text-muted-foreground">
-                      Go to <Link href="/admin/promotions" className="text-blue-600 hover:underline">Promotions</Link> and toggle
-                      &ldquo;Show on Homepage&rdquo; for any promotion to feature it here.
+                      Use the &ldquo;Add to Homepage&rdquo; section below to feature promotions here.
                     </p>
                   </div>
                 ) : (
@@ -173,7 +257,7 @@ export default function FeaturedDealsPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {promotions.map((p, index) => (
+                        {homepagePromotions.map((p, index) => (
                           <TableRow key={p.id}>
                             <TableCell>
                               <GripVertical className="h-4 w-4 text-muted-foreground" />
@@ -182,7 +266,7 @@ export default function FeaturedDealsPage() {
                               <div className="flex items-center gap-1">
                                 <Input
                                   type="number"
-                                  value={p.homepage_order}
+                                  value={draftOrders[p.id] ?? 0}
                                   onChange={(e) => updateOrder(p.id, parseInt(e.target.value) || 0)}
                                   className="w-16 h-8 text-center"
                                 />
@@ -201,7 +285,7 @@ export default function FeaturedDealsPage() {
                                     size="icon"
                                     className="h-4 w-4"
                                     onClick={() => moveDown(index)}
-                                    disabled={index === promotions.length - 1}
+                                    disabled={index === homepagePromotions.length - 1}
                                   >
                                     <ArrowUpDown className="h-3 w-3" />
                                   </Button>
@@ -226,11 +310,14 @@ export default function FeaturedDealsPage() {
                               </span>
                             </TableCell>
                             <TableCell>
-                              <div className="flex gap-1">
-                                <Switch
-                                  checked={p.show_on_homepage}
-                                  onCheckedChange={(checked) => toggleHomepage(p, checked)}
-                                />
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => removeFromHomepage(p.id)}
+                                >
+                                  Remove
+                                </Button>
                                 <Link href={`/admin/promotions/${p.id}/edit`}>
                                   <Button variant="ghost" size="sm">
                                     <ExternalLink className="h-4 w-4" />
@@ -273,10 +360,9 @@ export default function FeaturedDealsPage() {
                             <TableCell>{p.type}</TableCell>
                             <TableCell>{formatValue(p)}</TableCell>
                             <TableCell>
-                              <Switch
-                                checked={false}
-                                onCheckedChange={(checked) => toggleHomepage(p, checked)}
-                              />
+                              <Button size="sm" onClick={() => addToHomepage(p)}>
+                                Add to Homepage
+                              </Button>
                             </TableCell>
                           </TableRow>
                         ))}

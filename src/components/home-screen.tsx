@@ -27,6 +27,7 @@ import ProductCarousel from "@/components/product-carousel";
 import { getUrlSlug } from "@/lib/category-configs";
 import { CATEGORIES } from "@/lib/catalog-constants";
 import { HomepageDeals } from "@/components/promotions/HomepageDeals";
+import { supabase } from "@/lib/supabase";
 import type { Promotion as DbPromotion, Brand as DbBrand, Testimonial as DbTestimonial, Category as DbCategory } from "@/lib/supabase/types";
 
 interface DbProduct {
@@ -109,6 +110,20 @@ const CountUp = ({
 };
 
 const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [], brands = [], testimonials = [], siteSettings = {}, homepageCategories = [] }: HomeScreenProps) => {
+  const [liveDeals, setLiveDeals] = useState<DbPromotion[]>(featuredDeals);
+
+  useEffect(() => {
+    supabase
+      .from("promotions")
+      .select("*")
+      .eq("show_on_homepage", true)
+      .eq("is_active", true)
+      .order("homepage_order")
+      .then(({ data }) => {
+        if (data) setLiveDeals(data);
+      });
+  }, []);
+
   const productImages = {
     tires: "/images/tires_icon.webp",
     wheels: "/images/wheels_icon.webp",
@@ -308,7 +323,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
         </div>
       </section>
 
-      <HomepageDeals dbPromotions={featuredDeals} />
+      <HomepageDeals dbPromotions={liveDeals} />
 
       {/* Featured Products */}
       {featuredProducts.length > 0 && (

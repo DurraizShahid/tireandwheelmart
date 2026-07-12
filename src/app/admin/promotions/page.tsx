@@ -8,7 +8,8 @@ import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, ExternalLink, Trash2 } from "lucide-react";
+import { Plus, ExternalLink, Trash2, Sparkles } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import type { Promotion } from "@/lib/supabase/types";
 
@@ -59,6 +60,23 @@ export default function PromotionsPage() {
     return `$${p.value}`;
   };
 
+  const toggleHomepage = async (promo: Promotion, show: boolean) => {
+    const homepagePromos = promotions.filter((p) => p.show_on_homepage && p.id !== promo.id);
+    const { error } = await supabase
+      .from("promotions")
+      .update({
+        show_on_homepage: show,
+        homepage_order: show ? (homepagePromos.length > 0 ? Math.max(...homepagePromos.map((p) => p.homepage_order)) + 1 : 0) : 0,
+      })
+      .eq("id", promo.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(show ? `"${promo.name}" added to homepage` : `"${promo.name}" removed from homepage`);
+    setPromotions((prev) => prev.map((p) => (p.id === promo.id ? { ...p, show_on_homepage: show, homepage_order: show ? p.homepage_order || 0 : 0 } : p)));
+  };
+
   return (
     <div className="flex min-h-screen bg-muted/30">
       <AdminSidebar />
@@ -92,6 +110,7 @@ export default function PromotionsPage() {
                         <TableHead>Type</TableHead>
                         <TableHead>Value</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Homepage</TableHead>
                         <TableHead>Priority</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
@@ -99,15 +118,15 @@ export default function PromotionsPage() {
                     <TableBody>
                       {loading ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading...</TableCell>
+                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Loading...</TableCell>
                         </TableRow>
                       ) : error ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-red-600">{error}</TableCell>
+                          <TableCell colSpan={7} className="text-center py-8 text-red-600">{error}</TableCell>
                         </TableRow>
                       ) : promotions.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No promotions yet</TableCell>
+                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No promotions yet</TableCell>
                         </TableRow>
                       ) : (
                         promotions.map((p) => (
@@ -121,6 +140,15 @@ export default function PromotionsPage() {
                               }`}>
                                 {p.is_active ? "Active" : "Inactive"}
                               </span>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Switch
+                                  checked={p.show_on_homepage}
+                                  onCheckedChange={(checked) => toggleHomepage(p, checked)}
+                                />
+                                {p.show_on_homepage && <Sparkles className="h-3.5 w-3.5 text-blue-600" />}
+                              </div>
                             </TableCell>
                             <TableCell>{p.priority}</TableCell>
                             <TableCell>

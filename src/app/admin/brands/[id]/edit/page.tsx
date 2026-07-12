@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,11 +32,11 @@ export default function EditBrandPage() {
   });
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data, error } = await supabase.from("brands").select("*").eq("id", id).single();
-      if (error || !data) {
-        setNotFound(true);
-      } else {
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/admin/brands/${id}`);
+        if (!res.ok) throw new Error("Not found");
+        const data = await res.json();
         setForm({
           name: data.name,
           slug: data.slug,
@@ -47,10 +46,12 @@ export default function EditBrandPage() {
           display_order: String(data.display_order),
           is_active: data.is_active,
         });
+      } catch {
+        setNotFound(true);
       }
       setLoading(false);
     };
-    fetch();
+    load();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, ExternalLink, Trash2 } from "lucide-react";
+import { Plus, ExternalLink, Trash2, Database, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Brand } from "@/lib/supabase/types";
 
@@ -16,15 +15,21 @@ export default function BrandsPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [populating, setPopulating] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data, error } = await supabase.from("brands").select("*").order("display_order");
-      if (error) setError(error.message);
-      else if (data) setBrands(data);
+    const load = async () => {
+      try {
+        const res = await fetch("/api/admin/brands");
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data: Brand[] = await res.json();
+        setBrands(data);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Failed to fetch brands");
+      }
       setLoading(false);
     };
-    fetch();
+    load();
   }, []);
 
   const handleDelete = async (id: string, name: string) => {
@@ -36,6 +41,22 @@ export default function BrandsPage() {
     } else {
       const data = await res.json().catch(() => ({}));
       toast.error(data.error ?? "Failed to delete brand");
+    }
+  };
+
+  const handlePopulate = async () => {
+    setPopulating(true);
+    try {
+      const res = await fetch("/api/admin/brands/populate", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to populate");
+      toast.success(data.message);
+      const reload = await fetch("/api/admin/brands");
+      if (reload.ok) setBrands(await reload.json());
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to populate brands");
+    } finally {
+      setPopulating(false);
     }
   };
 
@@ -51,12 +72,18 @@ export default function BrandsPage() {
                 <h1 className="text-3xl font-bold tracking-tight">Brands</h1>
                 <p className="text-muted-foreground">Manage tire and wheel brands</p>
               </div>
-              <Link href="/admin/brands/new">
-                <Button className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  Add Brand
+              <div className="flex items-center gap-2">
+                <Button variant="outline" className="gap-2" onClick={handlePopulate} disabled={populating}>
+                  {populating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
+                  {populating ? "Populating..." : "Populate from Products"}
                 </Button>
-              </Link>
+                <Link href="/admin/brands/new">
+                  <Button className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add Brand
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             <Card>
