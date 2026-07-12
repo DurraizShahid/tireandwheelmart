@@ -80,6 +80,7 @@ export interface Brand {
   description: string | null;
   display_order: number;
   is_active: boolean;
+  show_on_homepage: boolean;
   created_at: string;
   updated_at: string;
 }

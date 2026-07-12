@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
@@ -23,6 +24,7 @@ export default function NewBrandPage() {
     website_url: "",
     description: "",
     display_order: "0",
+    show_on_homepage: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,6 +45,7 @@ export default function NewBrandPage() {
           website_url: form.website_url || undefined,
           description: form.description || undefined,
           display_order: parseInt(form.display_order) || 0,
+          show_on_homepage: form.show_on_homepage,
         }),
       });
       if (!res.ok) {
@@ -108,6 +111,10 @@ export default function NewBrandPage() {
                   <div className="space-y-2">
                     <Label htmlFor="order">Display Order</Label>
                     <Input id="order" type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: e.target.value })} />
+                  </div>
+                  <div className="flex items-center gap-2 pb-2">
+                    <Switch id="show_on_homepage" checked={form.show_on_homepage} onCheckedChange={(c) => setForm({ ...form, show_on_homepage: c })} />
+                    <Label htmlFor="show_on_homepage">Show on Homepage</Label>
                   </div>
                   <div className="flex gap-4 pt-4">
                     <Link href="/admin/brands">

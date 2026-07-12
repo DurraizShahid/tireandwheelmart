@@ -142,6 +142,8 @@ export async function getBrands(): Promise<Brand[]> {
     .from("brands")
     .select("*")
     .eq("is_active", true)
+    .eq("show_on_homepage", true)
+    .not("image_url", "is", null)
     .order("display_order");
 
   if (error) throw error;

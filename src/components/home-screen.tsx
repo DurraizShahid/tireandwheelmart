@@ -157,7 +157,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
     : defaultCategories;
 
   const displayBrands = brands.length > 0
-    ? brands.map((b) => ({
+    ? brands.filter((b) => b.image_url).map((b) => ({
         name: b.name,
         imageSrc: b.image_url ?? "/placeholder.svg",
         href: `/shop?brand=${b.slug}`,

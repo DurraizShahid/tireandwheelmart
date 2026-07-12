@@ -10,7 +10,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { name, slug, image_url, website_url, description, display_order } = body;
+  const { name, slug, image_url, website_url, description, display_order, show_on_homepage } = body;
 
   if (!name) return NextResponse.json({ error: "Brand name is required" }, { status: 400 });
 
@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       description: description || null,
       display_order: display_order ?? 0,
       is_active: true,
+      show_on_homepage: show_on_homepage ?? false,
     })
     .select()
     .single();

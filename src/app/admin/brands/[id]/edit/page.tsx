@@ -29,6 +29,7 @@ export default function EditBrandPage() {
     description: "",
     display_order: "0",
     is_active: true,
+    show_on_homepage: false,
   });
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export default function EditBrandPage() {
           description: data.description ?? "",
           display_order: String(data.display_order),
           is_active: data.is_active,
+          show_on_homepage: data.show_on_homepage ?? false,
         });
       } catch {
         setNotFound(true);
@@ -73,6 +75,7 @@ export default function EditBrandPage() {
           description: form.description || undefined,
           display_order: parseInt(form.display_order) || 0,
           is_active: form.is_active,
+          show_on_homepage: form.show_on_homepage,
         }),
       });
       if (!res.ok) {
@@ -158,18 +161,22 @@ export default function EditBrandPage() {
                     <Label htmlFor="desc">Description</Label>
                     <Textarea id="desc" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="order">Display Order</Label>
-                      <Input id="order" type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: e.target.value })} />
-                    </div>
-                    <div className="space-y-2 flex items-end pb-2">
-                      <div className="flex items-center gap-2">
-                        <Switch id="active" checked={form.is_active} onCheckedChange={(c) => setForm({ ...form, is_active: c })} />
-                        <Label htmlFor="active">Active</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="order">Display Order</Label>
+                        <Input id="order" type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: e.target.value })} />
+                      </div>
+                      <div className="space-y-2 flex items-end pb-2">
+                        <div className="flex items-center gap-2">
+                          <Switch id="active" checked={form.is_active} onCheckedChange={(c) => setForm({ ...form, is_active: c })} />
+                          <Label htmlFor="active">Active</Label>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <Switch id="show_on_homepage" checked={form.show_on_homepage} onCheckedChange={(c) => setForm({ ...form, show_on_homepage: c })} />
+                      <Label htmlFor="show_on_homepage">Show on Homepage</Label>
+                    </div>
                   <div className="flex gap-4 pt-4">
                     <Link href="/admin/brands">
                       <Button type="button" variant="outline">Cancel</Button>
