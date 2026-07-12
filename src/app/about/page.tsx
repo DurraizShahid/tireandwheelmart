@@ -30,8 +30,8 @@ export default function AboutPage() {
               grown into a trusted online destination for wheel and tire enthusiasts across the country.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              We understand that your vehicle's wheels and tires are more than just components—they're essential for your
-              safety, performance, and style. That's why we partner with the world's leading manufacturers to bring you
+              We understand that your vehicle&apos;s wheels and tires are more than just components—they&apos;re essential for your
+              safety, performance, and style. That&apos;s why we partner with the world&apos;s leading manufacturers to bring you
               the best selection of tires and wheels for every need, from daily commuting to track performance.
             </p>
           </section>
@@ -56,7 +56,7 @@ export default function AboutPage() {
                   <h3 className="text-xl font-semibold text-foreground mb-2">Expert Support</h3>
                   <p className="text-muted-foreground">
                     Our knowledgeable team is here to help you find the perfect wheels and tires for your vehicle,
-                    whether you're upgrading for performance or replacing worn tires.
+                    whether you&apos;re upgrading for performance or replacing worn tires.
                   </p>
                 </CardContent>
               </Card>
@@ -66,7 +66,7 @@ export default function AboutPage() {
                   <Award className="h-12 w-12 text-purple-600 mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">Wide Selection</h3>
                   <p className="text-muted-foreground">
-                    From all-season tires to performance wheels, we offer an extensive inventory to meet every driver's
+                    From all-season tires to performance wheels, we offer an extensive inventory to meet every driver&apos;s
                     needs and preferences.
                   </p>
                 </CardContent>
@@ -77,7 +77,7 @@ export default function AboutPage() {
                   <Heart className="h-12 w-12 text-red-600 mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">Customer First</h3>
                   <p className="text-muted-foreground">
-                    Your satisfaction is our top priority. We're committed to providing exceptional service from selection
+                    Your satisfaction is our top priority. We&apos;re committed to providing exceptional service from selection
                     to delivery and beyond.
                   </p>
                 </CardContent>
@@ -88,9 +88,9 @@ export default function AboutPage() {
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Our Commitment</h2>
             <p className="text-muted-foreground leading-relaxed">
-              At Tire&Wheel, we're more than just a retailer—we're your partners in keeping your vehicle safe and performing
-              at its best. We're committed to providing honest advice, quality products, and reliable service that you can
-              count on. Whether you're a daily commuter, weekend enthusiast, or track-day regular, we have the wheels and
+              At Tire&Wheel, we&apos;re more than just a retailer—we&apos;re your partners in keeping your vehicle safe and performing
+              at its best. We&apos;re committed to providing honest advice, quality products, and reliable service that you can
+              count on. Whether you&apos;re a daily commuter, weekend enthusiast, or track-day regular, we have the wheels and
               tires you need to drive with confidence.
             </p>
           </section>

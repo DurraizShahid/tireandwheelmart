@@ -14,7 +14,6 @@ import { ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
-import type { Brand } from "@/lib/supabase/types";
 
 export default function EditBrandPage() {
   const router = useRouter();

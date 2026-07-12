@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, MapPin } from "lucide-react";
+import { X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,27 +12,6 @@ interface SearchModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const tireBrands = [
-  "Michelin",
-  "Bridgestone",
-  "Continental",
-  "Goodyear",
-  "Pirelli",
-  "Toyo",
-  "Cooper",
-  "Firestone",
-  "Hercules",
-  "Nokian",
-];
-
-const tireTypes = [
-  "All-Season",
-  "Summer",
-  "Winter",
-  "Performance",
-  "All-Terrain",
-];
-
 const SearchModal: React.FC<SearchModalProps> = ({ open, onOpenChange }) => {
   const router = useRouter();
   const [zipCode, setZipCode] = useState("");
@@ -40,6 +19,17 @@ const SearchModal: React.FC<SearchModalProps> = ({ open, onOpenChange }) => {
   const [tireSize, setTireSize] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [tireBrands, setTireBrands] = useState<string[]>([]);
+  const [tireTypes, setTireTypes] = useState<{ name: string; slug: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/search/filters")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.brands?.length) setTireBrands(data.brands);
+        if (data.types?.length) setTireTypes(data.types);
+      });
+  }, []);
 
   const handleSearch = () => {
     // Build search query based on selected filters
@@ -184,8 +174,8 @@ const SearchModal: React.FC<SearchModalProps> = ({ open, onOpenChange }) => {
                   >
                     <option value="">Select a type</option>
                     {tireTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
+                      <option key={type.slug} value={type.slug}>
+                        {type.name}
                       </option>
                     ))}
                   </select>

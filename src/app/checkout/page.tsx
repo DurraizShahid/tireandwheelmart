@@ -15,14 +15,14 @@ import { StepPayment } from "@/components/checkout/StepPayment";
 import { StepReviewOrder } from "@/components/checkout/StepReviewOrder";
 import { StepConfirmation } from "@/components/checkout/StepConfirmation";
 import { CheckoutPromotions } from "@/components/promotions/CheckoutPromotions";
-import { SHIPPING_METHODS } from "@/lib/checkout-types";
+import { SHIPPING_METHODS as FALLBACK_METHODS } from "@/lib/checkout-types";
 
 export default function CheckoutPage() {
   const { items } = useCart();
   const {
     step, formData, errors, isTransitioning, isSubmitting, orderNumber, shippingCost,
     updateCustomerInfo, updateShippingAddress, updateShippingMethod, updateBillingInfo, updatePaymentInfo,
-    goToStep, goNext, goBack, submitOrder,
+    goToStep, goNext, goBack, submitOrder, shippingMethods,
   } = useCheckoutForm();
 
   if (items.length === 0 && step !== "confirmation") {
@@ -39,7 +39,7 @@ export default function CheckoutPage() {
   }
 
   const isConfirmation = step === "confirmation";
-  const shippingMethod = formData.shippingMethod ?? SHIPPING_METHODS[0];
+  const shippingMethod = formData.shippingMethod ?? shippingMethods[0] ?? FALLBACK_METHODS[0];
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -71,7 +71,7 @@ export default function CheckoutPage() {
                     <StepShippingAddress data={formData.shippingAddress} errors={errors} onChange={updateShippingAddress} />
                   )}
                   {step === "shipping-method" && (
-                    <StepShippingMethod selected={formData.shippingMethod} errors={errors} onChange={updateShippingMethod} />
+                    <StepShippingMethod selected={formData.shippingMethod} errors={errors} onChange={updateShippingMethod} methods={shippingMethods} />
                   )}
                   {step === "billing-info" && (
                     <StepBillingInfo data={formData.billingInfo} errors={errors} onChange={updateBillingInfo} />

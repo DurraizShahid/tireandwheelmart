@@ -10,15 +10,15 @@ import type { WishlistService } from "./wishlist-service";
 import type { PromotionService } from "./promotion-service";
 
 import { createSupabaseProductService, createMockProductService } from "./product-service";
-import { createMockCartService, createSupabaseCartService } from "./cart-service";
-import { createSupabaseOrderService, createMockOrderService } from "./order-service";
+import { createMockCartService } from "./cart-service";
+import { createSupabaseOrderService } from "./order-service";
 import { createSupabaseReviewService, createMockReviewService } from "./review-service";
 import { createSupabaseCouponService, createMockCouponService } from "./coupon-service";
 import { createMockShippingService } from "./shipping-service";
 import { createMockPaymentService } from "./payment-service";
 import { createSupabaseSearchService, createMockSearchService } from "./search-service";
-import { createMockWishlistService, createSupabaseWishlistService } from "./wishlist-service";
-import { createSupabasePromotionService, createMockPromotionService } from "./promotion-service";
+import { createMockWishlistService } from "./wishlist-service";
+import { createSupabasePromotionService } from "./promotion-service";
 
 export interface Services {
   product: ProductService;

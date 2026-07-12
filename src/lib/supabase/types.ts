@@ -142,3 +142,14 @@ export interface Promotion {
   created_at: string;
   updated_at: string;
 }
+
+export interface Faq {
+  id: string;
+  category: string;
+  question: string;
+  answer: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}

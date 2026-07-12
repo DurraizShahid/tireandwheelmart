@@ -3,8 +3,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
-import { createBrowserClient } from "@/lib/supabase/client";
-import { createSupabaseWishlistService } from "@/lib/services/wishlist-service";
 
 export interface WishlistItem {
   id: string;
@@ -42,11 +40,6 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const { user, isLoaded: clerkLoaded } = useUser();
   const lastUserId = useRef<string | null>(null);
 
-  const supabaseWishlist = useMemo(() => {
-    if (!user?.id) return null;
-    return createSupabaseWishlistService(user.id, createBrowserClient());
-  }, [user?.id]);
-
   useEffect(() => {
     try {
       const stored = localStorage.getItem(WISHLIST_STORAGE_KEY);
@@ -66,32 +59,29 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     if (!hydrated || !clerkLoaded) return;
     if (user?.id && user.id !== lastUserId.current) {
       lastUserId.current = user.id;
-      supabaseWishlist?.getItems().then((res) => {
-        if (res.success && res.data.length > 0) {
-          setItems(res.data);
+      fetch("/api/wishlist").then((r) => r.json()).then((serverItems: any[]) => {
+        if (serverItems.length > 0) {
+          setItems(serverItems);
         }
       });
     } else if (!user?.id) {
       lastUserId.current = null;
     }
-  }, [user?.id, hydrated, clerkLoaded, supabaseWishlist]);
+  }, [user?.id, hydrated, clerkLoaded]);
 
   useEffect(() => {
     if (hydrated) {
       localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
-      if (supabaseWishlist) {
-        if (items.length > 0) {
-          supabaseWishlist.clear().then(() => {
-            for (const item of items) {
-              supabaseWishlist.addItem(item);
-            }
-          });
-        } else {
-          supabaseWishlist.clear();
-        }
+      if (user?.id) {
+        const payload = items.map((i) => ({ productId: i.id }));
+        fetch("/api/wishlist", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items: payload }),
+        });
       }
     }
-  }, [items, hydrated, supabaseWishlist]);
+  }, [items, hydrated, user?.id]);
 
   const addToWishlist = useCallback((item: Omit<WishlistItem, "addedAt">) => {
     setItems((prev) => {

@@ -31,7 +31,6 @@ export function ShopClient() {
     filters,
     sort,
     viewMode,
-    page,
     activeFilterCount,
     brands,
     setSearchTerm,
@@ -40,7 +39,6 @@ export function ShopClient() {
     setViewMode,
     setPage,
     clearFilters,
-    updateFilter,
   } = useShop({ products, defaultPageSize: 12 });
 
   return (

@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Snowflake, Sun, CloudRain, Zap, Gauge, Calendar, Shield } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Snowflake, Sun, CloudRain, Zap, Gauge, Shield } from "lucide-react";
 
 interface Product {
   id: string;

@@ -7,15 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import type { BillingInfo, ShippingAddress } from "@/lib/checkout-types";
 import { COUNTRIES, US_STATES } from "@/lib/checkout-types";
-import { cn } from "@/lib/utils";
-
 interface Props {
   data: BillingInfo;
   errors: Record<string, string>;
   onChange: (data: BillingInfo) => void;
 }
 
-export function StepBillingInfo({ data, errors, onChange }: Props) {
+export function StepBillingInfo({ data, onChange }: Props) {
   const toggleSameAsShipping = (checked: boolean) => {
     onChange({ ...data, sameAsShipping: checked });
   };

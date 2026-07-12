@@ -25,12 +25,10 @@ function SearchResultItem({
   product,
   isActive,
   onNavigate,
-  onClose,
 }: {
   product: Product;
   isActive: boolean;
   onNavigate: (slug: string) => void;
-  onClose: () => void;
 }) {
   const { addToCart } = useCart();
   const { toggleWishlist } = useWishlist();
@@ -271,7 +269,6 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                     product={product}
                     isActive={i === activeIndex}
                     onNavigate={handleNavigate}
-                    onClose={() => onOpenChange(false)}
                   />
                 ))}
               </div>

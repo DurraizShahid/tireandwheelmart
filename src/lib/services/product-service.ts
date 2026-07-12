@@ -1,6 +1,7 @@
 import type { Product, ProductFilters, SortOption } from "@/lib/catalog-types";
 import type { ServiceResult, PaginatedResult } from "./types";
 import { success, failure } from "./types";
+import { generateMockProducts } from "@/lib/mock-products";
 
 export interface ProductService {
   getProducts(filters?: ProductFilters, sort?: SortOption, page?: number, pageSize?: number): Promise<ServiceResult<PaginatedResult<Product>>>;
@@ -76,7 +77,6 @@ export function createSupabaseProductService(): ProductService {
 }
 
 export function createMockProductService(): ProductService {
-  const { generateMockProducts } = require("@/lib/mock-products");
   let allProducts: Product[] | null = null;
 
   function getProducts(): Product[] {

@@ -20,12 +20,6 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-  // Turbopack configurationss4
-  // Note: @dyad-sh/nextjs-webpack-component-tagger is Webpack-specific
-  // and won't work with Turbopack. This config is added to resolve the warning.
-  turbo: {
-    // Add Turbopack-specific configuration here if needed
-  },
 };
 
 export default nextConfig;

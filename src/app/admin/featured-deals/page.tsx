@@ -18,7 +18,6 @@ export default function FeaturedDealsPage() {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [allPromotions, setAllPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {

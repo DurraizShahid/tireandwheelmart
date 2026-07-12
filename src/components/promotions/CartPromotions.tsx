@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { formatPrice } from "@/lib/catalog-helpers";
 import { evaluatePromotions, computeTotalPromotionDiscount } from "@/lib/promotions/engine";
 import { PROMOTIONS } from "@/lib/promotions/constants";
 import { formatDiscountLabel } from "@/lib/promotions/helpers";
@@ -17,13 +16,13 @@ interface CartPromotionsProps {
   className?: string;
 }
 
-export function CartPromotions({ items, subtotal, appliedPromotions, className }: CartPromotionsProps) {
+export function CartPromotions({ items, subtotal, className }: CartPromotionsProps) {
   const promoItems = useMemo(
     () => items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, category: i.size ? "tires" : undefined, brand: i.brand })),
     [items]
   );
 
-  const { results, totalDiscount } = useMemo(() => {
+  const { results } = useMemo(() => {
     const ctx = { items: promoItems, subtotal };
     const r = evaluatePromotions(PROMOTIONS, ctx);
     return { results: r, totalDiscount: computeTotalPromotionDiscount(r) };

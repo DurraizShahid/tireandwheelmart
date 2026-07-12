@@ -5,13 +5,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/catalog-helpers";
-import { SHIPPING_METHODS, type ShippingMethod } from "@/lib/checkout-types";
+import { SHIPPING_METHODS as FALLBACK_METHODS, type ShippingMethod } from "@/lib/checkout-types";
 import { Truck, Zap, Rocket, Store } from "lucide-react";
 
 interface Props {
   selected: ShippingMethod | null;
   errors: Record<string, string>;
   onChange: (method: ShippingMethod) => void;
+  methods?: ShippingMethod[];
 }
 
 const icons: Record<string, React.ReactNode> = {
@@ -21,7 +22,8 @@ const icons: Record<string, React.ReactNode> = {
   pickup: <Store className="h-5 w-5" />,
 };
 
-export function StepShippingMethod({ selected, errors, onChange }: Props) {
+export function StepShippingMethod({ selected, errors, onChange, methods }: Props) {
+  const shippingMethods = methods && methods.length > 0 ? methods : FALLBACK_METHODS;
   return (
     <Card>
       <CardHeader>
@@ -32,12 +34,12 @@ export function StepShippingMethod({ selected, errors, onChange }: Props) {
         <RadioGroup
           value={selected?.id ?? ""}
           onValueChange={(id) => {
-            const method = SHIPPING_METHODS.find((m) => m.id === id);
+            const method = shippingMethods.find((m) => m.id === id);
             if (method) onChange(method);
           }}
         >
           <div className="space-y-3">
-            {SHIPPING_METHODS.map((method) => {
+            {shippingMethods.map((method) => {
               const isSelected = selected?.id === method.id;
               return (
                 <label

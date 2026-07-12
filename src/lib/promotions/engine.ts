@@ -64,7 +64,7 @@ function evaluateSingle(p: Promotion, ctx: PromotionContext): number {
   }
 }
 
-export function getApplicablePromotions(promotions: Promotion[], ctx: PromotionContext): Promotion[] {
+export function getApplicablePromotions(promotions: Promotion[], _ctx: PromotionContext): Promotion[] {
   return promotions.filter((p) => isPromotionActive(p));
 }
 

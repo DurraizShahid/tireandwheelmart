@@ -14,7 +14,7 @@ interface OrderSummaryProps {
 }
 
 export function OrderSummary({ compact, shippingCost = 0 }: OrderSummaryProps) {
-  const { items, updateQuantity, removeFromCart } = useCart();
+  const { items } = useCart();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);

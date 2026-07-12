@@ -1,5 +1,5 @@
 import type { ServiceResult } from "./types";
-import { success, failure } from "./types";
+import { success } from "./types";
 import type { PaymentInfo } from "@/lib/checkout-types";
 
 export interface PaymentResult {

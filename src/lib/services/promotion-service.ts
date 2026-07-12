@@ -1,9 +1,8 @@
 import type { ServiceResult } from "./types";
 import { success } from "./types";
-import type { Promotion, PromotionResult, PromotionContext, BundlePrice, ProductPromotionBadge } from "@/lib/promotions/types";
+import type { Promotion, PromotionResult, PromotionContext } from "@/lib/promotions/types";
 import { PROMOTIONS } from "@/lib/promotions/constants";
 import { evaluatePromotions, computeTotalPromotionDiscount, hasFreeShipping } from "@/lib/promotions/engine";
-import { formatPromotionValue } from "@/lib/promotions/helpers";
 
 export interface PromotionService {
   getActivePromotions(): Promise<ServiceResult<Promotion[]>>;

@@ -3,10 +3,6 @@
 import { Shield, Zap, CloudRain, Snowflake, Award, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface ProductFeaturesProps {
-  productName: string;
-}
-
 const features = [
   { icon: Shield, title: "Durability", description: "Reinforced construction and advanced compound technology ensure long-lasting performance mile after mile." },
   { icon: Zap, title: "Performance", description: "Engineered for responsive handling, precise steering, and confident cornering in all conditions." },

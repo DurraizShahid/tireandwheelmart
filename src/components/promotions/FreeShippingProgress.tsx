@@ -28,11 +28,11 @@ export function FreeShippingProgress({ subtotal, threshold = 200, className }: F
         />
         {unlocked ? (
           <p className="text-sm font-medium text-green-700">
-            Congratulations! You've unlocked FREE Shipping.
+            Congratulations! You&apos;ve unlocked FREE Shipping.
           </p>
         ) : (
           <p className="text-sm text-muted-foreground">
-            You're <strong className="text-foreground">{formatPrice(remaining)}</strong> away from{" "}
+            You&apos;re <strong className="text-foreground">{formatPrice(remaining)}</strong> away from{" "}
             <strong className="text-green-700">FREE Shipping</strong>
           </p>
         )}

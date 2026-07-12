@@ -4,7 +4,6 @@ import Link from "next/link";
 import { X, GitCompare, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCompare } from "@/contexts/compare-context";
-import { cn } from "@/lib/utils";
 
 export function CompareBar() {
   const { items, compareCount, removeFromCompare, clearCompare } = useCompare();

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { X, Heart, ShoppingCart, Trash2, Share2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useCart } from "@/contexts/cart-context";
 import { toast } from "sonner";
@@ -48,8 +47,21 @@ export function WishlistDrawer() {
     toast.success(`Moved ${count} item${count !== 1 ? "s" : ""} to cart`);
   };
 
-  const handleShare = () => {
-    toast.info("Share wishlist coming soon");
+  const handleShare = async () => {
+    try {
+      const res = await fetch("/api/wishlist/share", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) { toast.error("Could not create share link"); return; }
+      const url = `${window.location.origin}/shared/${data.token}`;
+      if (navigator.share) {
+        await navigator.share({ title: "My Wishlist", url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Share link copied to clipboard");
+      }
+    } catch {
+      toast.error("Could not create share link");
+    }
   };
 
   return (

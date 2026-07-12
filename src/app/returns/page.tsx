@@ -35,7 +35,7 @@ export default function ReturnsPage() {
                   <li>• Unused wheels in original packaging</li>
                   <li>• Items within 30 days of purchase</li>
                   <li>• Items with original receipt or order number</li>
-                  <li>• Items that haven't been mounted or installed</li>
+                   <li>• Items that haven&apos;t been mounted or installed</li>
                 </ul>
               </CardContent>
             </Card>
@@ -97,7 +97,7 @@ export default function ReturnsPage() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Ship Back</h3>
                   <p className="text-muted-foreground">
-                    We'll provide you with a return shipping label and instructions. Ship the items back to us
+                    We&apos;ll provide you with a return shipping label and instructions. Ship the items back to us
                     using the provided label within 7 days of receiving return authorization.
                   </p>
                 </div>
@@ -112,7 +112,7 @@ export default function ReturnsPage() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Receive Refund</h3>
                   <p className="text-muted-foreground">
-                    Once we receive and inspect your return, we'll process your refund to the original payment method.
+                    Once we receive and inspect your return, we&apos;ll process your refund to the original payment method.
                     Refunds typically appear within 5-10 business days.
                   </p>
                 </div>
@@ -151,17 +151,17 @@ export default function ReturnsPage() {
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Defective Items</h2>
             <p className="text-muted-foreground leading-relaxed">
-              If you receive a defective tire or wheel, please contact us immediately. We'll arrange for a replacement
+              If you receive a defective tire or wheel, please contact us immediately. We&apos;ll arrange for a replacement
               or full refund, including return shipping costs. Defective items are covered under manufacturer warranties,
-              and we'll work with you to resolve the issue quickly.
+              and we&apos;ll work with you to resolve the issue quickly.
             </p>
           </section>
 
           <section>
             <h2 className="text-3xl font-bold text-foreground mb-4">Questions?</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              If you have any questions about our return policy or need assistance with a return, please don't hesitate
-              to contact our customer service team. We're here to help!
+              If you have any questions about our return policy or need assistance with a return, please don&apos;t hesitate
+              to contact our customer service team. We&apos;re here to help!
             </p>
             <a
               href="/contact"

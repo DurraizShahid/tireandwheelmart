@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { getServices } from "@/lib/services/service-registry";
 import type { Promotion, PromotionResult, PromotionContext } from "@/lib/promotions/types";
 

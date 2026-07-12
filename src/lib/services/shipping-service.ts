@@ -15,7 +15,7 @@ const MOCK_METHODS: ShippingMethod[] = [
 
 export function createMockShippingService(): ShippingService {
   return {
-    async getShippingMethods(_address) {
+    async getShippingMethods(_address: ShippingAddress) {
       return success(MOCK_METHODS);
     },
   };

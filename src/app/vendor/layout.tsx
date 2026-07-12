@@ -5,7 +5,7 @@ import { VendorSidebar } from "@/components/vendor-sidebar";
 import { VendorHeader } from "@/components/vendor-header";
 
 export default function VendorLayout({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-muted/30">

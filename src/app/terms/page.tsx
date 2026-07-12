@@ -22,7 +22,7 @@ export default function TermsPage() {
         <div className="prose prose-lg max-w-none space-y-8">
           <section>
             <p className="text-muted-foreground leading-relaxed">
-              Welcome to Tire&Wheel. These Terms of Service ("Terms") govern your access to and use of our website and
+               Welcome to Tire&Wheel. These Terms of Service (&quot;Terms&quot;) govern your access to and use of our website and
               services. By accessing or using our website, you agree to be bound by these Terms.
             </p>
           </section>
@@ -118,7 +118,7 @@ export default function TermsPage() {
                   We will assist you in processing warranty claims, but warranty terms are set by the manufacturers.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  <strong>Website Disclaimer:</strong> Our website and services are provided "as is" without warranties of any
+                   <strong>Website Disclaimer:</strong> Our website and services are provided &quot;as is&quot; without warranties of any
                   kind, either express or implied. We do not warrant that our website will be uninterrupted, secure, or error-free.
                 </p>
               </CardContent>
@@ -162,7 +162,7 @@ export default function TermsPage() {
             <h2 className="text-3xl font-bold text-foreground mb-4">Modifications to Terms</h2>
             <p className="text-muted-foreground leading-relaxed">
               We reserve the right to modify these Terms at any time. We will notify you of any material changes by posting
-              the updated Terms on this page and updating the "Last Updated" date. Your continued use of our website after
+               the updated Terms on this page and updating the &quot;Last Updated&quot; date. Your continued use of our website after
               such changes constitutes acceptance of the modified Terms.
             </p>
           </section>

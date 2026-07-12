@@ -16,7 +16,7 @@ interface Props {
   shippingCost: number;
 }
 
-export function StepConfirmation({ orderNumber, customerEmail, shippingMethodLabel, estimatedDays, shippingCost }: Props) {
+export function StepConfirmation({ orderNumber, customerEmail, estimatedDays, shippingCost }: Props) {
   const { items } = useCart();
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const tax = Math.max(0, subtotal) * 0.08;

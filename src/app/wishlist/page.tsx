@@ -30,8 +30,21 @@ export default function WishlistPage() {
     toast.success(`Moved "${item.name}" to cart`);
   };
 
-  const handleShare = () => {
-    toast.info("Share wishlist coming soon");
+  const handleShare = async () => {
+    try {
+      const res = await fetch("/api/wishlist/share", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) { toast.error("Could not create share link"); return; }
+      const url = `${window.location.origin}/shared/${data.token}`;
+      if (navigator.share) {
+        await navigator.share({ title: "My Wishlist", url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Share link copied to clipboard");
+      }
+    } catch {
+      toast.error("Could not create share link");
+    }
   };
 
   if (items.length === 0) {

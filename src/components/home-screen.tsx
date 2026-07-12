@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Car,
@@ -26,6 +25,7 @@ import BrandCard from "@/components/brand-card";
 import HeaderSlideshow from "@/components/header-slideshow";
 import ProductCarousel from "@/components/product-carousel";
 import { getUrlSlug } from "@/lib/category-configs";
+import { CATEGORIES } from "@/lib/catalog-constants";
 import { HomepageDeals } from "@/components/promotions/HomepageDeals";
 import type { Promotion as DbPromotion, Brand as DbBrand, Testimonial as DbTestimonial, Category as DbCategory } from "@/lib/supabase/types";
 
@@ -128,10 +128,14 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
     { title: "Tire Accessories", imageSrc: "/categories/tireaccessories.png", description: "TPMS sensors, valve stems, and repair kits.", href: "/shop/tire-accessories" },
   ];
 
+  const categoryImageBySlug = Object.fromEntries(
+    CATEGORIES.map((c) => [c.slug, c.image])
+  );
+
   const featuredCategories = homepageCategories.length > 0
     ? homepageCategories.map((c) => ({
         title: c.name,
-        imageSrc: c.image_url ?? "/placeholder.svg",
+        imageSrc: c.image_url || categoryImageBySlug[c.slug] || categoryImageBySlug[getUrlSlug(c.slug)] || "/categories/allseason.png",
         description: c.homepage_description ?? c.description ?? "",
         href: `/shop/${getUrlSlug(c.slug)}`,
       }))

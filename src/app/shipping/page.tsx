@@ -79,7 +79,7 @@ export default function ShippingPage() {
                     <strong>Cost:</strong> Free
                   </p>
                   <p className="text-muted-foreground text-sm">
-                    Pick up your order at our store. We'll notify you when your order is ready.
+                    Pick up your order at our store. We&apos;ll notify you when your order is ready.
                   </p>
                 </CardContent>
               </Card>
@@ -98,7 +98,7 @@ export default function ShippingPage() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Order Processing</h3>
                   <p className="text-muted-foreground">
-                    Most orders are processed and shipped within 1-2 business days. You'll receive a confirmation email
+                    Most orders are processed and shipped within 1-2 business days. You&apos;ll receive a confirmation email
                     with your order details and tracking information.
                   </p>
                 </div>
@@ -128,8 +128,8 @@ export default function ShippingPage() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Tracking</h3>
                   <p className="text-muted-foreground">
-                    Once your order ships, you'll receive a tracking number via email. Use this to monitor your
-                    shipment's progress and estimated delivery date.
+                    Once your order ships, you&apos;ll receive a tracking number via email. Use this to monitor your
+                    shipment&apos;s progress and estimated delivery date.
                   </p>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function ShippingPage() {
                       <h3 className="font-semibold text-foreground mb-1">Delivery Delays</h3>
                       <p className="text-muted-foreground text-sm">
                         While we strive for on-time delivery, weather conditions, carrier delays, or other factors
-                        beyond our control may affect delivery times. We'll keep you informed of any significant delays.
+                        beyond our control may affect delivery times. We&apos;ll keep you informed of any significant delays.
                       </p>
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function ShippingPage() {
             <h2 className="text-3xl font-bold text-foreground mb-4">Questions?</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
               If you have any questions about shipping, delivery times, or need to make special arrangements,
-              please contact our customer service team. We're here to help!
+              please contact our customer service team. We&apos;re here to help!
             </p>
             <a
               href="/contact"

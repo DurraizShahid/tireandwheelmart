@@ -1,5 +1,5 @@
 import { createServerClient } from "./server";
-import type { Product, ProductWithCategory, Category, Supplier, Promotion, Brand, Testimonial, SiteSetting } from "./types";
+import type { Product, ProductWithCategory, Category, Supplier, Promotion, Brand, Testimonial, Faq } from "./types";
 
 export async function getCategories(): Promise<Category[]> {
   const supabase = createServerClient();
@@ -155,6 +155,21 @@ export async function getTestimonials(): Promise<Testimonial[]> {
     .select("*")
     .eq("is_active", true)
     .eq("is_approved", true)
+    .order("display_order");
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+// ---- FAQ Queries ----
+
+export async function getFaqs(): Promise<Faq[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("faqs")
+    .select("*")
+    .eq("is_active", true)
+    .order("category")
     .order("display_order");
 
   if (error) throw error;

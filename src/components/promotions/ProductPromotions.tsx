@@ -2,13 +2,13 @@
 
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { Tag, Truck, Package, Shield, Clock, Sparkles } from "lucide-react";
-import { PromotionBadge, PromotionBadgeGroup } from "./PromotionBadge";
+import { Truck, Shield } from "lucide-react";
+import { PromotionBadgeGroup } from "./PromotionBadge";
 import { BundlePricing } from "./BundlePricing";
 import { computeBundleSavings, getProductBadgesFromPromotions } from "@/lib/promotions/helpers";
 import { PROMOTIONS } from "@/lib/promotions/constants";
 import type { ProductPromotionBadge, BundlePrice } from "@/lib/promotions/types";
-import { FlashSaleCountdown } from "./FlashSaleCountdown";
+
 
 interface ProductPromotionsProps {
   product: { id: string; name: string; price: number; category?: string; brand?: string; comparePrice?: number; quantity?: number };

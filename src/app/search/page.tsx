@@ -11,7 +11,6 @@ import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { FilterSidebar } from "@/components/catalog/FilterSidebar";
 import { SortDropdown } from "@/components/catalog/SortDropdown";
 import { Pagination } from "@/components/catalog/Pagination";
-import { EmptyState } from "@/components/catalog/EmptyState";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -33,7 +32,6 @@ function SearchContent() {
     filters,
     sort,
     viewMode,
-    page,
     brands,
     setSearchTerm,
     setFilters,

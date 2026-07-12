@@ -15,7 +15,7 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSummaryProps) {
-  const { items, subtotal, tax, shipping, total, formattedSubtotal, formattedTax, formattedShipping, formattedTotal, isApplyingCoupon, applyCoupon, appliedCoupon, discount, formattedDiscount } = useCart();
+  const { items, subtotal, shipping, formattedSubtotal, formattedTax, formattedShipping, formattedTotal, isApplyingCoupon, applyCoupon, appliedCoupon, discount, formattedDiscount } = useCart();
   const [couponCode, setCouponCode] = useState("");
 
   const handleApplyCoupon = async () => {

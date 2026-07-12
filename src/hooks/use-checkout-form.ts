@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import type { CheckoutStep, CheckoutFormData, CustomerInfo, ShippingAddress, ShippingMethod, BillingInfo, PaymentInfo } from "@/lib/checkout-types";
 import { CHECKOUT_STEPS, SHIPPING_METHODS } from "@/lib/checkout-types";
@@ -15,6 +15,17 @@ export function useCheckoutForm() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>(SHIPPING_METHODS);
+
+  useEffect(() => {
+    fetch("/api/shipping")
+      .then((r) => r.json())
+      .then((methods: ShippingMethod[]) => {
+        if (methods.length > 0) {
+          setShippingMethods(methods);
+        }
+      });
+  }, []);
 
   const currentIndex = CHECKOUT_STEPS.indexOf(step);
 
@@ -119,8 +130,8 @@ export function useCheckoutForm() {
     }, 1500);
   }, [clearCart]);
 
-  const shippingCost = formData.shippingMethod?.cost ?? SHIPPING_METHODS[0].cost;
-  const defaultShippingMethod = SHIPPING_METHODS[0];
+  const shippingCost = formData.shippingMethod?.cost ?? shippingMethods[0]?.cost ?? 0;
+  const defaultShippingMethod = shippingMethods[0] ?? SHIPPING_METHODS[0];
 
   return {
     step,
@@ -142,5 +153,6 @@ export function useCheckoutForm() {
     goNext,
     goBack,
     submitOrder,
+    shippingMethods,
   };
 }

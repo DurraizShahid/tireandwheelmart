@@ -145,7 +145,7 @@ export function createMockOrderService(): OrderService {
       return success(order);
     },
 
-    async getOrderByNumber(orderNumber) {
+    async getOrderByNumber(_orderNumber) {
       return failure("NOT_FOUND", "Order not found. Integration required.");
     },
   };

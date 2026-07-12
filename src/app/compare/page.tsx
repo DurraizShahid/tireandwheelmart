@@ -5,16 +5,15 @@ import Link from "next/link";
 import { Star, ShoppingCart, Trash2, GitCompare, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCompare } from "@/contexts/compare-context";
 import { useCart } from "@/contexts/cart-context";
 import { toast } from "sonner";
 import { Breadcrumb } from "@/components/catalog/Breadcrumb";
 import { EmptyCompare } from "@/components/compare/EmptyCompare";
-import { formatPrice, computeDiscount, getProductBadges } from "@/lib/catalog-helpers";
+import { formatPrice, computeDiscount } from "@/lib/catalog-helpers";
 import { cn } from "@/lib/utils";
-import type { Product, BadgeType } from "@/lib/catalog-types";
+import type { Product } from "@/lib/catalog-types";
 
 function allEqual<T>(values: T[]): boolean {
   if (values.length <= 1) return true;
@@ -48,15 +47,7 @@ function MobileProductCard({ product, onRemove, onAddToCart, isActive, onSelect 
   isActive: boolean;
   onSelect: () => void;
 }) {
-  const badges = getProductBadges(product);
   const discount = computeDiscount(product.price, product.comparePrice);
-
-  const badgeStyles: Record<BadgeType, string> = {
-    featured: "bg-purple-600 text-white hover:bg-purple-600",
-    new: "bg-blue-600 text-white hover:bg-blue-600",
-    bestseller: "bg-amber-600 text-white hover:bg-amber-600",
-    sale: "bg-red-600 text-white hover:bg-red-600",
-  };
 
   return (
     <Card className={cn("overflow-hidden border-2 transition-all", isActive ? "border-blue-500" : "border-gray-100 opacity-60")}>

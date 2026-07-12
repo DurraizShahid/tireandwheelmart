@@ -8,7 +8,7 @@ interface SeoContentProps {
   seoContent?: string[];
 }
 
-export function SeoContent({ category, categoryTitle, seoContent }: SeoContentProps) {
+export function SeoContent({ categoryTitle, seoContent }: SeoContentProps) {
   const title = categoryTitle || "Premium Tires and Wheels";
 
   return (

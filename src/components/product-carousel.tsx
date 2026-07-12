@@ -31,7 +31,6 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
     const content = contentRef.current;
     if (!scrollContainer || !content) return;
 
-    let scrollInterval: NodeJS.Timeout;
     let isAutoScrolling = true;
 
     const autoScroll = () => {
@@ -52,7 +51,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
     };
 
     // Start auto-scroll
-    scrollInterval = setInterval(autoScroll, autoScrollSpeed);
+    const scrollInterval = setInterval(autoScroll, autoScrollSpeed);
 
     // Pause on hover
     const handleMouseEnter = () => {

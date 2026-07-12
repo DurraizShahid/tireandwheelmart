@@ -35,7 +35,7 @@ export default function ContactPage() {
           Contact Us
         </h1>
         <p className="text-xl text-muted-foreground text-center mb-12">
-          Have questions about wheels or tires? We're here to help!
+          Have questions about wheels or tires? We&apos;re here to help!
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

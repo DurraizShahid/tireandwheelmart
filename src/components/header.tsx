@@ -2,14 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Menu, Search, Shield } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CategoryDropdown } from "@/components/category-dropdown";
-import { useCart } from "@/contexts/cart-context";
 import { CartBadge } from "@/components/cart/CartBadge";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { WishlistBadge } from "@/components/wishlist/WishlistBadge";
@@ -26,30 +25,9 @@ const navLinks = [
 
 const Header = () => {
   const pathname = usePathname();
-  const router = useRouter();
-
-  if (pathname.startsWith("/admin")) return null;
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery("");
-      setShowSuggestions(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setShowSuggestions(true);
-  };
-
-  const handleInputFocus = () => {
-    setShowSuggestions(true);
-  };
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <header className="w-full border-b bg-background">

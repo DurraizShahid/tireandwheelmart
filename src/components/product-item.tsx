@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Star, Snowflake, Sun, CloudRain, Zap, Gauge, Calendar, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +36,6 @@ const ProductItem = ({
   name,
   price,
   imageSrc,
-  accentColor = "bg-gray-200",
   href,
   specs,
   rating = 4.5,

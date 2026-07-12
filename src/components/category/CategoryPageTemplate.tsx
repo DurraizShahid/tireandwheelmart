@@ -46,7 +46,6 @@ export function CategoryPageTemplate({ config, products: providedProducts }: Cat
     filters,
     sort,
     viewMode,
-    page,
     activeFilterCount,
     brands,
     setSearchTerm,

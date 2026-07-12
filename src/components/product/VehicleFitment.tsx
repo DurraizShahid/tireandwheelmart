@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Truck, Ruler } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Product } from "@/lib/catalog-types";
@@ -8,9 +9,36 @@ interface VehicleFitmentProps {
   product: Product;
 }
 
-const vehicleMakes = ["BMW", "Mercedes-Benz", "Audi", "Lexus", "Acura", "Porsche", "Volkswagen", "Toyota", "Honda", "Ford"];
+interface Fitment {
+  id: string;
+  make: string;
+  model: string;
+  year_start: number;
+  year_end: number;
+  tire_size: string;
+  bolt_pattern: string | null;
+  offset_range: string | null;
+}
 
 export function VehicleFitment({ product }: VehicleFitmentProps) {
+  const [fitments, setFitments] = useState<Fitment[]>([]);
+
+  useEffect(() => {
+    if (product.size) {
+      fetch(`/api/fitments?size=${encodeURIComponent(product.size)}`)
+        .then((r) => r.json())
+        .then((data) => setFitments(data ?? []));
+    }
+  }, [product.size]);
+
+  if (fitments.length === 0) return null;
+
+  const grouped = fitments.reduce<Record<string, Fitment[]>>((acc, f) => {
+    if (!acc[f.make]) acc[f.make] = [];
+    acc[f.make].push(f);
+    return acc;
+  }, {});
+
   return (
     <Card className="rounded-2xl shadow-sm border border-gray-100">
       <CardHeader className="p-6 pb-4">
@@ -21,13 +49,16 @@ export function VehicleFitment({ product }: VehicleFitmentProps) {
       </CardHeader>
       <CardContent className="p-6 pt-0">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {vehicleMakes.slice(0, 10).map((make) => (
+          {Object.entries(grouped).slice(0, 10).map(([make, models]) => (
             <div
               key={make}
               className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 text-center hover:border-blue-200 hover:bg-blue-50/50 transition-colors"
             >
               <p className="font-semibold text-sm text-foreground">{make}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">2018 - 2025</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {Math.min(...models.map((m) => m.year_start))} - {Math.max(...models.map((m) => m.year_end))}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">{models.length} model{models.length > 1 ? "s" : ""}</p>
             </div>
           ))}
         </div>
