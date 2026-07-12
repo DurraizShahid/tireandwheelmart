@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import HomeScreen from "@/components/home-screen";
-import { getFeaturedProducts, getProductsByCategory } from "@/lib/supabase/queries";
+import { getFeaturedProducts, getProductsByCategory, getHomepageFeaturedDeals, getBrands, getTestimonials, getSiteSettings, getHomepageCategories } from "@/lib/supabase/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -18,11 +18,21 @@ export const metadata: Metadata = {
 export default async function Home() {
   let featuredProducts: Awaited<ReturnType<typeof getFeaturedProducts>> = [];
   let summerTires: Awaited<ReturnType<typeof getProductsByCategory>> = [];
+  let featuredDeals: Awaited<ReturnType<typeof getHomepageFeaturedDeals>> = [];
+  let brands: Awaited<ReturnType<typeof getBrands>> = [];
+  let testimonials: Awaited<ReturnType<typeof getTestimonials>> = [];
+  let siteSettings: Record<string, unknown> = {};
+  let homepageCategories: Awaited<ReturnType<typeof getHomepageCategories>> = [];
 
   try {
-    [featuredProducts, summerTires] = await Promise.all([
+    [featuredProducts, summerTires, featuredDeals, brands, testimonials, siteSettings, homepageCategories] = await Promise.all([
       getFeaturedProducts(),
       getProductsByCategory("summer"),
+      getHomepageFeaturedDeals(),
+      getBrands(),
+      getTestimonials(),
+      getSiteSettings(),
+      getHomepageCategories(),
     ]);
   } catch {
     // Database may not be seeded yet — render with empty arrays
@@ -32,6 +42,11 @@ export default async function Home() {
     <HomeScreen
       featuredProducts={featuredProducts}
       summerTires={summerTires}
+      featuredDeals={featuredDeals}
+      brands={brands}
+      testimonials={testimonials}
+      siteSettings={siteSettings}
+      homepageCategories={homepageCategories}
     />
   );
 }

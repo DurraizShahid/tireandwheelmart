@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
-  const { name, slug, description, image_url, hero_image, seo_title, seo_description, content, display_order } = body;
+  const { name, slug, description, image_url, hero_image, seo_title, seo_description, content, display_order, homepage_category, homepage_description } = body;
 
   const supabase = createServerClient();
   const updates: Record<string, unknown> = {};
@@ -28,6 +28,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (seo_description !== undefined) updates.seo_description = seo_description || null;
   if (content !== undefined) updates.content = content;
   if (display_order !== undefined) updates.display_order = display_order;
+  if (homepage_category !== undefined) updates.homepage_category = homepage_category;
+  if (homepage_description !== undefined) updates.homepage_description = homepage_description || null;
 
   const { data, error } = await supabase.from("categories").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

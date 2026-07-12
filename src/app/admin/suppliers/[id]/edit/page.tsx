@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
+import { ADMIN_DEFAULTS } from "@/lib/admin-constants";
 
 interface Supplier {
   id: string;
@@ -27,40 +30,52 @@ export default function EditSupplierPage() {
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     business_name: "",
     business_email: "",
     business_phone: "",
-    commission_rate: "10",
+    commission_rate: String(ADMIN_DEFAULTS.DEFAULT_COMMISSION_RATE),
     order_handling: "admin" as "admin" | "self",
     is_active: true,
   });
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase
-        .from("suppliers")
-        .select("*")
-        .eq("id", params.id)
-        .single();
-      if (data) {
-        setForm({
-          business_name: data.business_name,
-          business_email: data.business_email ?? "",
-          business_phone: data.business_phone ?? "",
-          commission_rate: String(data.commission_rate),
-          order_handling: data.order_handling,
-          is_active: data.is_active,
-        });
+      try {
+        const { data } = await supabase
+          .from("suppliers")
+          .select("*")
+          .eq("id", params.id)
+          .single();
+        if (!data) { setNotFound(true); setLoading(false); return; }
+        if (data) {
+          setForm({
+            business_name: data.business_name,
+            business_email: data.business_email ?? "",
+            business_phone: data.business_phone ?? "",
+            commission_rate: String(data.commission_rate),
+            order_handling: data.order_handling,
+            is_active: data.is_active,
+          });
+        }
+      } catch {
+        setNotFound(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetch();
   }, [params.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.business_name.trim()) {
+      toast.error("Business name is required");
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch("/api/admin/suppliers", {
@@ -89,15 +104,40 @@ export default function EditSupplierPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-muted/30 items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex flex-col gap-4">
+            <p className="text-lg font-medium">Supplier not found</p>
+            <Link href="/admin/suppliers">
+              <Button variant="outline">Back to Suppliers</Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">

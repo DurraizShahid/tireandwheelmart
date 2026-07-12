@@ -1,8 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/catalog-helpers";
+import { createBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseCartService } from "@/lib/services/cart-service";
+import type { CartItemData } from "@/lib/services/cart-service";
 
 export interface CartItem {
   id: string;
@@ -60,6 +64,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [discount, setDiscount] = useState(0);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const { user, isLoaded: clerkLoaded } = useUser();
+  const lastUserId = useRef<string | null>(null);
+
+  const supabaseCart = useMemo(() => {
+    if (!user?.id) return null;
+    return createSupabaseCartService(user.id, createBrowserClient());
+  }, [user?.id]);
 
   useEffect(() => {
     try {
@@ -77,10 +88,35 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!hydrated || !clerkLoaded) return;
+    if (user?.id && user.id !== lastUserId.current) {
+      lastUserId.current = user.id;
+      supabaseCart?.getItems().then((res) => {
+        if (res.success && res.data.length > 0) {
+          setItems(res.data);
+        }
+      });
+    } else if (!user?.id) {
+      lastUserId.current = null;
+    }
+  }, [user?.id, hydrated, clerkLoaded, supabaseCart]);
+
+  useEffect(() => {
     if (hydrated) {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      if (supabaseCart) {
+        if (items.length > 0) {
+          supabaseCart.clear().then(() => {
+            for (const item of items) {
+              supabaseCart.addItem(item);
+            }
+          });
+        } else {
+          supabaseCart.clear();
+        }
+      }
     }
-  }, [items, hydrated]);
+  }, [items, hydrated, supabaseCart]);
 
   const addToCart = useCallback((item: CartItem) => {
     setItems((prev) => {
@@ -182,20 +218,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const applyCoupon = useCallback(async (code: string): Promise<boolean> => {
     setIsApplyingCoupon(true);
-    await new Promise((r) => setTimeout(r, 800));
+    const { getServices } = await import("@/lib/services/service-registry");
+    const result = await getServices().coupon.validateCoupon(code, subtotal);
     setIsApplyingCoupon(false);
-    if (code.toUpperCase() === "SAVE10") {
-      setAppliedCoupon(code.toUpperCase());
-      setDiscount(subtotal * 0.1);
-      toast.success("Coupon applied: 10% off");
+    if (result.success) {
+      setAppliedCoupon(result.data.code);
+      setDiscount(result.data.discount);
+      toast.success(result.data.description);
       return true;
     }
-    if (code.toUpperCase() === "FREESHIP") {
-      setAppliedCoupon(code.toUpperCase());
-      toast.success("Free shipping applied");
-      return true;
-    }
-    toast.error("Invalid coupon code");
+    toast.error(result.error.message);
     return false;
   }, [subtotal]);
 

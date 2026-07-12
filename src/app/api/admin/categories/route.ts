@@ -10,7 +10,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { name, slug, description, image_url, hero_image, seo_title, seo_description, content, display_order } = body;
+  const { name, slug, description, image_url, hero_image, seo_title, seo_description, content, display_order, homepage_category, homepage_description } = body;
 
   if (!name) return NextResponse.json({ error: "Category name is required" }, { status: 400 });
 
@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
       seo_description: seo_description || null,
       content: content || {},
       display_order: display_order ?? 0,
+      homepage_category: homepage_category ?? false,
+      homepage_description: homepage_description || null,
     })
     .select()
     .single();

@@ -14,8 +14,13 @@ import {
   BarChart3,
   Tag,
   Percent,
+  Star,
   LogOut,
   Menu,
+  Building2,
+  MessageSquare,
+  MessageCircle,
+  LayoutList,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -30,12 +35,17 @@ import {
 const adminLinks = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Products", href: "/admin/products", icon: Package },
+  { name: "Brands", href: "/admin/brands", icon: Building2 },
   { name: "Categories", href: "/admin/categories", icon: Tag },
   { name: "Promotions", href: "/admin/promotions", icon: Percent },
+  { name: "Featured Deals", href: "/admin/featured-deals", icon: Star },
   { name: "Suppliers", href: "/admin/suppliers", icon: Users },
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { name: "Reviews", href: "/admin/reviews", icon: MessageCircle },
+  { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
   { name: "Customers", href: "/admin/customers", icon: Users },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { name: "Homepage Stats", href: "/admin/site-settings", icon: LayoutList },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

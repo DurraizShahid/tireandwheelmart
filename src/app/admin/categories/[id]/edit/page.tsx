@@ -11,12 +11,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
 import type { Category } from "@/lib/supabase/types";
 
 export default function EditCategoryPage() {
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -27,28 +30,38 @@ export default function EditCategoryPage() {
     seo_title: "",
     seo_description: "",
     display_order: "0",
+    homepage_category: false,
+    homepage_description: "",
   });
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase
-        .from("categories")
-        .select("*")
-        .eq("id", params.id)
-        .single();
-      if (data) {
-        setForm({
-          name: data.name,
-          slug: data.slug,
-          description: data.description ?? "",
-          image_url: data.image_url ?? "",
-          hero_image: data.hero_image ?? "",
-          seo_title: data.seo_title ?? "",
-          seo_description: data.seo_description ?? "",
-          display_order: String(data.display_order),
-        });
+      try {
+        const { data } = await supabase
+          .from("categories")
+          .select("*")
+          .eq("id", params.id)
+          .single();
+        if (!data) { setNotFound(true); setLoading(false); return; }
+        if (data) {
+          setForm({
+            name: data.name,
+            slug: data.slug,
+            description: data.description ?? "",
+            image_url: data.image_url ?? "",
+            hero_image: data.hero_image ?? "",
+            seo_title: data.seo_title ?? "",
+            seo_description: data.seo_description ?? "",
+            display_order: String(data.display_order),
+            homepage_category: data.homepage_category ?? false,
+            homepage_description: data.homepage_description ?? "",
+          });
+        }
+      } catch {
+        setNotFound(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetch();
   }, [params.id]);
@@ -74,6 +87,8 @@ export default function EditCategoryPage() {
           seo_title: form.seo_title || undefined,
           seo_description: form.seo_description || undefined,
           display_order: parseInt(form.display_order) || 0,
+          homepage_category: form.homepage_category,
+          homepage_description: form.homepage_description || undefined,
         }),
       });
       if (!res.ok) {
@@ -92,15 +107,40 @@ export default function EditCategoryPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-muted/30 items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex flex-col gap-4">
+            <p className="text-lg font-medium">Category not found</p>
+            <Link href="/admin/categories">
+              <Button variant="outline">Back to Categories</Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
@@ -157,6 +197,29 @@ export default function EditCategoryPage() {
                   <div className="space-y-2">
                     <Label htmlFor="seo_desc">SEO Description</Label>
                     <Textarea id="seo_desc" value={form.seo_description} onChange={(e) => setForm({ ...form, seo_description: e.target.value })} />
+                  </div>
+                  <div className="space-y-4 border-t pt-4">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="homepage_category"
+                        checked={form.homepage_category}
+                        onChange={(e) => setForm({ ...form, homepage_category: e.target.checked })}
+                        className="h-4 w-4"
+                      />
+                      <Label htmlFor="homepage_category">Show on Homepage Category Grid</Label>
+                    </div>
+                    {form.homepage_category && (
+                      <div className="space-y-2">
+                        <Label htmlFor="homepage_desc">Homepage Grid Description</Label>
+                        <Textarea
+                          id="homepage_desc"
+                          value={form.homepage_description}
+                          onChange={(e) => setForm({ ...form, homepage_description: e.target.value })}
+                          placeholder="Short description for the homepage category grid"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-4 pt-4">
                     <Link href="/admin/categories">

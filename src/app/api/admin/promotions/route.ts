@@ -10,7 +10,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { name, description, type, value, min_subtotal, min_quantity, category_slug, brand_name, product_id, start_date, end_date, stackable, priority, badge_text, badge_color, banner_image, banner_bg, is_active } = body;
+  const { name, description, type, value, min_subtotal, min_quantity, category_slug, brand_name, product_id, start_date, end_date, stackable, priority, badge_text, badge_color, banner_image, banner_bg, is_active, show_on_homepage, homepage_order } = body;
 
   if (!name) return NextResponse.json({ error: "Promotion name is required" }, { status: 400 });
   if (!type) return NextResponse.json({ error: "Promotion type is required" }, { status: 400 });
@@ -38,6 +38,8 @@ export async function POST(req: NextRequest) {
       banner_image: banner_image || null,
       banner_bg: banner_bg || null,
       is_active: is_active ?? true,
+      show_on_homepage: show_on_homepage ?? false,
+      homepage_order: homepage_order ?? 0,
     })
     .select()
     .single();

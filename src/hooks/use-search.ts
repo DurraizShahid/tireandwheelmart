@@ -38,11 +38,12 @@ export function useSearch() {
       return;
     }
     setIsLoading(true);
-    const filtered = searchProductsFiltered(debouncedQuery);
-    setResults(filtered);
-    setIsLoading(false);
-    setHasSearched(true);
-    setActiveIndex(-1);
+    searchProductsFiltered(debouncedQuery).then((filtered) => {
+      setResults(filtered);
+      setIsLoading(false);
+      setHasSearched(true);
+      setActiveIndex(-1);
+    });
   }, [debouncedQuery]);
 
   const handleSearch = useCallback((term: string) => {

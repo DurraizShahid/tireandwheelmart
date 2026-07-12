@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, X, Clock, TrendingUp, ShoppingCart, Heart, GitCompare, ArrowRight, Star } from "lucide-react";
@@ -198,7 +198,10 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     [handleKeyDown, query, results.length, setQuery, onOpenChange, router, handleViewAll]
   );
 
-  const trending = getTrendingProducts();
+  const [trending, setTrending] = useState<Product[]>([]);
+  useEffect(() => {
+    getTrendingProducts().then(setTrending);
+  }, []);
   const popularCategories = getPopularCategories();
   const showTrending = !query.trim() && !hasSearched;
   const showResults = query.trim() && (results.length > 0 || hasSearched);

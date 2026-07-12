@@ -1,20 +1,41 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin, Edit } from "lucide-react";
+import { Mail, Phone, Loader2 } from "lucide-react";
+
+interface Customer {
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  phone: string | null;
+  order_count: number;
+  full_name: string | null;
+  created_at: string;
+}
 
 export default function CustomersPage() {
-  const customers = [
-    { id: 1, name: "John Doe", email: "john@example.com", phone: "+1-555-0101", orders: 5, joined: "2023-06-15" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", phone: "+1-555-0102", orders: 3, joined: "2023-07-20" },
-    { id: 3, name: "Mike Johnson", email: "mike@example.com", phone: "+1-555-0103", orders: 8, joined: "2023-08-10" },
-    { id: 4, name: "Sarah Williams", email: "sarah@example.com", phone: "+1-555-0104", orders: 2, joined: "2023-09-05" },
-    { id: 5, name: "Tom Brown", email: "tom@example.com", phone: "+1-555-0105", orders: 6, joined: "2023-10-12" },
-  ];
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/customers")
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to load customers");
+        const data = await res.json();
+        setCustomers(Array.isArray(data) ? data : []);
+      })
+      .catch((e) => setError(e.message ?? "Failed to load customers"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const totalOrders = customers.reduce((sum, c) => sum + c.order_count, 0);
+  const avgOrders = customers.length > 0 ? (totalOrders / customers.length).toFixed(1) : "0";
 
   return (
     <div className="flex min-h-screen bg-muted/30">
@@ -23,20 +44,18 @@ export default function CustomersPage() {
         <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="space-y-6">
-            {/* Page Header */}
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Customers</h1>
               <p className="text-muted-foreground">Manage and view customer information</p>
             </div>
 
-            {/* Stats */}
             <div className="grid gap-4 md:grid-cols-3">
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{customers.length}</div>
+                  <div className="text-2xl font-bold">{loading ? "-" : customers.length}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -44,7 +63,7 @@ export default function CustomersPage() {
                   <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">567</div>
+                  <div className="text-2xl font-bold">{loading ? "-" : customers.filter((c) => c.order_count > 0).length}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -52,58 +71,67 @@ export default function CustomersPage() {
                   <CardTitle className="text-sm font-medium">Average Orders</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">4.8</div>
+                  <div className="text-2xl font-bold">{loading ? "-" : avgOrders}</div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Customers Table */}
             <Card>
               <CardHeader>
                 <CardTitle>Customer List</CardTitle>
-                <CardDescription>All registered customers</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="rounded-lg border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Orders</TableHead>
-                        <TableHead>Joined</TableHead>
-                        <TableHead>Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {customers.map((customer) => (
-                        <TableRow key={customer.id}>
-                          <TableCell className="font-medium">{customer.name}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4 text-muted-foreground" />
-                              {customer.email}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Phone className="h-4 w-4 text-muted-foreground" />
-                              {customer.phone}
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-semibold">{customer.orders}</TableCell>
-                          <TableCell>{customer.joined}</TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="sm">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
+                {loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : error ? (
+                  <p className="text-center text-red-600 py-8">{error}</p>
+                ) : customers.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">No customers found.</p>
+                ) : (
+                  <div className="rounded-lg border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead>Orders</TableHead>
+                          <TableHead>Joined</TableHead>
+                          
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                      </TableHeader>
+                      <TableBody>
+                        {customers.map((customer) => (
+                          <TableRow key={customer.id}>
+                            <TableCell className="font-medium">
+                              {customer.full_name || customer.email}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                {customer.email}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {customer.phone ? (
+                                <div className="flex items-center gap-2">
+                                  <Phone className="h-4 w-4 text-muted-foreground" />
+                                  {customer.phone}
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="font-semibold">{customer.order_count}</TableCell>
+                            <TableCell>{new Date(customer.created_at).toLocaleDateString()}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

@@ -1,7 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
+import { createBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseWishlistService } from "@/lib/services/wishlist-service";
 
 export interface WishlistItem {
   id: string;
@@ -36,6 +39,13 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
+  const { user, isLoaded: clerkLoaded } = useUser();
+  const lastUserId = useRef<string | null>(null);
+
+  const supabaseWishlist = useMemo(() => {
+    if (!user?.id) return null;
+    return createSupabaseWishlistService(user.id, createBrowserClient());
+  }, [user?.id]);
 
   useEffect(() => {
     try {
@@ -53,10 +63,35 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!hydrated || !clerkLoaded) return;
+    if (user?.id && user.id !== lastUserId.current) {
+      lastUserId.current = user.id;
+      supabaseWishlist?.getItems().then((res) => {
+        if (res.success && res.data.length > 0) {
+          setItems(res.data);
+        }
+      });
+    } else if (!user?.id) {
+      lastUserId.current = null;
+    }
+  }, [user?.id, hydrated, clerkLoaded, supabaseWishlist]);
+
+  useEffect(() => {
     if (hydrated) {
       localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
+      if (supabaseWishlist) {
+        if (items.length > 0) {
+          supabaseWishlist.clear().then(() => {
+            for (const item of items) {
+              supabaseWishlist.addItem(item);
+            }
+          });
+        } else {
+          supabaseWishlist.clear();
+        }
+      }
     }
-  }, [items, hydrated]);
+  }, [items, hydrated, supabaseWishlist]);
 
   const addToWishlist = useCallback((item: Omit<WishlistItem, "addedAt">) => {
     setItems((prev) => {

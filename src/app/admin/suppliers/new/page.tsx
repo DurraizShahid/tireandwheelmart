@@ -10,6 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
+import { ADMIN_DEFAULTS } from "@/lib/admin-constants";
 
 export default function NewSupplierPage() {
   const router = useRouter();
@@ -18,7 +21,7 @@ export default function NewSupplierPage() {
     business_name: "",
     business_email: "",
     business_phone: "",
-    commission_rate: "10",
+    commission_rate: String(ADMIN_DEFAULTS.DEFAULT_COMMISSION_RATE),
     order_handling: "admin" as "admin" | "self",
   });
 
@@ -26,6 +29,10 @@ export default function NewSupplierPage() {
     e.preventDefault();
     if (!form.business_name.trim()) {
       toast.error("Business name is required");
+      return;
+    }
+    if (!form.business_email.trim()) {
+      toast.error("Email is required");
       return;
     }
     setLoading(true);
@@ -57,7 +64,9 @@ export default function NewSupplierPage() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
@@ -82,7 +91,7 @@ export default function NewSupplierPage() {
                     <Input id="business_name" value={form.business_name} onChange={(e) => setForm({ ...form, business_name: e.target.value })} placeholder="e.g. Premium Tires Co." />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Email *</Label>
                     <Input id="email" type="email" value={form.business_email} onChange={(e) => setForm({ ...form, business_email: e.target.value })} placeholder="vendor@example.com" />
                     <p className="text-xs text-muted-foreground">If the user already exists, they&apos;ll be linked. Otherwise, a new Clerk account will be created.</p>
                   </div>

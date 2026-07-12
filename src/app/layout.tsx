@@ -9,6 +9,7 @@ import { WishlistProvider } from "@/contexts/wishlist-context";
 import { CompareProvider } from "@/contexts/compare-context";
 import Header from "@/components/header"; // Import the new Header
 import Footer from "@/components/footer"; // Import the new Footer
+import { AnnouncementBar } from "@/components/promotions/AnnouncementBar";
 
 // Define Space Grotesk font
 const spaceGrotesk = Space_Grotesk({
@@ -75,7 +76,10 @@ export default function RootLayout({
           <CartProvider>
           <WishlistProvider>
           <CompareProvider>
-          <Header /> {/* Render the Header */}
+          <div className="sticky top-0 z-50 w-full">
+            <AnnouncementBar />
+            <Header />
+          </div>
           <main id="main-content" className="flex-grow outline-none">
           {children}
           </main>

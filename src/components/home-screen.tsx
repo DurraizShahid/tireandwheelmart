@@ -26,8 +26,8 @@ import BrandCard from "@/components/brand-card";
 import HeaderSlideshow from "@/components/header-slideshow";
 import ProductCarousel from "@/components/product-carousel";
 import { getUrlSlug } from "@/lib/category-configs";
-import { AnnouncementBar } from "@/components/promotions/AnnouncementBar";
 import { HomepageDeals } from "@/components/promotions/HomepageDeals";
+import type { Promotion as DbPromotion, Brand as DbBrand, Testimonial as DbTestimonial, Category as DbCategory } from "@/lib/supabase/types";
 
 interface DbProduct {
   id: string;
@@ -39,11 +39,18 @@ interface DbProduct {
   description: string | null;
   specs: Record<string, unknown>;
   featured: boolean;
+  rating: number | null;
+  review_count: number | null;
 }
 
 interface HomeScreenProps {
   featuredProducts?: DbProduct[];
   summerTires?: DbProduct[];
+  featuredDeals?: DbPromotion[];
+  brands?: DbBrand[];
+  testimonials?: DbTestimonial[];
+  siteSettings?: Record<string, unknown>;
+  homepageCategories?: DbCategory[];
 }
 
 const CountUp = ({
@@ -101,7 +108,7 @@ const CountUp = ({
   );
 };
 
-const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps) => {
+const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [], brands = [], testimonials = [], siteSettings = {}, homepageCategories = [] }: HomeScreenProps) => {
   const productImages = {
     tires: "/images/tires_icon.webp",
     wheels: "/images/wheels_icon.webp",
@@ -109,96 +116,86 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
     snowTires: "/images/snowTire_icon.webp",
   };
 
-  const featuredCategories = [
-    {
-      title: "All-Season Tires",
-      imageSrc: "/categories/allseason.png",
-      description: "Year-round performance for all weather conditions.",
-      href: "/shop/all-season-tires",
-    },
-    {
-      title: "Summer Tires",
-      imageSrc: "/categories/summertires.png",
-      description: "Superior dry and wet traction for warm weather.",
-      href: "/shop/summer-tires",
-    },
-    {
-      title: "Winter Tires",
-      imageSrc: "/categories/wintertires.png",
-      description: "Advanced grip on snow and ice.",
-      href: "/shop/winter-tires",
-    },
-    {
-      title: "Performance Tires",
-      imageSrc: "/categories/performancetires.png",
-      description: "Track-ready tires for maximum grip.",
-      href: "/shop/performance-tires",
-    },
-    {
-      title: "Alloy Wheels",
-      imageSrc: "/categories/alloywheels.webp",
-      description: "Lightweight and stylish alloy wheels.",
-      href: "/shop/alloy-wheels",
-    },
-    {
-      title: "Steel Wheels",
-      imageSrc: "/categories/steelwheels.png",
-      description: "Durable and affordable steel wheels.",
-      href: "/shop/steel-wheels",
-    },
-    {
-      title: "Tire & Wheel Packages",
-      imageSrc: "/categories/tireandwheel.png",
-      description: "Complete sets ready for installation.",
-      href: "/shop/tire-wheel-packages",
-    },
-    {
-      title: "Wheel Accessories",
-      imageSrc: "/categories/wheelaccessories.png",
-      description: "Lug nuts, spacers, center caps, and more.",
-      href: "/shop/wheel-accessories",
-    },
-    {
-      title: "Tire Accessories",
-      imageSrc: "/categories/tireaccessories.png",
-      description: "TPMS sensors, valve stems, and repair kits.",
-      href: "/shop/tire-accessories",
-    },
+  const defaultCategories = [
+    { title: "All-Season Tires", imageSrc: "/categories/allseason.png", description: "Year-round performance for all weather conditions.", href: "/shop/all-season-tires" },
+    { title: "Summer Tires", imageSrc: "/categories/summertires.png", description: "Superior dry and wet traction for warm weather.", href: "/shop/summer-tires" },
+    { title: "Winter Tires", imageSrc: "/categories/wintertires.png", description: "Advanced grip on snow and ice.", href: "/shop/winter-tires" },
+    { title: "Performance Tires", imageSrc: "/categories/performancetires.png", description: "Track-ready tires for maximum grip.", href: "/shop/performance-tires" },
+    { title: "Alloy Wheels", imageSrc: "/categories/alloywheels.webp", description: "Lightweight and stylish alloy wheels.", href: "/shop/alloy-wheels" },
+    { title: "Steel Wheels", imageSrc: "/categories/steelwheels.png", description: "Durable and affordable steel wheels.", href: "/shop/steel-wheels" },
+    { title: "Tire & Wheel Packages", imageSrc: "/categories/tireandwheel.png", description: "Complete sets ready for installation.", href: "/shop/tire-wheel-packages" },
+    { title: "Wheel Accessories", imageSrc: "/categories/wheelaccessories.png", description: "Lug nuts, spacers, center caps, and more.", href: "/shop/wheel-accessories" },
+    { title: "Tire Accessories", imageSrc: "/categories/tireaccessories.png", description: "TPMS sensors, valve stems, and repair kits.", href: "/shop/tire-accessories" },
   ];
 
-  const brands = [
-    { name: "Michelin", imageSrc: "/brands/logo_michelin.png", href: "/shop/all-season-tires" },
-    { name: "Bridgestone", imageSrc: "/brands/logo_bridgestone.png", href: "/shop/all-season-tires" },
-    { name: "Continental", imageSrc: "/brands/logo_continental.png", href: "/shop/all-season-tires" },
-    { name: "Toyo", imageSrc: "/brands/logo_toyo.png", href: "/shop/all-season-tires" },
-    { name: "Cooper", imageSrc: "/brands/logo_cooper.png", href: "/shop/all-season-tires" },
-    { name: "Firestone", imageSrc: "/brands/logo_firestone.png", href: "/shop/all-season-tires" },
-    { name: "Hercules", imageSrc: "/brands/logo_hercules.png", href: "/shop/all-season-tires" },
-  ];
+  const featuredCategories = homepageCategories.length > 0
+    ? homepageCategories.map((c) => ({
+        title: c.name,
+        imageSrc: c.image_url ?? "/placeholder.svg",
+        description: c.homepage_description ?? c.description ?? "",
+        href: `/shop/${getUrlSlug(c.slug)}`,
+      }))
+    : defaultCategories;
 
-  const testimonials = [
-    {
-      quote: "The best tire shop online! Found the perfect set of winter tires for my SUV. Fast shipping and excellent quality.",
-      author: "Alex Johnson",
-      title: "Satisfied Customer",
-      avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=AJ",
-      rating: 5,
-    },
-    {
-      quote: "I needed new wheels for my sports car and found exactly what I was looking for. The product description was accurate, and delivery was quick.",
-      author: "Maria Rodriguez",
-      title: "Car Enthusiast",
-      avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=MR",
-      rating: 5,
-    },
-    {
-      quote: "Fantastic customer service! They helped me choose the right tire package for my vehicle. The installation was smooth and the tires perform excellently!",
-      author: "David Lee",
-      title: "Happy Customer",
-      avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=DL",
-      rating: 5,
-    },
-  ];
+  const displayBrands = brands.length > 0
+    ? brands.map((b) => ({
+        name: b.name,
+        imageSrc: b.image_url ?? "/placeholder.svg",
+        href: `/shop?brand=${b.slug}`,
+      }))
+    : [
+        { name: "Michelin", imageSrc: "/brands/logo_michelin.png", href: "/shop/all-season-tires" },
+        { name: "Bridgestone", imageSrc: "/brands/logo_bridgestone.png", href: "/shop/all-season-tires" },
+        { name: "Continental", imageSrc: "/brands/logo_continental.png", href: "/shop/all-season-tires" },
+        { name: "Toyo", imageSrc: "/brands/logo_toyo.png", href: "/shop/all-season-tires" },
+        { name: "Cooper", imageSrc: "/brands/logo_cooper.png", href: "/shop/all-season-tires" },
+        { name: "Firestone", imageSrc: "/brands/logo_firestone.png", href: "/shop/all-season-tires" },
+        { name: "Hercules", imageSrc: "/brands/logo_hercules.png", href: "/shop/all-season-tires" },
+      ];
+
+  const displayTestimonials = testimonials.length > 0
+    ? testimonials.map((t) => ({
+        quote: t.content,
+        author: t.author,
+        title: t.role ?? (t.company ? `${t.company}` : "Customer"),
+        avatarSrc: t.avatar_url ?? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(t.author)}`,
+        rating: t.rating,
+      }))
+    : [
+        {
+          quote: "The best tire shop online! Found the perfect set of winter tires for my SUV. Fast shipping and excellent quality.",
+          author: "Alex Johnson",
+          title: "Satisfied Customer",
+          avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=AJ",
+          rating: 5,
+        },
+        {
+          quote: "I needed new wheels for my sports car and found exactly what I was looking for. The product description was accurate, and delivery was quick.",
+          author: "Maria Rodriguez",
+          title: "Car Enthusiast",
+          avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=MR",
+          rating: 5,
+        },
+        {
+          quote: "Fantastic customer service! They helped me choose the right tire package for my vehicle. The installation was smooth and the tires perform excellently!",
+          author: "David Lee",
+          title: "Happy Customer",
+          avatarSrc: "https://api.dicebear.com/7.x/initials/svg?seed=DL",
+          rating: 5,
+        },
+      ];
+
+  type StatValue = { end: number | string; suffix: string; label: string };
+  const getStat = (key: string, fallback: StatValue): StatValue => {
+    const val = siteSettings[key];
+    if (val && typeof val === "object" && "end" in val) return val as StatValue;
+    return fallback;
+  };
+  const statApproval = getStat("stat_approval", { end: 98, suffix: "%", label: "of customers approve" });
+  const statGrowth = getStat("stat_growth", { end: "Top 500", suffix: "", label: "fastest growing company in US" });
+  const statInstallers = getStat("stat_installers", { end: 20000, suffix: "+", label: "certified installers" });
+  const statDistributors = getStat("stat_distributors", { end: 7000, suffix: "+", label: "local distributors" });
+  const statCustomers = getStat("stat_customers", { end: 6000000, suffix: "+", label: "customers served" });
 
   const toProductItemProps = (p: DbProduct) => {
     const specs = p.specs ?? {};
@@ -223,15 +220,13 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
         loadIndex: specs.load_index as string | undefined,
         speedRating: specs.speed_rating as string | undefined,
       },
-      rating: 4.5 + Math.random() * 0.4,
-      reviews: Math.floor(100 + Math.random() * 2000),
+      rating: p.rating ?? 4.5,
+      reviews: p.review_count ?? 0,
     };
   };
 
   return (
-    <div className="flex flex-col items-center bg-white text-foreground">
-      <AnnouncementBar />
-      {/* Hero Section */}
+    <div className="flex flex-col bg-white text-foreground">
       <HeaderSlideshow
         slides={[
           "/header/pexels-gustavo-fring-6870311.jpg",
@@ -307,7 +302,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
         </div>
       </section>
 
-      <HomepageDeals />
+      <HomepageDeals dbPromotions={featuredDeals} />
 
       {/* Featured Products */}
       {featuredProducts.length > 0 && (
@@ -431,7 +426,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
             Shop from the most trusted tire and wheel brands in the industry
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {brands.map((brand, index) => (
+            {displayBrands.map((brand, index) => (
               <BrandCard
                 key={index}
                 name={brand.name}
@@ -491,8 +486,8 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
             <div className="w-full md:w-2/3 lg:w-1/2">
               <div className="relative flex h-[500px] w-full flex-row items-center justify-center overflow-hidden">
                 <Marquee pauseOnHover vertical className="[--duration:20s]">
-                  {testimonials
-                    .slice(0, Math.ceil(testimonials.length / 2))
+                  {displayTestimonials
+                    .slice(0, Math.ceil(displayTestimonials.length / 2))
                     .map((testimonial, index) => (
                       <div key={index} className="mb-4 last:mb-0 min-h-[200px]">
                         <TestimonialCard
@@ -511,8 +506,8 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
                   vertical
                   className="[--duration:20s]"
                 >
-                  {testimonials
-                    .slice(Math.ceil(testimonials.length / 2))
+                  {displayTestimonials
+                    .slice(Math.ceil(displayTestimonials.length / 2))
                     .map((testimonial, index) => (
                       <div key={index} className="mb-4 last:mb-0 min-h-[200px]">
                         <TestimonialCard
@@ -544,48 +539,46 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [] }: HomeScreenProps
               <div className="flex items-center mb-3">
                 <ShieldCheck className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
                 <div className="text-3xl md:text-4xl font-bold text-red-600">
-                  <CountUp end={98} suffix="%" />
+                  <CountUp end={statApproval.end} suffix={statApproval.suffix} />
                 </div>
               </div>
-              <p className="text-muted-foreground">of customers approve</p>
+              <p className="text-muted-foreground">{statApproval.label}</p>
             </div>
             <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">
               <div className="flex items-center mb-3">
                 <TrendingUp className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
                 <div className="text-3xl md:text-4xl font-bold text-red-600">
-                  <CountUp end="Top 500" />
+                  <CountUp end={statGrowth.end} suffix={statGrowth.suffix} />
                 </div>
               </div>
-              <p className="text-muted-foreground">
-                fastest growing company in US
-              </p>
+              <p className="text-muted-foreground">{statGrowth.label}</p>
             </div>
             <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">
               <div className="flex items-center mb-3">
                 <Wrench className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
                 <div className="text-3xl md:text-4xl font-bold text-red-600">
-                  <CountUp end={20000} suffix="+" />
+                  <CountUp end={statInstallers.end} suffix={statInstallers.suffix} />
                 </div>
               </div>
-              <p className="text-muted-foreground">certified installers</p>
+              <p className="text-muted-foreground">{statInstallers.label}</p>
             </div>
             <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">
               <div className="flex items-center mb-3">
                 <MapPin className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
                 <div className="text-3xl md:text-4xl font-bold text-red-600">
-                  <CountUp end={7000} suffix="+" />
+                  <CountUp end={statDistributors.end} suffix={statDistributors.suffix} />
                 </div>
               </div>
-              <p className="text-muted-foreground">local distributors</p>
+              <p className="text-muted-foreground">{statDistributors.label}</p>
             </div>
             <div className="text-left">
               <div className="flex items-center mb-3">
                 <Users className="h-6 w-6 text-red-600 mr-2 flex-shrink-0" />
                 <div className="text-3xl md:text-4xl font-bold text-red-600">
-                  <CountUp end={6000000} suffix="+" />
+                  <CountUp end={statCustomers.end} suffix={statCustomers.suffix} />
                 </div>
               </div>
-              <p className="text-muted-foreground">customers served</p>
+              <p className="text-muted-foreground">{statCustomers.label}</p>
             </div>
           </div>
         </div>

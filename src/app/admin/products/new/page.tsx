@@ -13,6 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
 import type { Category } from "@/lib/supabase/types";
 
 export default function NewProductPage() {
@@ -49,7 +51,10 @@ export default function NewProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name) { toast.error("Product name is required"); return; }
-    if (!form.price) { toast.error("Price is required"); return; }
+    if (!form.price || parseFloat(form.price) <= 0) {
+      toast.error("Price must be a positive number");
+      return;
+    }
     if (!form.category_id) { toast.error("Category is required"); return; }
 
     let specs: Record<string, unknown> = {};
@@ -103,7 +108,9 @@ export default function NewProductPage() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="flex items-center gap-4">

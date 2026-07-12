@@ -11,6 +11,50 @@ export interface PromotionService {
   getBannerPromotions(): Promise<ServiceResult<Promotion[]>>;
 }
 
+export function createSupabasePromotionService(): PromotionService {
+  async function loadPromotions(): Promise<Promotion[]> {
+    const { createBrowserClient } = await import("@/lib/supabase/client");
+    const { toCatalogPromotions } = await import("@/lib/supabase/promotion-mappers");
+    const supabase = createBrowserClient();
+    const { data, error } = await supabase
+      .from("promotions")
+      .select("*")
+      .eq("is_active", true)
+      .order("priority");
+    if (error) return [];
+    return toCatalogPromotions(data ?? []);
+  }
+
+  return {
+    async getActivePromotions() {
+      const promotions = await loadPromotions();
+      const now = Date.now();
+      const active = promotions.filter((p) => {
+        if (p.startDate && new Date(p.startDate).getTime() > now) return false;
+        if (p.endDate && new Date(p.endDate).getTime() < now) return false;
+        return true;
+      });
+      return success(active);
+    },
+
+    async evaluate(ctx) {
+      const promotions = await loadPromotions();
+      const results = evaluatePromotions(promotions, ctx);
+      return success({
+        results,
+        totalDiscount: computeTotalPromotionDiscount(results),
+        freeShipping: hasFreeShipping(results),
+      });
+    },
+
+    async getBannerPromotions() {
+      const promotions = await loadPromotions();
+      const banners = promotions.filter((p) => p.bannerImage || p.bannerBg || p.type === "flash_sale");
+      return success(banners);
+    },
+  };
+}
+
 export function createMockPromotionService(): PromotionService {
   return {
     async getActivePromotions() {

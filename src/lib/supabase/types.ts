@@ -8,6 +8,8 @@ export interface Category {
   seo_title: string | null;
   seo_description: string | null;
   content: Record<string, unknown>;
+  homepage_category: boolean;
+  homepage_description: string | null;
   display_order: number;
   created_at: string;
   updated_at: string;
@@ -61,6 +63,60 @@ export interface ProductWithSupplier extends Product {
   suppliers: Supplier | null;
 }
 
+export interface SiteSetting {
+  id: string;
+  key: string;
+  value: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+  website_url: string | null;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Testimonial {
+  id: string;
+  author: string;
+  role: string | null;
+  company: string | null;
+  avatar_url: string | null;
+  content: string;
+  rating: number;
+  display_order: number;
+  is_approved: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Review {
+  id: string;
+  product_id: string;
+  customer_id: string | null;
+  author: string;
+  rating: number;
+  title: string;
+  content: string;
+  vehicle: string | null;
+  tire_size: string | null;
+  photos: string[];
+  verified: boolean;
+  helpful_count: number;
+  is_approved: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Promotion {
   id: string;
   name: string;
@@ -81,6 +137,8 @@ export interface Promotion {
   banner_image: string | null;
   banner_bg: string | null;
   is_active: boolean;
+  show_on_homepage: boolean;
+  homepage_order: number;
   created_at: string;
   updated_at: string;
 }

@@ -13,6 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
 import type { Promotion } from "@/lib/supabase/types";
 
 const promotionTypes = [
@@ -33,6 +35,7 @@ export default function EditPromotionPage() {
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -52,37 +55,47 @@ export default function EditPromotionPage() {
     banner_image: "",
     banner_bg: "",
     is_active: "true",
+    show_on_homepage: "false",
+    homepage_order: "0",
   });
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase
-        .from("promotions")
-        .select("*")
-        .eq("id", params.id)
-        .single() as { data: Promotion | null };
-      if (data) {
-        setForm({
-          name: data.name,
-          description: data.description ?? "",
-          type: data.type,
-          value: String(data.value),
-          min_subtotal: data.min_subtotal ? String(data.min_subtotal) : "",
-          min_quantity: data.min_quantity ? String(data.min_quantity) : "",
-          category_slug: data.category_slug ?? "",
-          brand_name: data.brand_name ?? "",
-          start_date: data.start_date ? data.start_date.slice(0, 16) : "",
-          end_date: data.end_date ? data.end_date.slice(0, 16) : "",
-          stackable: String(data.stackable),
-          priority: String(data.priority),
-          badge_text: data.badge_text ?? "",
-          badge_color: data.badge_color ?? "",
-          banner_image: data.banner_image ?? "",
-          banner_bg: data.banner_bg ?? "",
-          is_active: String(data.is_active),
-        });
+      try {
+        const { data } = await supabase
+          .from("promotions")
+          .select("*")
+          .eq("id", params.id)
+          .single() as { data: Promotion | null };
+        if (!data) { setNotFound(true); setLoading(false); return; }
+        if (data) {
+          setForm({
+            name: data.name,
+            description: data.description ?? "",
+            type: data.type,
+            value: String(data.value),
+            min_subtotal: data.min_subtotal ? String(data.min_subtotal) : "",
+            min_quantity: data.min_quantity ? String(data.min_quantity) : "",
+            category_slug: data.category_slug ?? "",
+            brand_name: data.brand_name ?? "",
+            start_date: data.start_date ? data.start_date.slice(0, 16) : "",
+            end_date: data.end_date ? data.end_date.slice(0, 16) : "",
+            stackable: String(data.stackable),
+            priority: String(data.priority),
+            badge_text: data.badge_text ?? "",
+            badge_color: data.badge_color ?? "",
+            banner_image: data.banner_image ?? "",
+            banner_bg: data.banner_bg ?? "",
+            is_active: String(data.is_active),
+            show_on_homepage: String(data.show_on_homepage),
+            homepage_order: String(data.homepage_order),
+          });
+        }
+      } catch {
+        setNotFound(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetch();
   }, [params.id]);
@@ -92,6 +105,10 @@ export default function EditPromotionPage() {
     if (!form.name) { toast.error("Promotion name is required"); return; }
     if (!form.type) { toast.error("Promotion type is required"); return; }
     if (!form.value) { toast.error("Promotion value is required"); return; }
+    if (form.start_date && form.end_date && new Date(form.end_date) <= new Date(form.start_date)) {
+      toast.error("End date must be after start date");
+      return;
+    }
 
     setSaving(true);
     try {
@@ -116,6 +133,8 @@ export default function EditPromotionPage() {
           banner_image: form.banner_image || undefined,
           banner_bg: form.banner_bg || undefined,
           is_active: form.is_active === "true",
+          show_on_homepage: form.show_on_homepage === "true",
+          homepage_order: parseInt(form.homepage_order) || 0,
         }),
       });
       if (!res.ok) {
@@ -134,15 +153,40 @@ export default function EditPromotionPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-muted/30 items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex flex-col gap-4">
+            <p className="text-lg font-medium">Promotion not found</p>
+            <Link href="/admin/promotions">
+              <Button variant="outline">Back to Promotions</Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
@@ -251,9 +295,21 @@ export default function EditPromotionPage() {
                       <Input id="banner_bg" value={form.banner_bg} onChange={(e) => setForm({ ...form, banner_bg: e.target.value })} />
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 pt-2">
-                    <Switch id="active" checked={form.is_active === "true"} onCheckedChange={(v) => setForm({ ...form, is_active: String(v) })} />
-                    <Label htmlFor="active">Active</Label>
+                  <div className="flex items-center gap-4 pt-2">
+                    <div className="flex items-center gap-2">
+                      <Switch id="active" checked={form.is_active === "true"} onCheckedChange={(v) => setForm({ ...form, is_active: String(v) })} />
+                      <Label htmlFor="active">Active</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch id="homepage" checked={form.show_on_homepage === "true"} onCheckedChange={(v) => setForm({ ...form, show_on_homepage: String(v) })} />
+                      <Label htmlFor="homepage">Show on Homepage</Label>
+                    </div>
+                    {form.show_on_homepage === "true" && (
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="homepage_order" className="whitespace-nowrap">Order</Label>
+                        <Input id="homepage_order" type="number" value={form.homepage_order} onChange={(e) => setForm({ ...form, homepage_order: e.target.value })} className="w-20" />
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-4 pt-4">
                     <Link href="/admin/promotions">

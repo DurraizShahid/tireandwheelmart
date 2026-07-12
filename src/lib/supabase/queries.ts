@@ -1,5 +1,5 @@
 import { createServerClient } from "./server";
-import type { Product, ProductWithCategory, Category, Supplier } from "./types";
+import type { Product, ProductWithCategory, Category, Supplier, Promotion, Brand, Testimonial, SiteSetting } from "./types";
 
 export async function getCategories(): Promise<Category[]> {
   const supabase = createServerClient();
@@ -75,6 +75,19 @@ export async function getFeaturedProducts(): Promise<Product[]> {
   return data ?? [];
 }
 
+export async function getHomepageFeaturedDeals(): Promise<Promotion[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("promotions")
+    .select("*")
+    .eq("show_on_homepage", true)
+    .eq("is_active", true)
+    .order("homepage_order");
+
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function searchProductsInDb(
   query: string
 ): Promise<Product[]> {
@@ -86,6 +99,63 @@ export async function searchProductsInDb(
     .select("*")
     .or(`name.ilike.${term},brand.ilike.${term},description.ilike.${term}`)
     .order("name");
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+// ---- Homepage Categories ----
+
+export async function getHomepageCategories(): Promise<Category[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("homepage_category", true)
+    .order("display_order");
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+// ---- Site Settings ----
+
+export async function getSiteSettings(): Promise<Record<string, unknown>> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("*");
+
+  if (error) throw error;
+  const settings: Record<string, unknown> = {};
+  for (const row of data ?? []) {
+    settings[row.key] = row.value;
+  }
+  return settings;
+}
+
+// ---- Brand & Testimonial Queries ----
+
+export async function getBrands(): Promise<Brand[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("brands")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order");
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("testimonials")
+    .select("*")
+    .eq("is_active", true)
+    .eq("is_approved", true)
+    .order("display_order");
 
   if (error) throw error;
   return data ?? [];

@@ -9,16 +9,16 @@ import type { SearchService } from "./search-service";
 import type { WishlistService } from "./wishlist-service";
 import type { PromotionService } from "./promotion-service";
 
-import { createMockProductService } from "./product-service";
-import { createMockCartService } from "./cart-service";
-import { createMockOrderService } from "./order-service";
-import { createMockReviewService } from "./review-service";
-import { createMockCouponService } from "./coupon-service";
+import { createSupabaseProductService, createMockProductService } from "./product-service";
+import { createMockCartService, createSupabaseCartService } from "./cart-service";
+import { createSupabaseOrderService, createMockOrderService } from "./order-service";
+import { createSupabaseReviewService, createMockReviewService } from "./review-service";
+import { createSupabaseCouponService, createMockCouponService } from "./coupon-service";
 import { createMockShippingService } from "./shipping-service";
 import { createMockPaymentService } from "./payment-service";
-import { createMockSearchService } from "./search-service";
-import { createMockWishlistService } from "./wishlist-service";
-import { createMockPromotionService } from "./promotion-service";
+import { createSupabaseSearchService, createMockSearchService } from "./search-service";
+import { createMockWishlistService, createSupabaseWishlistService } from "./wishlist-service";
+import { createSupabasePromotionService, createMockPromotionService } from "./promotion-service";
 
 export interface Services {
   product: ProductService;
@@ -46,18 +46,18 @@ export function resetServices(): void {
 }
 
 function buildServices(): Services {
-  const useMock = process.env.NEXT_PUBLIC_USE_MOCK_SERVICES !== "false";
+  const useMock = process.env.NEXT_PUBLIC_USE_MOCK_SERVICES === "true";
   return {
-    product: useMock ? createMockProductService() : createMockProductService(),
+    product: useMock ? createMockProductService() : createSupabaseProductService(),
     cart: useMock ? createMockCartService() : createMockCartService(),
-    order: useMock ? createMockOrderService() : createMockOrderService(),
-    review: useMock ? createMockReviewService() : createMockReviewService(),
-    coupon: useMock ? createMockCouponService() : createMockCouponService(),
+    order: useMock ? createSupabaseOrderService() : createSupabaseOrderService(),
+    review: useMock ? createMockReviewService() : createSupabaseReviewService(),
+    coupon: useMock ? createMockCouponService() : createSupabaseCouponService(),
     shipping: useMock ? createMockShippingService() : createMockShippingService(),
     payment: useMock ? createMockPaymentService() : createMockPaymentService(),
-    search: useMock ? createMockSearchService() : createMockSearchService(),
+    search: useMock ? createMockSearchService() : createSupabaseSearchService(),
     wishlist: useMock ? createMockWishlistService() : createMockWishlistService(),
-    promotion: useMock ? createMockPromotionService() : createMockPromotionService(),
+    promotion: useMock ? createSupabasePromotionService() : createSupabasePromotionService(),
   };
 }
 

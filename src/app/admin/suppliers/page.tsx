@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, ExternalLink } from "lucide-react";
+import { Plus, ExternalLink, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
 
 interface Supplier {
   id: string;
@@ -21,19 +24,34 @@ interface Supplier {
 export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase.from("suppliers").select("*").order("business_name");
-      if (data) setSuppliers(data);
+      const { data, error } = await supabase.from("suppliers").select("*").order("business_name");
+      if (error) setError(error.message);
+      else if (data) setSuppliers(data);
       setLoading(false);
     };
     fetch();
   }, []);
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    const res = await fetch(`/api/admin/suppliers/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      toast.success("Supplier deleted");
+      setSuppliers((prev) => prev.filter((s) => s.id !== id));
+    } else {
+      toast.error("Failed to delete supplier");
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -73,6 +91,12 @@ export default function SuppliersPage() {
                             Loading...
                           </TableCell>
                         </TableRow>
+                      ) : error ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8 text-red-600">
+                            {error}
+                          </TableCell>
+                        </TableRow>
                       ) : suppliers.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
@@ -98,11 +122,16 @@ export default function SuppliersPage() {
                               </span>
                             </TableCell>
                             <TableCell>
-                              <Link href={`/admin/suppliers/${s.id}/edit`}>
-                                <Button variant="ghost" size="sm">
-                                  <ExternalLink className="h-4 w-4" />
+                              <div className="flex gap-1">
+                                <Link href={`/admin/suppliers/${s.id}/edit`}>
+                                  <Button variant="ghost" size="sm">
+                                    <ExternalLink className="h-4 w-4" />
+                                  </Button>
+                                </Link>
+                                <Button variant="ghost" size="sm" onClick={() => handleDelete(s.id, s.business_name)}>
+                                  <Trash2 className="h-4 w-4 text-red-600" />
                                 </Button>
-                              </Link>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))

@@ -2,15 +2,24 @@ import type { Product } from "./catalog-types";
 import { getServices } from "@/lib/services/service-registry";
 import { CATEGORIES } from "./catalog-constants";
 
-export function getAllProducts(): Product[] {
-  const { generateMockProducts } = require("@/lib/mock-products");
-  return generateMockProducts();
+let allProductsPromise: Promise<Product[]> | null = null;
+
+function getAllProductsCached(): Promise<Product[]> {
+  if (!allProductsPromise) {
+    allProductsPromise = getServices().product.getAll().then((r) => r.success ? r.data : []);
+  }
+  return allProductsPromise;
 }
 
-export function searchProducts(query: string): Product[] {
+export async function getAllProducts(): Promise<Product[]> {
+  return getAllProductsCached();
+}
+
+export async function searchProducts(query: string): Promise<Product[]> {
   if (!query.trim()) return [];
   const q = query.toLowerCase();
-  return getAllProducts().filter(
+  const all = await getAllProductsCached();
+  return all.filter(
     (p) =>
       p.name.toLowerCase().includes(q) ||
       p.brand?.toLowerCase().includes(q) ||
@@ -21,18 +30,19 @@ export function searchProducts(query: string): Product[] {
   );
 }
 
-export function searchProductsFiltered(query: string, limit = 20): Product[] {
-  if (!query.trim()) return [];
-  const results = searchProducts(query);
+export async function searchProductsFiltered(query: string, limit = 20): Promise<Product[]> {
+  const results = await searchProducts(query);
   return results.slice(0, limit);
 }
 
-export function getProductBySlugLocal(slug: string): Product | undefined {
-  return getAllProducts().find((p) => p.slug === slug);
+export async function getProductBySlugLocal(slug: string): Promise<Product | undefined> {
+  const all = await getAllProductsCached();
+  return all.find((p) => p.slug === slug);
 }
 
-export function getProductByIdLocal(id: string): Product | undefined {
-  return getAllProducts().find((p) => p.id === id);
+export async function getProductByIdLocal(id: string): Promise<Product | undefined> {
+  const all = await getAllProductsCached();
+  return all.find((p) => p.id === id);
 }
 
 export function getRecentSearches(): string[] {
@@ -47,8 +57,8 @@ export function clearRecentSearches(): void {
   getServices().search.clearRecentSearches();
 }
 
-export function getTrendingProducts(): Product[] {
-  const all = getAllProducts();
+export async function getTrendingProducts(): Promise<Product[]> {
+  const all = await getAllProducts();
   return all.filter((p) => p.isBestSeller || p.featured).slice(0, 6);
 }
 

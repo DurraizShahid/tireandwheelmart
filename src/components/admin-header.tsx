@@ -1,17 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useAdmin } from "@/contexts/admin-context";
 import { UserButton } from "@clerk/nextjs";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Bell, Settings, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Settings, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -46,13 +39,11 @@ export function AdminHeader() {
           </Tooltip>
         </TooltipProvider>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full" />
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="Settings">
-            <Settings className="h-5 w-5" />
-          </Button>
+          <Link href="/admin/settings">
+            <Button variant="ghost" size="icon" aria-label="Settings">
+              <Settings className="h-5 w-5" />
+            </Button>
+          </Link>
           <UserButton />
         </div>
       </div>

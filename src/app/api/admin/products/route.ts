@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
+import { ADMIN_DEFAULTS } from "@/lib/admin-constants";
 
 export async function GET() {
   const supabase = createServerClient();
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
       price,
       compare_at_price: compare_at_price || null,
       sku: sku || null,
-      image_url: image_url || "/placeholder.png",
+      image_url: image_url || ADMIN_DEFAULTS.PLACEHOLDER_IMAGE,
       images: images || [],
       category_id,
       brand: brand || null,

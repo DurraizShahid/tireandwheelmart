@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
 
 const promotionTypes = [
   { value: "percentage", label: "Percentage Off" },
@@ -48,6 +50,8 @@ export default function NewPromotionPage() {
     banner_image: "",
     banner_bg: "",
     is_active: "true",
+    show_on_homepage: "false",
+    homepage_order: "0",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +59,10 @@ export default function NewPromotionPage() {
     if (!form.name) { toast.error("Promotion name is required"); return; }
     if (!form.type) { toast.error("Promotion type is required"); return; }
     if (!form.value) { toast.error("Promotion value is required"); return; }
+    if (form.start_date && form.end_date && new Date(form.end_date) <= new Date(form.start_date)) {
+      toast.error("End date must be after start date");
+      return;
+    }
 
     setSaving(true);
     try {
@@ -79,6 +87,8 @@ export default function NewPromotionPage() {
           banner_image: form.banner_image || undefined,
           banner_bg: form.banner_bg || undefined,
           is_active: form.is_active === "true",
+          show_on_homepage: form.show_on_homepage === "true",
+          homepage_order: parseInt(form.homepage_order) || 0,
         }),
       });
       if (!res.ok) {
@@ -97,7 +107,9 @@ export default function NewPromotionPage() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
@@ -206,9 +218,21 @@ export default function NewPromotionPage() {
                       <Input id="banner_bg" value={form.banner_bg} onChange={(e) => setForm({ ...form, banner_bg: e.target.value })} />
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 pt-2">
-                    <Switch id="active" checked={form.is_active === "true"} onCheckedChange={(v) => setForm({ ...form, is_active: String(v) })} />
-                    <Label htmlFor="active">Active</Label>
+                  <div className="flex items-center gap-4 pt-2">
+                    <div className="flex items-center gap-2">
+                      <Switch id="active" checked={form.is_active === "true"} onCheckedChange={(v) => setForm({ ...form, is_active: String(v) })} />
+                      <Label htmlFor="active">Active</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch id="homepage" checked={form.show_on_homepage === "true"} onCheckedChange={(v) => setForm({ ...form, show_on_homepage: String(v) })} />
+                      <Label htmlFor="homepage">Show on Homepage</Label>
+                    </div>
+                    {form.show_on_homepage === "true" && (
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="homepage_order" className="whitespace-nowrap">Order</Label>
+                        <Input id="homepage_order" type="number" value={form.homepage_order} onChange={(e) => setForm({ ...form, homepage_order: e.target.value })} className="w-20" />
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-4 pt-4">
                     <Link href="/admin/promotions">

@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
-  const { name, description, type, value, min_subtotal, min_quantity, category_slug, brand_name, product_id, start_date, end_date, stackable, priority, badge_text, badge_color, banner_image, banner_bg, is_active } = body;
+  const { name, description, type, value, min_subtotal, min_quantity, category_slug, brand_name, product_id, start_date, end_date, stackable, priority, badge_text, badge_color, banner_image, banner_bg, is_active, show_on_homepage, homepage_order } = body;
 
   const supabase = createServerClient();
   const updates: Record<string, unknown> = {};
@@ -35,6 +35,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (banner_image !== undefined) updates.banner_image = banner_image || null;
   if (banner_bg !== undefined) updates.banner_bg = banner_bg || null;
   if (is_active !== undefined) updates.is_active = is_active;
+  if (show_on_homepage !== undefined) updates.show_on_homepage = show_on_homepage;
+  if (homepage_order !== undefined) updates.homepage_order = homepage_order;
 
   const { data, error } = await supabase.from("promotions").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

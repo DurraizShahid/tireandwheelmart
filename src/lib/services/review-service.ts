@@ -28,6 +28,104 @@ export interface ReviewService {
   submitReview(productId: string, data: { author: string; rating: number; title: string; content: string; vehicle?: string; tireSize?: string }): Promise<ServiceResult<ReviewData>>;
 }
 
+export function createSupabaseReviewService(): ReviewService {
+  return {
+    async getProductReviews(productId) {
+      const { createBrowserClient } = await import("@/lib/supabase/client");
+      const supabase = createBrowserClient();
+
+      const { data: reviews, error } = await (supabase
+        .from("reviews") as any)
+        .select("*")
+        .eq("product_id", productId)
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false });
+
+      if (error) return success({ reviews: [], breakdown: emptyBreakdown() });
+
+      const mapped: ReviewData[] = (reviews ?? []).map((r: any) => ({
+        id: r.id,
+        productId: r.product_id,
+        author: r.author,
+        rating: r.rating,
+        date: r.created_at?.split("T")[0] ?? "",
+        verified: r.verified,
+        title: r.title,
+        content: r.content,
+        photos: r.photos?.length ? r.photos : undefined,
+        vehicle: r.vehicle ?? undefined,
+        tireSize: r.tire_size ?? undefined,
+        helpfulCount: r.helpful_count ?? 0,
+      }));
+
+      const totalReviews = mapped.length;
+      const starCounts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+      let sum = 0;
+      for (const r of mapped) {
+        starCounts[r.rating] = (starCounts[r.rating] ?? 0) + 1;
+        sum += r.rating;
+      }
+      const averageRating = totalReviews > 0 ? Math.round((sum / totalReviews) * 10) / 10 : 0;
+      const stars: Record<number, { count: number; percentage: number }> = {};
+      for (let i = 1; i <= 5; i++) {
+        stars[i] = {
+          count: starCounts[i] ?? 0,
+          percentage: totalReviews > 0 ? Math.round(((starCounts[i] ?? 0) / totalReviews) * 100) : 0,
+        };
+      }
+      const recommendPercent = totalReviews > 0 ? Math.round((((starCounts[4] ?? 0) + (starCounts[5] ?? 0)) / totalReviews) * 100) : 0;
+
+      return success({
+        reviews: mapped,
+        breakdown: { stars, totalReviews, averageRating, recommendPercent },
+      });
+    },
+
+    async submitReview(productId, data) {
+      const { createBrowserClient } = await import("@/lib/supabase/client");
+      const supabase = createBrowserClient();
+
+      const { data: reviewResult, error } = await (supabase.from("reviews") as any).insert({
+        product_id: productId,
+        author: data.author,
+        rating: data.rating,
+        title: data.title,
+        content: data.content,
+        vehicle: data.vehicle ?? null,
+        tire_size: data.tireSize ?? null,
+        verified: false,
+        is_approved: false,
+      }).select();
+
+      const review = (reviewResult as any)?.[0] ?? null;
+      if (error || !review) return failure("UNKNOWN", "Failed to submit review");
+
+      return success({
+        id: review.id,
+        productId: review.product_id,
+        author: review.author,
+        rating: review.rating,
+        date: review.created_at?.split("T")[0] ?? "",
+        verified: review.verified,
+        title: review.title,
+        content: review.content,
+        vehicle: review.vehicle ?? undefined,
+        tireSize: review.tire_size ?? undefined,
+        helpfulCount: review.helpful_count ?? 0,
+      });
+    },
+  };
+}
+
+function emptyBreakdown(): RatingBreakdown {
+  return {
+    stars: { 5: { count: 0, percentage: 0 }, 4: { count: 0, percentage: 0 }, 3: { count: 0, percentage: 0 }, 2: { count: 0, percentage: 0 }, 1: { count: 0, percentage: 0 } },
+    totalReviews: 0,
+    averageRating: 0,
+    recommendPercent: 0,
+  };
+}
+
 export function createMockReviewService(): ReviewService {
   return {
     async getProductReviews(productId) {

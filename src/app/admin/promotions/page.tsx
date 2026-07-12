@@ -8,7 +8,8 @@ import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, ExternalLink } from "lucide-react";
+import { Plus, ExternalLink, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import type { Promotion } from "@/lib/supabase/types";
 
 const typeLabels: Record<string, string> = {
@@ -28,15 +29,29 @@ const typeLabels: Record<string, string> = {
 export default function PromotionsPage() {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase.from("promotions").select("*").order("priority");
-      if (data) setPromotions(data);
+      const { data, error } = await supabase.from("promotions").select("*").order("priority");
+      if (error) setError(error.message);
+      else if (data) setPromotions(data);
       setLoading(false);
     };
     fetch();
   }, []);
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    const res = await fetch(`/api/admin/promotions/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      toast.success("Promotion deleted");
+      setPromotions((prev) => prev.filter((p) => p.id !== id));
+    } else {
+      const data = await res.json().catch(() => ({}));
+      toast.error(data.error ?? "Failed to delete promotion");
+    }
+  };
 
   const formatValue = (p: Promotion) => {
     if (p.type === "percentage") return `${p.value}%`;
@@ -86,6 +101,10 @@ export default function PromotionsPage() {
                         <TableRow>
                           <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading...</TableCell>
                         </TableRow>
+                      ) : error ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8 text-red-600">{error}</TableCell>
+                        </TableRow>
                       ) : promotions.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No promotions yet</TableCell>
@@ -105,11 +124,16 @@ export default function PromotionsPage() {
                             </TableCell>
                             <TableCell>{p.priority}</TableCell>
                             <TableCell>
-                              <Link href={`/admin/promotions/${p.id}/edit`}>
-                                <Button variant="ghost" size="sm">
-                                  <ExternalLink className="h-4 w-4" />
+                              <div className="flex gap-1">
+                                <Link href={`/admin/promotions/${p.id}/edit`}>
+                                  <Button variant="ghost" size="sm">
+                                    <ExternalLink className="h-4 w-4" />
+                                  </Button>
+                                </Link>
+                                <Button variant="ghost" size="sm" onClick={() => handleDelete(p.id, p.name)}>
+                                  <Trash2 className="h-4 w-4 text-red-600" />
                                 </Button>
-                              </Link>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))

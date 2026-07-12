@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useMemo, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { useShop } from "@/lib/shop-utils";
 import { getAllProducts } from "@/lib/search-utils";
+import type { Product } from "@/lib/catalog-types";
 import { Breadcrumb } from "@/components/catalog/Breadcrumb";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { FilterSidebar } from "@/components/catalog/FilterSidebar";
@@ -19,7 +20,10 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
 
-  const allProducts = useMemo(() => getAllProducts(), []);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    getAllProducts().then(setAllProducts);
+  }, []);
 
   const {
     filteredProducts,

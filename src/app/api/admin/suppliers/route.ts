@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
+import { ADMIN_DEFAULTS } from "@/lib/admin-constants";
 
 export async function GET() {
   const supabase = createServerClient();
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
       business_name,
       business_email,
       business_phone,
-      commission_rate: commission_rate ?? 10.0,
+      commission_rate: commission_rate ?? ADMIN_DEFAULTS.DEFAULT_COMMISSION_RATE,
       order_handling: order_handling ?? "admin",
     })
     .select()

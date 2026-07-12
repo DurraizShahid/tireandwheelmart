@@ -7,22 +7,54 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { PROMOTIONS, HOMEPAGE_DEALS_SECTION } from "@/lib/promotions/constants";
 import { PromotionCard } from "./PromotionCard";
 import { FlashSaleCountdown } from "./FlashSaleCountdown";
+import type { Promotion as DbPromotion } from "@/lib/supabase/types";
+import type { Promotion } from "@/lib/promotions/types";
 
 interface HomepageDealsProps {
   className?: string;
   limit?: number;
+  dbPromotions?: DbPromotion[];
 }
 
-export function HomepageDeals({ className, limit = 4 }: HomepageDealsProps) {
-  const displayPromos = useMemo(
-    () => PROMOTIONS.filter((p) => p.badgeText).slice(0, limit),
-    [limit]
-  );
+function mapDbPromotionToClient(db: DbPromotion): Promotion {
+  return {
+    id: db.id,
+    name: db.name,
+    description: db.description ?? "",
+    type: db.type,
+    value: db.value,
+    minSubtotal: db.min_subtotal ?? undefined,
+    minQuantity: db.min_quantity ?? undefined,
+    categorySlug: db.category_slug ?? undefined,
+    brandName: db.brand_name ?? undefined,
+    productId: db.product_id ?? undefined,
+    startDate: db.start_date ?? undefined,
+    endDate: db.end_date ?? undefined,
+    stackable: db.stackable,
+    priority: db.priority,
+    badgeText: db.badge_text ?? undefined,
+    badgeColor: db.badge_color ?? undefined,
+    bannerImage: db.banner_image ?? undefined,
+    bannerBg: db.banner_bg ?? undefined,
+  };
+}
 
-  const flashSale = useMemo(
-    () => PROMOTIONS.find((p) => p.type === "flash_sale" && p.endDate),
-    []
-  );
+export function HomepageDeals({ className, limit = 4, dbPromotions }: HomepageDealsProps) {
+  const displayPromos = useMemo(() => {
+    if (dbPromotions && dbPromotions.length > 0) {
+      return dbPromotions.slice(0, limit).map(mapDbPromotionToClient);
+    }
+    return PROMOTIONS.filter((p) => p.badgeText).slice(0, limit);
+  }, [dbPromotions, limit]);
+
+  const flashSale = useMemo(() => {
+    if (dbPromotions && dbPromotions.length > 0) {
+      const found = dbPromotions.find((p) => p.type === "flash_sale" && p.end_date);
+      return found ? { endDate: found.end_date } : null;
+    }
+    const found = PROMOTIONS.find((p) => p.type === "flash_sale" && p.endDate);
+    return found ? { endDate: found.endDate } : null;
+  }, [dbPromotions]);
 
   if (displayPromos.length === 0) return null;
 

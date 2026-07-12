@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,16 +29,22 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
   className,
 }) => {
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
-  const suggestions = useMemo(() => {
-    if (!query.trim() || query.length < 2) return [];
-    return searchProductsFiltered(query, 5).map((p) => ({
-      id: p.id,
-      name: p.name,
-      slug: p.slug,
-      price: p.price,
-      brand: p.brand ?? null,
-    }));
+  useEffect(() => {
+    if (!query.trim() || query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    searchProductsFiltered(query, 5).then((results) => {
+      setSuggestions(results.map((p) => ({
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        price: p.price,
+        brand: p.brand ?? null,
+      })));
+    });
   }, [query]);
 
   useEffect(() => {

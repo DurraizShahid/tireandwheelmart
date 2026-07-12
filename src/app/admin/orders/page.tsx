@@ -1,36 +1,46 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Loader2 } from "lucide-react";
+
+interface Order {
+  id: string;
+  status: string;
+  total: number;
+  created_at: string;
+  customers: { first_name: string | null; last_name: string | null; email: string } | null;
+}
+
+const statusColors: Record<string, string> = {
+  delivered: "bg-green-100 text-green-800",
+  shipped: "bg-blue-100 text-blue-800",
+  processing: "bg-yellow-100 text-yellow-800",
+  pending: "bg-orange-100 text-orange-800",
+  confirmed: "bg-blue-100 text-blue-800",
+  cancelled: "bg-red-100 text-red-800",
+  refunded: "bg-purple-100 text-purple-800",
+};
 
 export default function OrdersPage() {
-  const orders = [
-    { id: 1001, customer: "John Doe", email: "john@example.com", total: "$234.56", status: "Delivered", date: "2024-01-15" },
-    { id: 1002, customer: "Jane Smith", email: "jane@example.com", total: "$567.89", status: "Processing", date: "2024-01-16" },
-    { id: 1003, customer: "Mike Johnson", email: "mike@example.com", total: "$123.45", status: "Shipped", date: "2024-01-17" },
-    { id: 1004, customer: "Sarah Williams", email: "sarah@example.com", total: "$456.78", status: "Delivered", date: "2024-01-18" },
-    { id: 1005, customer: "Tom Brown", email: "tom@example.com", total: "$789.01", status: "Pending", date: "2024-01-19" },
-  ];
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Delivered":
-        return "bg-green-100 text-green-800";
-      case "Shipped":
-        return "bg-blue-100 text-blue-800";
-      case "Processing":
-        return "bg-yellow-100 text-yellow-800";
-      case "Pending":
-        return "bg-orange-100 text-orange-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  useEffect(() => {
+    fetch("/api/admin/orders")
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to load orders");
+        const data = await res.json();
+        setOrders(Array.isArray(data) ? data : []);
+      })
+      .catch((e) => setError(e.message ?? "Failed to load orders"))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-muted/30">
@@ -39,55 +49,63 @@ export default function OrdersPage() {
         <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="space-y-6">
-            {/* Page Header */}
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
               <p className="text-muted-foreground">Manage customer orders</p>
             </div>
 
-            {/* Orders Table */}
             <Card>
               <CardHeader>
                 <CardTitle>Recent Orders</CardTitle>
-                <CardDescription>Total orders: {orders.length}</CardDescription>
+                <CardDescription>
+                  {loading ? "Loading..." : `Total orders: ${orders.length}`}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="rounded-lg border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Order ID</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Total</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {orders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell className="font-medium">#{order.id}</TableCell>
-                          <TableCell>{order.customer}</TableCell>
-                          <TableCell>{order.email}</TableCell>
-                          <TableCell className="font-semibold">{order.total}</TableCell>
-                          <TableCell>
-                            <Badge className={getStatusColor(order.status)}>
-                              {order.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{order.date}</TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="sm">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
+                {loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : error ? (
+                  <p className="text-center text-red-600 py-8">{error}</p>
+                ) : orders.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">No orders found.</p>
+                ) : (
+                  <div className="rounded-lg border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Order ID</TableHead>
+                          <TableHead>Customer</TableHead>
+                          <TableHead>Total</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Date</TableHead>
+                          
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                      </TableHeader>
+                      <TableBody>
+                        {orders.map((order) => {
+                          const name = order.customers
+                            ? [order.customers.first_name, order.customers.last_name].filter(Boolean).join(" ") || order.customers.email
+                            : "Unknown";
+                          return (
+                            <TableRow key={order.id}>
+                              <TableCell className="font-medium">#{order.id.slice(0, 8)}</TableCell>
+                              <TableCell>{name}</TableCell>
+                              <TableCell className="font-semibold">${Number(order.total).toFixed(2)}</TableCell>
+                              <TableCell>
+                                <Badge className={statusColors[order.status] ?? "bg-gray-100 text-gray-800"}>
+                                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

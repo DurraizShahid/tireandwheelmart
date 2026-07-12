@@ -13,6 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminHeader } from "@/components/admin-header";
 import type { Category, Product } from "@/lib/supabase/types";
 
 export default function EditProductPage() {
@@ -20,6 +22,7 @@ export default function EditProductPage() {
   const params = useParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -48,6 +51,7 @@ export default function EditProductPage() {
       const prodRes = await supabase.from("products").select("*").eq("id", params.id).single();
       if (catRes.data) setCategories(catRes.data);
       const p = prodRes.data as Product | null;
+      if (!p) { setNotFound(true); setLoading(false); return; }
       if (p) {
         setForm({
           name: p.name,
@@ -78,7 +82,10 @@ export default function EditProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name) { toast.error("Product name is required"); return; }
-    if (!form.price) { toast.error("Price is required"); return; }
+    if (!form.price || parseFloat(form.price) <= 0) {
+      toast.error("Price must be a positive number");
+      return;
+    }
     if (!form.category_id) { toast.error("Category is required"); return; }
 
     let specs: Record<string, unknown> = {};
@@ -132,15 +139,40 @@ export default function EditProductPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-muted/30 items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="flex min-h-screen bg-muted/30">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col">
+          <AdminHeader />
+          <div className="flex-1 items-center justify-center flex flex-col gap-4">
+            <p className="text-lg font-medium">Product not found</p>
+            <Link href="/admin/products">
+              <Button variant="outline">Back to Products</Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <AdminSidebar />
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="flex items-center gap-4">

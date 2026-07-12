@@ -7,63 +7,14 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { CONFIG_TO_URL_SLUG } from "@/lib/category-configs";
+import { CATEGORIES } from "@/lib/catalog-constants";
 
-const categories = [
-  {
-    title: "All-Season Tires",
-    slug: "all-season",
-    image: "/categories/allseason.png",
-    bgColor: "bg-white",
-  },
-  {
-    title: "Summer Tires",
-    slug: "summer",
-    image: "/categories/summertires.png",
-    bgColor: "bg-red-600",
-  },
-  {
-    title: "Winter Tires",
-    slug: "winter",
-    image: "/categories/wintertires.png",
-    bgColor: "bg-black",
-  },
-  {
-    title: "Performance Tires",
-    slug: "performance",
-    image: "/categories/performancetires.png",
-    bgColor: "bg-white",
-  },
-  {
-    title: "Alloy Wheels",
-    slug: "alloy-wheels",
-    image: "/categories/alloywheels.webp",
-    bgColor: "bg-red-600",
-  },
-  {
-    title: "Steel Wheels",
-    slug: "steel-wheels",
-    image: "/categories/steelwheels.png",
-    bgColor: "bg-black",
-  },
-  {
-    title: "Tire & Wheel Packages",
-    slug: "packages",
-    image: "/categories/tireandwheel.png",
-    bgColor: "bg-white",
-  },
-  {
-    title: "Wheel Accessories",
-    slug: "wheel-accessories",
-    image: "/categories/wheelaccessories.png",
-    bgColor: "bg-red-600",
-  },
-  {
-    title: "Tire Accessories",
-    slug: "tire-accessories",
-    image: "/categories/tireaccessories.png",
-    bgColor: "bg-black",
-  },
-];
+const categories = CATEGORIES.map((c) => ({
+  title: c.title,
+  slug: c.slug,
+  image: c.image,
+  bgColor: c.bgColor,
+}));
 
 export const CategoryDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);

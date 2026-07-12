@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/supabase/queries";
+import { getProductBySlug as getDbProductBySlug } from "@/lib/supabase/queries";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import ProductDetailScreen from "@/components/product-detail-screen";
 
@@ -10,15 +10,20 @@ interface ProductDetailPageProps {
 
 export const dynamic = "force-dynamic";
 
-async function getMockProduct(slug: string) {
-  const { generateMockProducts } = await import("@/lib/mock-products");
-  return generateMockProducts().find((p) => p.slug === slug) ?? null;
+async function getCatalogProduct(slug: string) {
+  const { createServerClient } = await import("@/lib/supabase/server");
+  const { toCatalogProduct } = await import("@/lib/supabase/mappers");
+  const supabase = createServerClient();
+  const { data: rows } = await supabase.from("products").select("*").eq("slug", slug).limit(1);
+  const product = (rows as any)?.[0] ?? null;
+  if (!product) return null;
+  return toCatalogProduct(product);
 }
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const dbProduct = await getProductBySlug(slug);
+  const dbProduct = await getDbProductBySlug(slug);
   if (dbProduct) {
     return {
       title: `${dbProduct.name} | Tire&Wheel Mart`,
@@ -27,15 +32,15 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
     };
   }
 
-  const mockProduct = await getMockProduct(slug);
-  if (mockProduct) {
+  const catalogProduct = await getCatalogProduct(slug);
+  if (catalogProduct) {
     return {
-      title: `${mockProduct.name} | Tire&Wheel Mart`,
-      description: mockProduct.description ?? `Shop ${mockProduct.name} at Tire&Wheel Mart.`,
+      title: `${catalogProduct.name} | Tire&Wheel Mart`,
+      description: catalogProduct.description ?? `Shop ${catalogProduct.name} at Tire&Wheel Mart.`,
       openGraph: {
-        title: mockProduct.name,
-        description: mockProduct.description,
-        images: mockProduct.images[0] ? [{ url: mockProduct.images[0] }] : undefined,
+        title: catalogProduct.name,
+        description: catalogProduct.description,
+        images: catalogProduct.images[0] ? [{ url: catalogProduct.images[0] }] : undefined,
       },
     };
   }
@@ -46,11 +51,11 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { slug } = await params;
 
-  const dbProduct = await getProductBySlug(slug);
+  const dbProduct = await getDbProductBySlug(slug);
   if (dbProduct) return <ProductDetailScreen product={dbProduct} />;
 
-  const mockProduct = await getMockProduct(slug);
-  if (!mockProduct) notFound();
+  const catalogProduct = await getCatalogProduct(slug);
+  if (!catalogProduct) notFound();
 
-  return <ProductDetailClient product={mockProduct} />;
+  return <ProductDetailClient product={catalogProduct} />;
 }
