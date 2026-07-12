@@ -73,7 +73,7 @@ export default function EditCategoryPage() {
     }
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/categories", {
+      const res = await fetch(`/api/admin/categories/${params.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

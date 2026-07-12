@@ -25,6 +25,8 @@ export default function NewCategoryPage() {
     seo_title: "",
     seo_description: "",
     display_order: "0",
+    homepage_category: false,
+    homepage_description: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +49,8 @@ export default function NewCategoryPage() {
           seo_title: form.seo_title || undefined,
           seo_description: form.seo_description || undefined,
           display_order: parseInt(form.display_order) || 0,
+          homepage_category: form.homepage_category,
+          homepage_description: form.homepage_description || undefined,
         }),
       });
       if (!res.ok) {
@@ -124,6 +128,29 @@ export default function NewCategoryPage() {
                   <div className="space-y-2">
                     <Label htmlFor="seo_desc">SEO Description</Label>
                     <Textarea id="seo_desc" value={form.seo_description} onChange={(e) => setForm({ ...form, seo_description: e.target.value })} />
+                  </div>
+                  <div className="space-y-4 border-t pt-4">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="homepage_category"
+                        checked={form.homepage_category}
+                        onChange={(e) => setForm({ ...form, homepage_category: e.target.checked })}
+                        className="h-4 w-4"
+                      />
+                      <Label htmlFor="homepage_category">Show on Homepage Category Grid</Label>
+                    </div>
+                    {form.homepage_category && (
+                      <div className="space-y-2">
+                        <Label htmlFor="homepage_desc">Homepage Grid Description</Label>
+                        <Textarea
+                          id="homepage_desc"
+                          value={form.homepage_description}
+                          onChange={(e) => setForm({ ...form, homepage_description: e.target.value })}
+                          placeholder="Short description for the homepage category grid"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-4 pt-4">
                     <Link href="/admin/categories">
