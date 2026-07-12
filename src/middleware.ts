@@ -1,7 +1,6 @@
 import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 const isVendorRoute = createRouteMatcher(["/vendor(.*)"]);
 
@@ -12,8 +11,6 @@ async function getUserRole(userId: string): Promise<string | undefined> {
 }
 
 export default clerkMiddleware(async (auth, request) => {
-  if (isPublicRoute(request)) return;
-
   const { userId, sessionClaims } = await auth();
 
   let role: string | undefined;
@@ -56,8 +53,7 @@ export default clerkMiddleware(async (auth, request) => {
     return;
   }
 
-  // Protect all other non-public routes
-  await auth.protect();
+  // All other routes are public — no auth required
 });
 
 export const config = {

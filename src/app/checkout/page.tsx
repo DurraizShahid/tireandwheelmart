@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, ChevronRight, ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Loader2, LogIn, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser, SignInButton } from "@clerk/nextjs";
 import { useCart } from "@/contexts/cart-context";
 import { useCheckoutForm } from "@/hooks/use-checkout-form";
 import { CheckoutProgress } from "@/components/checkout/CheckoutProgress";
@@ -18,6 +19,7 @@ import { CheckoutPromotions } from "@/components/promotions/CheckoutPromotions";
 import { SHIPPING_METHODS as FALLBACK_METHODS } from "@/lib/checkout-types";
 
 export default function CheckoutPage() {
+  const { isSignedIn } = useUser();
   const { items } = useCart();
   const {
     step, formData, errors, isTransitioning, isSubmitting, orderNumber, shippingCost,
@@ -94,13 +96,21 @@ export default function CheckoutPage() {
                     )}
                   </div>
                   {step === "review" ? (
-                    <Button onClick={submitOrder} disabled={isSubmitting} className="min-w-[180px] h-12 text-base gap-2">
-                      {isSubmitting ? (
-                        <><Loader2 className="h-5 w-5 animate-spin" /> Processing...</>
-                      ) : (
-                        <><ShoppingCart className="h-5 w-5" /> Place Order</>
-                      )}
-                    </Button>
+                    isSignedIn ? (
+                      <Button onClick={submitOrder} disabled={isSubmitting} className="min-w-[180px] h-12 text-base gap-2">
+                        {isSubmitting ? (
+                          <><Loader2 className="h-5 w-5 animate-spin" /> Processing...</>
+                        ) : (
+                          <><ShoppingCart className="h-5 w-5" /> Place Order</>
+                        )}
+                      </Button>
+                    ) : (
+                    <SignInButton mode="modal">
+                      <Button className="min-w-[180px] h-12 text-base gap-2">
+                        <LogIn className="h-5 w-5" /> Sign in to Place Order
+                      </Button>
+                    </SignInButton>
+                    )
                   ) : (
                     <Button onClick={goNext} className="min-w-[140px] h-12 text-base gap-2">
                       Continue <ChevronRight className="h-4 w-4" />
@@ -139,13 +149,21 @@ export default function CheckoutPage() {
                   </p>
                 </div>
                 {step === "review" ? (
-                  <Button onClick={submitOrder} disabled={isSubmitting} className="flex-1 h-12 gap-2">
-                    {isSubmitting ? (
-                      <><Loader2 className="h-5 w-5 animate-spin" /> Processing</>
-                    ) : (
-                      <>Place Order</>
-                    )}
-                  </Button>
+                  isSignedIn ? (
+                    <Button onClick={submitOrder} disabled={isSubmitting} className="flex-1 h-12 gap-2">
+                      {isSubmitting ? (
+                        <><Loader2 className="h-5 w-5 animate-spin" /> Processing</>
+                      ) : (
+                        <>Place Order</>
+                      )}
+                    </Button>
+                  ) : (
+                    <SignInButton mode="modal">
+                      <Button className="flex-1 h-12 gap-2">
+                        <LogIn className="h-5 w-5" /> Sign in to Place Order
+                      </Button>
+                    </SignInButton>
+                  )
                 ) : (
                   <Button onClick={goNext} className="flex-1 h-12 gap-2">
                     Continue <ChevronRight className="h-4 w-4" />

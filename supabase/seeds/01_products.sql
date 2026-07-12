@@ -303,7 +303,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Track-day tire with dual-compound technology. Original equipment on Porsche 911 GT3 RS.',
  280.00, 330.00, 'TIR-MIC-PSC-016',
  '/tires/Michelin Pilot Sport Cup 2/4w-368_3528703112235_tire_michelin_pilot-sport-cup-2-r_325-slash-30-zr21-108y-xl_n0_a_main_5-quarterzoom_nopad.webp',
- 'a1000000-0000-0000-0000-000000000004', 'Michelin', true, 6, true,
+ 'a1000000-0000-0000-0000-000000000004', 'Michelin', true, 6, false,
  '{"width": 255, "aspect_ratio": 35, "rim_diameter": 19, "load_index": "96", "speed_rating": "Y", "tire_type": "Passenger", "season": "Summer", "runflat": false, "treadwear": 160, "traction": "AA", "temperature": "A", "noise_level": "77 dB", "warranty_miles": 0}'),
 
 -- Bridgestone Potenza S007A
@@ -312,7 +312,7 @@ INSERT INTO public.products (id, name, slug, description, price, compare_at_pric
  'Ultra-high performance summer tire for luxury sports cars. Original equipment on Audi RS models.',
  310.00, 360.00, 'TIR-BRI-PS7-043',
  '/tires/Pirelli P Zero Trofeo R/Trofeo R-02_i.webp',
- 'a1000000-0000-0000-0000-000000000004', 'Bridgestone', true, 10, false,
+ 'a1000000-0000-0000-0000-000000000004', 'Bridgestone', true, 10, true,
  '{"width": 265, "aspect_ratio": 30, "rim_diameter": 20, "load_index": "94", "speed_rating": "Y", "tire_type": "Passenger", "season": "Summer", "runflat": false, "treadwear": 220, "traction": "AA", "temperature": "A", "noise_level": "75 dB", "warranty_miles": 0}'),
 
 -- Goodyear Eagle F1 SuperSport
