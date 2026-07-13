@@ -100,14 +100,11 @@ export function createSupabaseOrderService(): OrderService {
           const product = productMap.get(item.id);
           if (product) {
             const newStock = product.stock_quantity - item.quantity;
-            await supabase
-              .from("products")
-              .update({
-                stock_quantity: newStock,
-                in_stock: newStock > 0,
-                updated_at: new Date().toISOString(),
-              })
-              .eq("id", item.id);
+            await (supabase.from("products") as any).update({
+              stock_quantity: newStock,
+              in_stock: newStock > 0,
+              updated_at: new Date().toISOString(),
+            }).eq("id", item.id);
           }
         }
       }
