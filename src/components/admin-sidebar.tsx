@@ -23,6 +23,9 @@ import {
   PhoneCall,
   Phone,
   LayoutList,
+  Puzzle,
+  Mail,
+  Smartphone,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -34,24 +37,107 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const adminLinks = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Products", href: "/admin/products", icon: Package },
-  { name: "Brands", href: "/admin/brands", icon: Building2 },
-  { name: "Categories", href: "/admin/categories", icon: Tag },
-  { name: "Promotions", href: "/admin/promotions", icon: Percent },
-  { name: "Featured Deals", href: "/admin/featured-deals", icon: Star },
-  { name: "Suppliers", href: "/admin/suppliers", icon: Users },
-  { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
-  { name: "Reviews", href: "/admin/reviews", icon: MessageCircle },
-  { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
-  { name: "Customers", href: "/admin/customers", icon: Users },
-  { name: "Leads", href: "/admin/leads", icon: PhoneCall },
-  { name: "Dialer", href: "/admin/dialer", icon: Phone },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { name: "Homepage Stats", href: "/admin/site-settings", icon: LayoutList },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
+interface SidebarLink {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+interface SidebarGroup {
+  label?: string;
+  links: SidebarLink[];
+}
+
+const sidebarGroups: SidebarGroup[] = [
+  {
+    links: [{ name: "Dashboard", href: "/admin", icon: LayoutDashboard }],
+  },
+  {
+    label: "Commerce",
+    links: [
+      { name: "Products", href: "/admin/products", icon: Package },
+      { name: "Brands", href: "/admin/brands", icon: Building2 },
+      { name: "Categories", href: "/admin/categories", icon: Tag },
+      { name: "Promotions", href: "/admin/promotions", icon: Percent },
+      { name: "Featured Deals", href: "/admin/featured-deals", icon: Star },
+      { name: "Suppliers", href: "/admin/suppliers", icon: Users },
+      { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+    ],
+  },
+  {
+    label: "Customers",
+    links: [
+      { name: "Customers", href: "/admin/customers", icon: Users },
+      { name: "Leads", href: "/admin/leads", icon: PhoneCall },
+      { name: "Dialer", href: "/admin/dialer", icon: Phone },
+      { name: "Reviews", href: "/admin/reviews", icon: MessageCircle },
+      { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Marketing",
+    links: [
+      { name: "Email Automations", href: "/admin/email-automations", icon: Mail },
+      { name: "SMS Automations", href: "/admin/sms-automations", icon: Smartphone },
+      { name: "Integrations", href: "/admin/integrations", icon: Puzzle },
+    ],
+  },
+  {
+    label: "Insights",
+    links: [
+      { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+      { name: "Site Settings", href: "/admin/site-settings", icon: LayoutList },
+    ],
+  },
+  {
+    label: "System",
+    links: [{ name: "Settings", href: "/admin/settings", icon: Settings }],
+  },
 ];
+
+function SidebarLinkItem({
+  link,
+  collapsed,
+  isMobile,
+  pathname,
+  onClick,
+}: {
+  link: SidebarLink;
+  collapsed: boolean;
+  isMobile: boolean;
+  pathname: string;
+  onClick: () => void;
+}) {
+  const Icon = link.icon;
+  const isActive = pathname === link.href;
+
+  const linkElement = (
+    <Link
+      href={link.href}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-3 rounded-md transition-colors",
+        collapsed && !isMobile ? "justify-center px-2 py-2" : "px-3 py-2",
+        isActive
+          ? "bg-red-600 text-white"
+          : "text-foreground hover:bg-muted"
+      )}
+    >
+      <Icon className="h-4 w-4 shrink-0" />
+      {(!collapsed || isMobile) && <span>{link.name}</span>}
+    </Link>
+  );
+
+  if (collapsed && !isMobile) {
+    return (
+      <Tooltip key={link.href} delayDuration={0}>
+        <TooltipTrigger asChild>{linkElement}</TooltipTrigger>
+        <TooltipContent side="right">{link.name}</TooltipContent>
+      </Tooltip>
+    );
+  }
+  return linkElement;
+}
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -66,38 +152,28 @@ export function AdminSidebar() {
           <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
         </Link>
       </div>
-      <nav className="flex-1 px-3 py-6 space-y-1">
-        {adminLinks.map((link) => {
-          const Icon = link.icon;
-          const isActive = pathname === link.href;
-          const linkElement = (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className={cn(
-                "flex items-center gap-3 rounded-md transition-colors",
-                collapsed && !isMobile ? "justify-center px-2 py-2" : "px-3 py-2",
-                isActive
-                  ? "bg-red-600 text-white"
-                  : "text-foreground hover:bg-muted"
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {(!collapsed || isMobile) && <span>{link.name}</span>}
-            </Link>
-          );
-
-          if (collapsed && !isMobile) {
-            return (
-              <Tooltip key={link.href} delayDuration={0}>
-                <TooltipTrigger asChild>{linkElement}</TooltipTrigger>
-                <TooltipContent side="right">{link.name}</TooltipContent>
-              </Tooltip>
-            );
-          }
-          return linkElement;
-        })}
+      <nav className="flex-1 px-3 py-6 space-y-6 overflow-y-auto">
+        {sidebarGroups.map((group, gi) => (
+          <div key={gi}>
+            {group.label && (!collapsed || isMobile) && (
+              <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+                {group.label}
+              </p>
+            )}
+            <div className="space-y-1">
+              {group.links.map((link) => (
+                <SidebarLinkItem
+                  key={link.href}
+                  link={link}
+                  collapsed={collapsed}
+                  isMobile={isMobile}
+                  pathname={pathname}
+                  onClick={() => setIsOpen(false)}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </nav>
       <div className="px-3 py-4 border-t">
         {collapsed && !isMobile ? (
@@ -130,7 +206,6 @@ export function AdminSidebar() {
 
   return (
     <TooltipProvider>
-      {/* Desktop Sidebar */}
       <aside
         className={cn(
           "hidden lg:flex border-r flex-col bg-background transition-all duration-300 sticky top-0 h-screen",
@@ -140,10 +215,9 @@ export function AdminSidebar() {
         <SidebarContent />
       </aside>
 
-      {/* Mobile Sidebar */}
       <div className="lg:hidden flex items-center gap-2 mb-4">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
+          <SheetTrigger asChild>
             <Button variant="ghost" size="icon" aria-label="Toggle sidebar menu">
               <Menu className="h-5 w-5" />
             </Button>

@@ -1,16 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, ExternalLink, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, ExternalLink, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 import type { Lead } from "@/lib/supabase/types";
 
 const statusLabels: Record<string, string> = {
@@ -29,16 +38,48 @@ const statusColors: Record<string, string> = {
   closed: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
 };
 
+const PAGE_SIZE = 20;
+
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  const fetchLeads = useCallback(async (q: string, p: number) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (q) params.set("search", q);
+      params.set("page", String(p));
+      params.set("pageSize", String(PAGE_SIZE));
+      const res = await fetch(`/api/admin/leads?${params}`);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const json = await res.json();
+      setLeads(json.data);
+      setTotal(json.total);
+    } catch {
+      toast.error("Failed to load leads");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    supabase.from("leads").select("*").order("created_at", { ascending: false }).then(({ data }) => {
-      if (data) setLeads(data);
-      setLoading(false);
-    });
-  }, []);
+    fetchLeads(search, page);
+  }, [page, fetchLeads]);
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setPage(1);
+    }, 300);
+  };
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Delete lead "${name}"? This cannot be undone.`)) return;
@@ -46,6 +87,7 @@ export default function LeadsPage() {
       const res = await fetch(`/api/admin/leads/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       setLeads((prev) => prev.filter((l) => l.id !== id));
+      setTotal((t) => t - 1);
       toast.success("Lead deleted");
     } catch {
       toast.error("Failed to delete lead");
@@ -72,8 +114,27 @@ export default function LeadsPage() {
               </Link>
             </div>
 
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, email, phone, company..."
+                className="pl-9"
+                value={search}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
+
             <Card>
-              <CardHeader><CardTitle>All Leads</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>
+                  All Leads
+                  {total > 0 && (
+                    <span className="ml-2 text-sm font-normal text-muted-foreground">
+                      ({total} total)
+                    </span>
+                  )}
+                </CardTitle>
+              </CardHeader>
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
@@ -131,6 +192,35 @@ export default function LeadsPage() {
                     )}
                   </TableBody>
                 </Table>
+
+                {totalPages > 1 && (
+                  <div className="p-4 border-t">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            onClick={(e) => { e.preventDefault(); setPage((p) => Math.max(1, p - 1)); }}
+                          />
+                        </PaginationItem>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                          <PaginationItem key={p}>
+                            <PaginationLink
+                              isActive={p === page}
+                              onClick={(e) => { e.preventDefault(); setPage(p); }}
+                            >
+                              {p}
+                            </PaginationLink>
+                          </PaginationItem>
+                        ))}
+                        <PaginationItem>
+                          <PaginationNext
+                            onClick={(e) => { e.preventDefault(); setPage((p) => Math.min(totalPages, p + 1)); }}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
