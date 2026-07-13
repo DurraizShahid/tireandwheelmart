@@ -54,7 +54,7 @@ export function ImageUpload({
         const ext = file.name.split(".").pop() || "jpg";
         const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const { data, error } = await supabase.storage
-          .from("products")
+          .from("Products")
           .upload(fileName, file, { cacheControl: "3600", upsert: false });
 
         if (error) {
@@ -66,7 +66,7 @@ export function ImageUpload({
           break;
         }
 
-        const { data: urlData } = supabase.storage.from("products").getPublicUrl(data.path);
+        const { data: urlData } = supabase.storage.from("Products").getPublicUrl(data.path);
         uploadedUrls.push(urlData.publicUrl);
       }
 
