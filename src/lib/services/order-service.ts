@@ -27,6 +27,25 @@ export function createSupabaseOrderService(): OrderService {
       const supabase = createBrowserClient();
       const email = formData.customerInfo.email;
 
+      // Validate stock for all items
+      const productIds = items.map((item) => item.id);
+      const { data: products } = await supabase
+        .from("products")
+        .select("id, stock_quantity, name")
+        .in("id", productIds);
+
+      const productMap = new Map((products ?? []).map((p: any) => [p.id, p]));
+
+      for (const item of items) {
+        const product = productMap.get(item.id);
+        if (!product) {
+          return failure("NOT_FOUND", `Product not found: ${item.id}`);
+        }
+        if (product.stock_quantity < item.quantity) {
+          return failure("VALIDATION", `Insufficient stock for "${product.name}". Available: ${product.stock_quantity}, requested: ${item.quantity}`);
+        }
+      }
+
       const { data: existing } = await (supabase.from("customers") as any).select("id").eq("email", email).limit(1);
       let customerId = (existing as any)?.[0]?.id ?? null;
 
@@ -75,6 +94,22 @@ export function createSupabaseOrderService(): OrderService {
             total_price: item.price * item.quantity,
           }))
         );
+
+        // Decrement stock for each product
+        for (const item of items) {
+          const product = productMap.get(item.id);
+          if (product) {
+            const newStock = product.stock_quantity - item.quantity;
+            await supabase
+              .from("products")
+              .update({
+                stock_quantity: newStock,
+                in_stock: newStock > 0,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", item.id);
+          }
+        }
       }
 
       const ts = Date.now().toString(36).toUpperCase();

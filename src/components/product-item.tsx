@@ -30,6 +30,7 @@ interface ProductItemProps {
   specs?: ProductSpecs;
   rating?: number;
   reviews?: number;
+  stock?: number;
 }
 
 const ProductItem = ({
@@ -40,6 +41,7 @@ const ProductItem = ({
   specs,
   rating,
   reviews,
+  stock,
 }: ProductItemProps) => {
   const getSeasonIcon = (season?: string) => {
     switch (season) {
@@ -67,13 +69,27 @@ const ProductItem = ({
 
           {/* Image Area */}
           <div className="relative w-full h-40 mb-4 flex items-center justify-center bg-white rounded-lg group-hover:bg-gray-100 transition-colors">
+            {/* Stock badge */}
+            {stock !== undefined && stock <= 0 && (
+              <div className="absolute top-1 left-1 z-20 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                Out of Stock
+              </div>
+            )}
+            {stock !== undefined && stock > 0 && stock <= 5 && (
+              <div className="absolute top-1 left-1 z-20 bg-amber-400 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded">
+                Low Stock
+              </div>
+            )}
             <Image
               src={imageSrc}
               alt={name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               style={{ objectFit: "contain" }}
-              className="group-hover:scale-110 transition-transform duration-500 p-2"
+              className={cn(
+                "transition-transform duration-500 p-2",
+                stock !== undefined && stock <= 0 ? "opacity-50 group-hover:scale-100" : "group-hover:scale-110"
+              )}
             />
           </div>
 
@@ -146,6 +162,15 @@ const ProductItem = ({
                 View Details
               </span>
             </div>
+            {stock !== undefined && (
+              <p className={`text-xs mt-1 ${
+                stock <= 0 ? "text-red-500 group-hover:text-red-200"
+                : stock <= 5 ? "text-amber-600 group-hover:text-amber-200"
+                : "text-green-600 group-hover:text-green-200"
+              }`}>
+                {stock <= 0 ? "Out of Stock" : stock <= 5 ? `Low Stock (${stock} left)` : `In Stock (${stock})`}
+              </p>
+            )}
           </div>
         </div>
       </Card>

@@ -60,7 +60,7 @@ export function CategoryHero({
               </Button>
             )}
             {ctaSecondary && (
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-base" asChild>
+              <Button size="lg" className="border border-white/20 bg-transparent text-white hover:bg-white/10 px-8 py-6 text-base" asChild>
                 <Link href={ctaSecondary.href}>{ctaSecondary.label}</Link>
               </Button>
             )}

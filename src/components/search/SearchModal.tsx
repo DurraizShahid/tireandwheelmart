@@ -116,15 +116,20 @@ function SearchResultItem({
         {product.comparePrice && product.comparePrice > product.price && (
           <p className="text-xs text-muted-foreground line-through">{formatPrice(product.comparePrice)}</p>
         )}
+        <p className={cn("text-[10px] mt-0.5", product.stock > 0 ? (product.stock <= 5 ? "text-amber-600" : "text-green-600") : "text-red-500")}>
+          {product.stock > 0 ? (product.stock <= 5 ? `Low Stock (${product.stock})` : "In Stock") : "Out of Stock"}
+        </p>
       </div>
       <div className="flex items-center gap-0.5 ml-1">
-        <button
-          onClick={handleAddToCart}
-          className="p-1.5 rounded-md hover:bg-blue-50 text-muted-foreground hover:text-blue-600 transition-colors"
-          title="Add to cart"
-        >
-          <ShoppingCart className="h-4 w-4" />
-        </button>
+        {product.stock > 0 && (
+          <button
+            onClick={handleAddToCart}
+            className="p-1.5 rounded-md hover:bg-blue-50 text-muted-foreground hover:text-blue-600 transition-colors"
+            title="Add to cart"
+          >
+            <ShoppingCart className="h-4 w-4" />
+          </button>
+        )}
         <button
           onClick={handleToggleWishlist}
           className="p-1.5 rounded-md hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors"

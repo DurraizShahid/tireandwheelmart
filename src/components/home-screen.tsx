@@ -42,6 +42,7 @@ interface DbProduct {
   featured: boolean;
   rating: number | null;
   review_count: number | null;
+  stock_quantity: number;
 }
 
 interface HomeScreenProps {
@@ -243,6 +244,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
       },
       rating: p.rating ?? undefined,
       reviews: p.review_count ?? undefined,
+      stock: p.stock_quantity,
     };
   };
 
@@ -345,6 +347,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
                     specs={props.specs}
                     rating={props.rating}
                     reviews={props.reviews}
+                    stock={props.stock}
                   />
                 );
               })}
@@ -379,6 +382,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
                     specs={props.specs}
                     rating={props.rating}
                     reviews={props.reviews}
+                    stock={props.stock}
                   />
                 );
               })}

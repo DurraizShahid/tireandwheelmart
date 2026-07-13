@@ -72,6 +72,18 @@ export function CartItem({ item, onUpdateQuantity, onRemove, compact }: CartItem
         <p className={`text-muted-foreground mt-1 ${compact ? "text-xs" : "text-xs sm:text-sm"}`}>
           ${item.price.toFixed(2)} each
         </p>
+
+        {item.maxQuantity !== undefined && item.maxQuantity <= 5 && item.maxQuantity > 0 && (
+          <p className={`text-amber-600 font-medium mt-0.5 ${compact ? "text-[10px]" : "text-xs"}`}>
+            Low Stock — {item.maxQuantity} left
+          </p>
+        )}
+
+        {item.maxQuantity === 0 && (
+          <p className={`text-red-500 font-medium mt-0.5 ${compact ? "text-[10px]" : "text-xs"}`}>
+            Out of Stock — remove from cart
+          </p>
+        )}
       </div>
     </div>
   );

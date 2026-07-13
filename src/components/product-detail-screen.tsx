@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { useCart } from "@/contexts/cart-context";
 
 const ProductReviews = lazy(() => import("./product/ProductReviews").then((m) => ({ default: m.ProductReviews })));
@@ -71,6 +72,9 @@ const ProductDetailScreen = ({ product, openReview }: ProductDetailScreenProps) 
   const tireType = specs.tire_type as string | undefined;
   const noiseLevel = specs.noise_level as string | undefined;
 
+  const inStock = product.stock_quantity > 0;
+  const lowStock = inStock && product.stock_quantity <= 5;
+
   const handleAddToCart = () => {
     addToCart({
       id: product.id,
@@ -79,6 +83,7 @@ const ProductDetailScreen = ({ product, openReview }: ProductDetailScreenProps) 
       price: product.price,
       quantity,
       imageSrc: product.image_url,
+      maxQuantity: product.stock_quantity,
     });
     toast.success(`${quantity} x ${product.name} added to cart!`);
   };
@@ -163,11 +168,37 @@ const ProductDetailScreen = ({ product, openReview }: ProductDetailScreenProps) 
               <Button
                 className="w-full py-2 sm:py-3 text-base sm:text-lg font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 shadow-lg flex items-center justify-center gap-2"
                 onClick={handleAddToCart}
-                disabled={!product.in_stock}
+                disabled={!inStock}
               >
                 <ShoppingCart className="h-4 sm:h-5 w-4 sm:w-5" />
-                {product.in_stock ? "Add to Cart" : "Out of Stock"}
+                {inStock ? "Add to Cart" : "Out of Stock"}
               </Button>
+
+              {/* Stock indicator */}
+              <div className="flex items-center gap-2 text-sm mt-2">
+                <span className={cn(
+                  "h-2.5 w-2.5 rounded-full",
+                  inStock ? (lowStock ? "bg-amber-400" : "bg-green-500") : "bg-red-500"
+                )} />
+                <span className={cn(
+                  "font-medium",
+                  inStock ? (lowStock ? "text-amber-600" : "text-green-700") : "text-red-600"
+                )}>
+                  {inStock
+                    ? lowStock
+                      ? `Low Stock — only ${product.stock_quantity} left`
+                      : `In Stock (${product.stock_quantity} available)`
+                    : "Out of Stock"}
+                </span>
+              </div>
+              {lowStock && (
+                <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden mt-1.5">
+                  <div
+                    className="h-full bg-amber-400 rounded-full transition-all"
+                    style={{ width: `${Math.max((product.stock_quantity / 5) * 100, 10)}%` }}
+                  />
+                </div>
+              )}
 
               <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 p-2 sm:p-3 rounded-lg mt-3">
                 <span className="text-xs sm:text-sm font-medium text-muted-foreground">
@@ -177,6 +208,7 @@ const ProductDetailScreen = ({ product, openReview }: ProductDetailScreenProps) 
                   variant="outline"
                   size="sm"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
                   className="h-8 w-8 p-0 text-sm"
                 >
                   −
@@ -187,23 +219,20 @@ const ProductDetailScreen = ({ product, openReview }: ProductDetailScreenProps) 
                   max={product.stock_quantity}
                   value={quantity}
                   onChange={(e) =>
-                    setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+                    setQuantity(Math.max(1, Math.min(parseInt(e.target.value) || 1, product.stock_quantity)))
                   }
                   className="w-12 h-8 text-center border rounded-md bg-background text-foreground text-sm"
+                  disabled={!inStock}
                 />
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={() => setQuantity(Math.min(quantity + 1, product.stock_quantity))}
+                  disabled={!inStock || quantity >= product.stock_quantity}
                   className="h-8 w-8 p-0 text-sm"
                 >
                   +
                 </Button>
-                {product.stock_quantity > 0 && (
-                  <span className="text-xs text-muted-foreground ml-2">
-                    {product.stock_quantity} in stock
-                  </span>
-                )}
               </div>
             </Card>
 

@@ -54,7 +54,7 @@ export default async function AllSeasonTiresPage() {
                   Shop All-Season Tires <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
+              <Button size="lg" className="border border-white/30 bg-transparent text-white hover:bg-white/10" asChild>
                 <Link href="/shop/summer-tires">Compare Summer Tires</Link>
               </Button>
             </div>

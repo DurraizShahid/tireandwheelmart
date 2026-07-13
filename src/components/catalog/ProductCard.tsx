@@ -42,7 +42,7 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
         isGrid ? "w-full aspect-square" : "w-48 h-48 shrink-0"
       )}>
         {/* Badges */}
-        {badges.length > 0 && (
+        {product.stock > 5 && badges.length > 0 && (
           <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
             {badges.map((badge) => (
               <Badge key={badge} className={cn("text-xs font-semibold uppercase tracking-wide", badgeStyles[badge])}>
@@ -53,14 +53,26 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
         )}
 
         {/* Primary Image */}
+        {/* Stock badge */}
+        {product.stock <= 0 && (
+          <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+            Out of Stock
+          </div>
+        )}
+        {product.stock > 0 && product.stock <= 5 && (
+          <div className="absolute top-2 left-2 z-10 bg-amber-400 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded">
+            Low Stock
+          </div>
+        )}
         <Image
           src={imageSrc}
           alt={product.name}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           className={cn(
-            "object-contain p-4 transition-opacity duration-500",
-            hoverImageSrc !== imageSrc ? "group-hover:opacity-0" : ""
+            "object-contain p-4 transition-all duration-500",
+            hoverImageSrc !== imageSrc ? "group-hover:opacity-0" : "",
+            product.stock <= 0 ? "opacity-50" : ""
           )}
         />
 
@@ -83,7 +95,7 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
 
         {/* Quick add to cart overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-          {onAddToCart && (
+          {onAddToCart && product.stock > 0 && (
             <Button
               size="sm"
               className="w-full bg-white/90 backdrop-blur-sm text-foreground hover:bg-white shadow-sm border"
@@ -92,6 +104,11 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
               <ShoppingCart className="h-4 w-4 mr-2" />
               Add to Cart
             </Button>
+          )}
+          {product.stock <= 0 && (
+            <div className="w-full bg-red-50 text-red-600 text-xs font-medium text-center py-1.5 rounded border border-red-200">
+              Out of Stock
+            </div>
           )}
         </div>
       </div>
@@ -142,7 +159,7 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
               <span className="text-sm text-muted-foreground line-through">{formatPrice(product.comparePrice)}</span>
             )}
           </div>
-          {!isGrid && onAddToCart && (
+          {!isGrid && onAddToCart && product.stock > 0 && (
             <Button
               size="sm"
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAddToCart(product); }}
@@ -154,8 +171,20 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
 
         {/* Stock status */}
         <p className={cn("text-xs mt-1", product.stock > 0 ? "text-green-600" : "text-red-500")}>
-          {product.stock > 0 ? `In Stock (${product.stock})` : "Out of Stock"}
+          {product.stock > 0
+            ? product.stock <= 5
+              ? `Low Stock (${product.stock} left)`
+              : `In Stock (${product.stock})`
+            : "Out of Stock"}
         </p>
+        {product.stock > 0 && product.stock <= 5 && (
+          <div className="h-1 w-full bg-gray-200 rounded-full mt-1.5 overflow-hidden">
+            <div
+              className="h-full bg-amber-400 rounded-full transition-all"
+              style={{ width: `${Math.max((product.stock / 5) * 100, 10)}%` }}
+            />
+          </div>
+        )}
       </div>
     </Card>
   );

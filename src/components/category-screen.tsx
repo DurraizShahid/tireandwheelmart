@@ -18,6 +18,7 @@ interface Product {
   description: string | null;
   brand: string | null;
   in_stock: boolean;
+  stock_quantity: number;
   featured: boolean;
   specs: Record<string, unknown>;
 }
@@ -149,6 +150,13 @@ const CategoryScreen = ({ categoryTitle, products }: CategoryScreenProps) => {
                             View Details
                           </span>
                         </div>
+                        <p className={`text-xs mt-1 ${
+                          product.stock_quantity <= 0 ? "text-red-500 group-hover:text-red-200"
+                          : product.stock_quantity <= 5 ? "text-amber-600 group-hover:text-amber-200"
+                          : "text-green-600 group-hover:text-green-200"
+                        }`}>
+                          {product.stock_quantity <= 0 ? "Out of Stock" : product.stock_quantity <= 5 ? `Low Stock (${product.stock_quantity} left)` : `In Stock (${product.stock_quantity})`}
+                        </p>
                       </div>
                     </div>
                   </Card>

@@ -17,6 +17,36 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Customer email is required" }, { status: 400 });
   }
 
+  if (!items?.length) {
+    return NextResponse.json({ error: "No items in order" }, { status: 400 });
+  }
+
+  // Validate stock for all items before proceeding
+  const productIds = items.map((item: { id: string }) => item.id);
+  const { data: products, error: stockLookupError } = await supabase
+    .from("products")
+    .select("id, stock_quantity, in_stock, name")
+    .in("id", productIds);
+
+  if (stockLookupError) {
+    return NextResponse.json({ error: "Failed to verify stock" }, { status: 500 });
+  }
+
+  const productMap = new Map((products ?? []).map((p) => [p.id, p]));
+
+  for (const item of items) {
+    const product = productMap.get(item.id);
+    if (!product) {
+      return NextResponse.json({ error: `Product not found: ${item.id}` }, { status: 400 });
+    }
+    if (product.stock_quantity < item.quantity) {
+      return NextResponse.json(
+        { error: `Insufficient stock for "${product.name}". Available: ${product.stock_quantity}, requested: ${item.quantity}` },
+        { status: 400 }
+      );
+    }
+  }
+
   const { data: existing } = await supabase
     .from("customers")
     .select("id")
@@ -85,19 +115,35 @@ export async function POST(req: NextRequest) {
 
   const orderId = orderResult?.id ?? null;
 
-  if (orderId && items?.length > 0) {
-    const { error: itemsError } = await supabase.from("order_items").insert(
-      items.map((item: { id: string; quantity: number; price: number }) => ({
-        order_id: orderId,
-        product_id: item.id,
-        quantity: item.quantity,
-        unit_price: item.price,
-        total_price: item.price * item.quantity,
-      }))
-    );
-    if (itemsError) {
-      console.error("Failed to insert order items:", itemsError);
-    }
+  if (!orderId) {
+    return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+  }
+
+  // Insert order items
+  const { error: itemsError } = await supabase.from("order_items").insert(
+    items.map((item: { id: string; quantity: number; price: number }) => ({
+      order_id: orderId,
+      product_id: item.id,
+      quantity: item.quantity,
+      unit_price: item.price,
+      total_price: item.price * item.quantity,
+    }))
+  );
+  if (itemsError) {
+    console.error("Failed to insert order items:", itemsError);
+  }
+
+  // Decrement stock for each product
+  for (const item of items) {
+    const newStock = (productMap.get(item.id)?.stock_quantity ?? 0) - item.quantity;
+    await supabase
+      .from("products")
+      .update({
+        stock_quantity: newStock,
+        in_stock: newStock > 0,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", item.id);
   }
 
   return NextResponse.json({

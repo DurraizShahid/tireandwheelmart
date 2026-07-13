@@ -83,16 +83,26 @@ export async function PUT(req: NextRequest) {
   }
 
   for (const item of items) {
+    // Verify stock server-side
+    const { data: product } = await supabase
+      .from("products")
+      .select("stock_quantity")
+      .eq("id", item.productId)
+      .maybeSingle();
+
+    const stockMax = product?.stock_quantity ?? 0;
+    const clampedQty = Math.max(1, Math.min(item.quantity, stockMax));
+
     if (existingIds.has(item.productId)) {
       await supabase
         .from("cart_items")
-        .update({ quantity: item.quantity })
+        .update({ quantity: clampedQty })
         .eq("cart_id", cart.id)
         .eq("product_id", item.productId);
-    } else {
+    } else if (stockMax > 0) {
       await supabase
         .from("cart_items")
-        .insert({ cart_id: cart.id, product_id: item.productId, quantity: item.quantity });
+        .insert({ cart_id: cart.id, product_id: item.productId, quantity: clampedQty });
     }
   }
 
@@ -103,10 +113,24 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { productId, quantity = 1, maxQuantity } = await req.json();
+  const { productId, quantity = 1 } = await req.json();
   if (!productId) return NextResponse.json({ error: "productId is required" }, { status: 400 });
 
   const supabase = createServerClient();
+
+  // Verify stock server-side
+  const { data: product } = await supabase
+    .from("products")
+    .select("stock_quantity, in_stock")
+    .eq("id", productId)
+    .maybeSingle();
+
+  if (!product) return NextResponse.json({ error: "Product not found" }, { status: 400 });
+  if (!product.in_stock || product.stock_quantity <= 0) {
+    return NextResponse.json({ error: "Product is out of stock" }, { status: 400 });
+  }
+
+  const stockMax = product.stock_quantity;
 
   let { data: cart } = await supabase
     .from("carts")
@@ -134,7 +158,7 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (existing) {
-    const newQty = Math.min(existing.quantity + quantity, maxQuantity ?? 999);
+    const newQty = Math.min(existing.quantity + quantity, stockMax);
     await supabase
       .from("cart_items")
       .update({ quantity: newQty })

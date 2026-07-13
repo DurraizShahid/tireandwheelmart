@@ -95,11 +95,31 @@ export function PurchasePanel({ product }: PurchasePanelProps) {
 
       {/* Stock + Shipping */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2 text-sm">
-          <span className={cn("h-2.5 w-2.5 rounded-full", inStock ? "bg-green-500" : "bg-red-500")} />
-          <span className={cn("font-medium", inStock ? "text-green-700" : "text-red-600")}>
-            {inStock ? `In Stock (${product.stock} available)` : "Out of Stock"}
-          </span>
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2 text-sm">
+            <span className={cn(
+              "h-2.5 w-2.5 rounded-full",
+              inStock ? (product.stock <= 5 ? "bg-amber-400" : "bg-green-500") : "bg-red-500"
+            )} />
+            <span className={cn(
+              "font-medium",
+              inStock ? (product.stock <= 5 ? "text-amber-600" : "text-green-700") : "text-red-600"
+            )}>
+              {inStock
+                ? product.stock <= 5
+                  ? `Low Stock — only ${product.stock} left`
+                  : `In Stock (${product.stock} available)`
+                : "Out of Stock"}
+            </span>
+          </div>
+          {inStock && product.stock <= 5 && (
+            <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden ml-4.5">
+              <div
+                className="h-full bg-amber-400 rounded-full transition-all"
+                style={{ width: `${Math.max((product.stock / 5) * 100, 10)}%` }}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

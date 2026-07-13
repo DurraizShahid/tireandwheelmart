@@ -14,6 +14,17 @@ export async function PATCH(
 
   const supabase = createServerClient();
 
+  // Verify stock server-side
+  const { data: product } = await supabase
+    .from("products")
+    .select("stock_quantity")
+    .eq("id", productId)
+    .maybeSingle();
+
+  if (!product) return NextResponse.json({ error: "Product not found" }, { status: 400 });
+
+  const stockMax = product.stock_quantity;
+
   const { data: cart } = await supabase
     .from("carts")
     .select("id")
@@ -30,9 +41,10 @@ export async function PATCH(
       .eq("cart_id", cart.id)
       .eq("product_id", productId);
   } else {
+    const clampedQty = Math.min(quantity, stockMax);
     await supabase
       .from("cart_items")
-      .update({ quantity })
+      .update({ quantity: clampedQty })
       .eq("cart_id", cart.id)
       .eq("product_id", productId);
   }

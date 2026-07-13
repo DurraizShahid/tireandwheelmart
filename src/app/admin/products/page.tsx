@@ -57,6 +57,7 @@ export default function ProductsPage() {
     const { data, error } = await supabase
       .from("products")
       .select("id, name, sku, price, stock_quantity, in_stock, brand")
+      .order("stock_quantity", { ascending: true })
       .order("name");
     if (error) {
       setError(error.message);

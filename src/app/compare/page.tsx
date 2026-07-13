@@ -96,8 +96,12 @@ function MobileProductCard({ product, onRemove, onAddToCart, isActive, onSelect 
             <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
           )}
         </div>
-        <p className={cn("text-xs", product.stock > 0 ? "text-green-600" : "text-red-500")}>
-          {product.stock > 0 ? `In Stock (${product.stock})` : "Out of Stock"}
+        <p className={cn("text-xs", product.stock > 0 ? (product.stock <= 5 ? "text-amber-600" : "text-green-600") : "text-red-500")}>
+          {product.stock > 0
+            ? product.stock <= 5
+              ? `Low Stock (${product.stock} left)`
+              : `In Stock (${product.stock})`
+            : "Out of Stock"}
         </p>
         <div className="flex gap-2 pt-2">
           <Button size="sm" className="flex-1 h-8 text-xs" onClick={() => onAddToCart(product)} disabled={product.stock <= 0}>
@@ -277,7 +281,7 @@ export default function ComparePage() {
               {/* Stock */}
               <SpecRow
                 label="Stock"
-                values={items.map((p) => p.stock > 0 ? `In Stock (${p.stock})` : "Out of Stock")}
+                values={items.map((p) => p.stock > 0 ? (p.stock <= 5 ? `Low Stock (${p.stock} left)` : `In Stock (${p.stock})`) : "Out of Stock")}
               />
 
               {/* Brand */}
