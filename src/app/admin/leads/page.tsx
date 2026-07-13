@@ -18,7 +18,6 @@ import {
   PaginationPrevious,
   PaginationNext,
   PaginationLink,
-  PaginationEllipsis,
 } from "@/components/ui/pagination";
 import type { Lead } from "@/lib/supabase/types";
 
@@ -71,7 +70,7 @@ export default function LeadsPage() {
 
   useEffect(() => {
     fetchLeads(search, page);
-  }, [page, fetchLeads]);
+  }, [page, search, fetchLeads]);
 
   const handleSearch = (value: string) => {
     setSearch(value);
