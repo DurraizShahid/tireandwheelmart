@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { X, Heart, ShoppingCart, Trash2, Share2 } from "lucide-react";
+import { Heart, ShoppingCart, Trash2, Share2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useWishlist } from "@/contexts/wishlist-context";
@@ -67,14 +67,11 @@ export function WishlistDrawer() {
   return (
     <Sheet open={wishlistOpen} onOpenChange={(open) => !open && closeWishlist()}>
       <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-0">
-        <SheetHeader className="px-4 py-4 border-b flex flex-row items-center justify-between space-y-0">
+        <SheetHeader className="px-4 py-4 border-b flex flex-row items-center space-y-0">
           <SheetTitle className="text-lg font-bold flex items-center gap-2">
             <Heart className="h-5 w-5" />
             Wishlist ({items.length})
           </SheetTitle>
-          <Button variant="ghost" size="icon" onClick={closeWishlist} className="h-8 w-8" aria-label="Close wishlist">
-            <X className="h-4 w-4" />
-          </Button>
         </SheetHeader>
 
         {items.length === 0 ? (
