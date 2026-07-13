@@ -1,4 +1,5 @@
 import type { Product, BadgeType, PaginationState, ProductFilters, SortOption } from "./catalog-types";
+import { fuzzySearchProducts } from "./search-fuzzy";
 
 export function computeDiscount(price: number, comparePrice?: number): number | undefined {
   if (!comparePrice || comparePrice <= price) return undefined;
@@ -33,6 +34,10 @@ export function extractBrands(products: Product[]): string[] {
 }
 
 export function filterProducts(products: Product[], filters: ProductFilters): Product[] {
+  const fuzzyMatchIds = filters.search
+    ? new Set(fuzzySearchProducts(products, filters.search).map((p) => p.id))
+    : null;
+
   return products.filter((p) => {
     if (filters.categories && filters.categories.length > 0 && !filters.categories.includes(p.category)) return false;
     if (filters.brands && filters.brands.length > 0 && p.brand && !filters.brands.includes(p.brand)) return false;
@@ -47,14 +52,7 @@ export function filterProducts(products: Product[], filters: ProductFilters): Pr
     if (filters.isNew && !p.isNew) return false;
     if (filters.isBestSeller && !p.isBestSeller) return false;
     if (filters.onSale && (!p.comparePrice || p.comparePrice <= p.price)) return false;
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      const match = p.name.toLowerCase().includes(q) ||
-        p.brand?.toLowerCase().includes(q) ||
-        p.sku?.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q));
-      if (!match) return false;
-    }
+    if (fuzzyMatchIds && !fuzzyMatchIds.has(p.id)) return false;
     return true;
   });
 }

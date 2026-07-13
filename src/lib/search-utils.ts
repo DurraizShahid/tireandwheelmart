@@ -1,6 +1,7 @@
 import type { Product } from "./catalog-types";
 import { getServices } from "@/lib/services/service-registry";
 import { CATEGORIES } from "./catalog-constants";
+import { fuzzySearchProducts } from "./search-fuzzy";
 
 let allProductsPromise: Promise<Product[]> | null = null;
 
@@ -17,17 +18,8 @@ export async function getAllProducts(): Promise<Product[]> {
 
 export async function searchProducts(query: string): Promise<Product[]> {
   if (!query.trim()) return [];
-  const q = query.toLowerCase();
   const all = await getAllProductsCached();
-  return all.filter(
-    (p) =>
-      p.name.toLowerCase().includes(q) ||
-      p.brand?.toLowerCase().includes(q) ||
-      p.sku?.toLowerCase().includes(q) ||
-      p.tags.some((t) => t.toLowerCase().includes(q)) ||
-      p.category.toLowerCase().includes(q) ||
-      p.description?.toLowerCase().includes(q)
-  );
+  return fuzzySearchProducts(all, query);
 }
 
 export async function searchProductsFiltered(query: string, limit = 20): Promise<Product[]> {
