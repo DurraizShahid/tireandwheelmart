@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,13 +14,18 @@ import { toast } from "sonner";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 
+function getReviewIdFromPath() {
+  if (typeof window === "undefined") return "";
+  return window.location.pathname.match(/\/admin\/reviews\/([^/]+)\/edit/)?.[1] ?? "";
+}
+
 export default function EditReviewPage() {
   const router = useRouter();
-  const params = useParams();
-  const id = params.id as string;
+  const id = getReviewIdFromPath();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [form, setForm] = useState({
     author: "",
     rating: "5",
@@ -33,30 +37,33 @@ export default function EditReviewPage() {
   const [productName, setProductName] = useState("");
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data, error } = await supabase
-        .from("reviews")
-        .select("*, products(name)")
-        .eq("id", id)
-        .single();
-
-      if (error || !data) {
-        setNotFound(true);
-      } else {
-        const d = data as unknown as { author: string; rating: number; title: string; content: string; is_approved: boolean; verified: boolean; products: { name: string } | null };
+    const loadReview = async () => {
+      try {
+        const res = await fetch(`/api/admin/reviews/${id}`);
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          setLoadError(errBody.error ?? `HTTP ${res.status}`);
+          setNotFound(true);
+          return;
+        }
+        const d = await res.json();
         setForm({
-          author: d.author,
-          rating: String(d.rating),
+          author: d.author ?? "",
+          rating: String(d.rating ?? 5),
           title: d.title ?? "",
-          content: d.content,
-          is_approved: d.is_approved,
-          verified: d.verified,
+          content: d.content ?? "",
+          is_approved: d.is_approved ?? false,
+          verified: d.verified ?? false,
         });
         setProductName(d.products?.name ?? "Unknown Product");
+      } catch (e) {
+        setLoadError(e instanceof Error ? e.message : "Unknown error");
+        setNotFound(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-    fetch();
+    loadReview();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,7 +113,14 @@ export default function EditReviewPage() {
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
           <AdminHeader />
-          <main className="flex-1 p-6 text-center text-muted-foreground pt-20">Review not found</main>
+          <main className="flex-1 p-6 text-center pt-20">
+            <p className="text-lg font-medium">Review not found</p>
+            {loadError && <p className="text-sm text-red-600 mt-2">Error: {loadError}</p>}
+            <p className="text-xs text-muted-foreground mt-1">ID: {id}</p>
+            <Link href="/admin/reviews" className="mt-4 inline-block">
+              <Button variant="outline">Back to Reviews</Button>
+            </Link>
+          </main>
         </div>
       </div>
     );

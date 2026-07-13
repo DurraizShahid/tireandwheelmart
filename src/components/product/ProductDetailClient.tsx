@@ -19,13 +19,14 @@ const RelatedProducts = lazy(() => import("./RelatedProducts").then((m) => ({ de
 
 interface ProductDetailClientProps {
   product: Product;
+  openReview?: boolean;
 }
 
 function SectionFallback() {
   return <div className="h-48 rounded-2xl bg-gray-50 animate-pulse" />;
 }
 
-export function ProductDetailClient({ product }: ProductDetailClientProps) {
+export function ProductDetailClient({ product, openReview }: ProductDetailClientProps) {
   const categoryTitle = product.category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const urlSlug = getUrlSlug(product.category);
   const categoryHref = urlSlug ? `/shop/${urlSlug}` : `/shop/${product.category}`;
@@ -87,7 +88,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
           <Separator />
 
           <Suspense fallback={<SectionFallback />}>
-            <ProductReviews rating={product.rating} reviewCount={product.reviewCount} />
+            <ProductReviews rating={product.rating} reviewCount={product.reviewCount} productId={product.id} openReview={openReview} />
           </Suspense>
 
           <Separator />

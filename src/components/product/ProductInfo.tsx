@@ -51,27 +51,27 @@ export function ProductInfo({ product }: ProductInfoProps) {
       </div>
 
       {/* Rating */}
-      {product.rating && (
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={cn(
-                  "h-4 w-4",
-                  star <= Math.round(product.rating!)
-                    ? "fill-amber-400 text-amber-400"
-                    : "fill-gray-200 text-gray-200"
-                )}
-              />
-            ))}
-          </div>
-          <span className="text-sm font-semibold text-foreground">{product.rating.toFixed(1)}</span>
-          {product.reviewCount && (
-            <span className="text-sm text-muted-foreground">({product.reviewCount} reviews)</span>
-          )}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={cn(
+                "h-4 w-4",
+                product.rating && product.rating > 0 && star <= Math.round(product.rating)
+                  ? "fill-amber-400 text-amber-400"
+                  : "fill-gray-200 text-gray-200"
+              )}
+            />
+          ))}
         </div>
-      )}
+        <span className="text-sm font-semibold text-foreground">
+          {product.rating && product.rating > 0 ? product.rating.toFixed(1) : ""}
+        </span>
+        {product.reviewCount !== undefined && product.reviewCount > 0 && (
+          <span className="text-sm text-muted-foreground">({product.reviewCount} reviews)</span>
+        )}
+      </div>
 
       <Separator />
 

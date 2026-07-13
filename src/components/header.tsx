@@ -104,6 +104,9 @@ const Header = () => {
               </SignUpButton>
             </Show>
             <Show when="signed-in">
+              <Link href="/account/orders">
+                <Button variant="ghost" size="sm">My Orders</Button>
+              </Link>
               <UserButton />
             </Show>
           </div>
@@ -159,6 +162,12 @@ const Header = () => {
                   </div>
                 </Show>
                 <Show when="signed-in">
+                  <Link
+                    href="/account/orders"
+                    className="text-lg font-medium transition-colors hover:text-primary text-muted-foreground"
+                  >
+                    My Orders
+                  </Link>
                   <div className="flex justify-center mt-2">
                     <UserButton />
                   </div>

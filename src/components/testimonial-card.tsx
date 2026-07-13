@@ -19,7 +19,7 @@ const TestimonialCard = ({
   author,
   title,
   avatarSrc,
-  rating = 5, // Default to 5 stars
+  rating = 0,
 }: TestimonialCardProps) => {
   return (
     <Card className="flex flex-col h-full p-4 shadow-md border-none bg-gradient-to-br from-gray-50 to-gray-100">

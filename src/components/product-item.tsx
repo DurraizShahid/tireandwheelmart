@@ -38,8 +38,8 @@ const ProductItem = ({
   imageSrc,
   href,
   specs,
-  rating = 4.5,
-  reviews = 0,
+  rating,
+  reviews,
 }: ProductItemProps) => {
   const getSeasonIcon = (season?: string) => {
     switch (season) {
@@ -86,12 +86,14 @@ const ProductItem = ({
                     key={i}
                     className={cn(
                       "h-3 w-3 fill-current",
-                      i < Math.floor(rating) ? "text-yellow-400" : "text-gray-300"
+                      rating && rating > 0 && i < Math.floor(rating) ? "text-yellow-400" : "text-gray-300"
                     )}
                   />
                 ))}
               </div>
-              <span className="text-xs text-muted-foreground ml-1">({reviews})</span>
+              {reviews !== undefined && (
+                <span className="text-xs text-muted-foreground ml-1">({reviews})</span>
+              )}
             </div>
 
             <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors group-hover:text-white">

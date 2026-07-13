@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
@@ -30,26 +29,29 @@ export default function ReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const { data, error } = await supabase
-        .from("reviews")
-        .select("*, products(name, slug)")
-        .order("created_at", { ascending: false });
-
-      if (error) setError(error.message);
-      else if (data) setReviews(data as unknown as ReviewRow[]);
+  const loadReviews = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/reviews");
+      if (!res.ok) throw new Error("Failed to load reviews");
+      const data = await res.json();
+      setReviews(data ?? []);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load reviews");
+    } finally {
       setLoading(false);
-    };
-    fetch();
-  }, []);
+    }
+  };
+
+  useEffect(() => { loadReviews(); }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this review? This cannot be undone.")) return;
     const res = await fetch(`/api/admin/reviews/${id}`, { method: "DELETE" });
     if (res.ok) {
       toast.success("Review deleted");
-      setReviews((prev) => prev.filter((r) => r.id !== id));
+      loadReviews();
     } else {
       const data = await res.json().catch(() => ({}));
       toast.error(data.error ?? "Failed to delete review");

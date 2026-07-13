@@ -5,7 +5,7 @@ create table if not exists public.testimonials (
   company text,
   avatar_url text,
   content text not null,
-  rating integer not null default 5 check (rating >= 1 and rating <= 5),
+  rating integer not null default 0 check (rating >= 0 and rating <= 5),
   display_order integer not null default 0,
   is_approved boolean not null default false,
   is_active boolean not null default true,

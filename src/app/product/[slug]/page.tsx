@@ -6,6 +6,7 @@ import ProductDetailScreen from "@/components/product-detail-screen";
 
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ review?: string }>;
 }
 
 export const dynamic = "force-dynamic";
@@ -48,14 +49,15 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   return {};
 }
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default async function ProductDetailPage({ params, searchParams }: ProductDetailPageProps) {
   const { slug } = await params;
+  const { review } = await searchParams;
 
   const dbProduct = await getDbProductBySlug(slug);
-  if (dbProduct) return <ProductDetailScreen product={dbProduct} />;
+  if (dbProduct) return <ProductDetailScreen product={dbProduct} openReview={review === "1"} />;
 
   const catalogProduct = await getCatalogProduct(slug);
   if (!catalogProduct) notFound();
 
-  return <ProductDetailClient product={catalogProduct} />;
+  return <ProductDetailClient product={catalogProduct} openReview={review === "1"} />;
 }

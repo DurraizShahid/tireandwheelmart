@@ -108,15 +108,27 @@ export function ProductCard({ product, viewMode = "grid", href, onAddToCart }: P
         )}
 
         {/* Rating */}
-        {product.rating && (
-          <div className="flex items-center gap-1 mb-2">
-            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-            <span className="text-xs font-medium text-foreground">{product.rating.toFixed(1)}</span>
-            {product.reviewCount && (
-              <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
-            )}
+        <div className="flex items-center gap-1 mb-2">
+          <div className="flex">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={cn(
+                  "h-3 w-3 fill-current",
+                  product.rating && product.rating > 0 && i < Math.floor(product.rating)
+                    ? "text-yellow-400"
+                    : "text-gray-300"
+                )}
+              />
+            ))}
           </div>
-        )}
+          <span className="text-xs font-medium text-foreground">
+            {product.rating && product.rating > 0 ? product.rating.toFixed(1) : ""}
+          </span>
+          {product.reviewCount !== undefined && product.reviewCount > 0 && (
+            <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
+          )}
+        </div>
 
         {/* Description (list view only) */}
         {!isGrid && product.description && (

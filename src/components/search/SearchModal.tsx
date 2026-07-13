@@ -90,12 +90,24 @@ function SearchResultItem({
         )}
         <p className="text-sm font-semibold text-foreground truncate">{product.name}</p>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-          {product.rating && (
-            <span className="flex items-center gap-0.5">
-              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-              {product.rating.toFixed(1)}
-            </span>
-          )}
+          <span className="flex items-center gap-0.5">
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={cn(
+                    "h-3 w-3 fill-current",
+                    product.rating && product.rating > 0 && i < Math.floor(product.rating)
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  )}
+                />
+              ))}
+            </div>
+            {product.rating && product.rating > 0 && (
+              <span>{product.rating.toFixed(1)}</span>
+            )}
+          </span>
           <span className="capitalize">{product.category.replace(/-/g, " ")}</span>
         </div>
       </div>

@@ -8,20 +8,73 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 interface WriteReviewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  productId: string;
+  customerName?: string;
+  onSuccess?: () => void;
 }
 
-export function WriteReviewDialog({ open, onOpenChange }: WriteReviewDialogProps) {
+export function WriteReviewDialog({ open, onOpenChange, productId, customerName, onSuccess }: WriteReviewDialogProps) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [author, setAuthor] = useState(customerName ?? "");
+  const [vehicleMake, setVehicleMake] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
+  const [vehicleYear, setVehicleYear] = useState("");
+  const [tireSize, setTireSize] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const reset = () => {
+    setRating(0);
+    setHoverRating(0);
+    setTitle("");
+    setContent("");
+    setAuthor(customerName ?? "");
+    setVehicleMake("");
+    setVehicleModel("");
+    setVehicleYear("");
+    setTireSize("");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onOpenChange(false);
+    if (rating === 0) return;
+    setSubmitting(true);
+    try {
+      const vehicle = [vehicleYear, vehicleMake, vehicleModel].filter(Boolean).join(" ") || undefined;
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          product_id: productId,
+          author,
+          rating,
+          title,
+          content,
+          vehicle,
+          tire_size: tireSize || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to submit review");
+      }
+      toast.success("Review submitted for moderation!");
+      reset();
+      onOpenChange(false);
+      onSuccess?.();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to submit review");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -32,7 +85,6 @@ export function WriteReviewDialog({ open, onOpenChange }: WriteReviewDialogProps
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Rating selector */}
           <div className="space-y-2">
             <Label>Overall Rating <span className="text-red-500">*</span></Label>
             <div className="flex items-center gap-1">
@@ -63,60 +115,48 @@ export function WriteReviewDialog({ open, onOpenChange }: WriteReviewDialogProps
 
           <Separator />
 
-          {/* Review title */}
           <div className="space-y-2">
             <Label htmlFor="review-title">Review Title</Label>
-            <Input id="review-title" placeholder="Summarize your experience" />
+            <Input id="review-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Summarize your experience" />
           </div>
 
-          {/* Review body */}
           <div className="space-y-2">
             <Label htmlFor="review-body">Your Review <span className="text-red-500">*</span></Label>
             <Textarea
               id="review-body"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               placeholder="Tell others about your experience with this product..."
               className="min-h-[120px]"
               required
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Nickname */}
-            <div className="space-y-2">
-              <Label htmlFor="nickname">Nickname <span className="text-red-500">*</span></Label>
-              <Input id="nickname" placeholder="e.g. John D." required />
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="For verification only" />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="nickname">Nickname <span className="text-red-500">*</span></Label>
+            <Input id="nickname" value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="e.g. John D." required />
           </div>
 
-          {/* Vehicle info */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="vehicle-make">Vehicle Make</Label>
-              <Input id="vehicle-make" placeholder="e.g. BMW" />
+              <Input id="vehicle-make" value={vehicleMake} onChange={(e) => setVehicleMake(e.target.value)} placeholder="e.g. BMW" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="vehicle-model">Vehicle Model</Label>
-              <Input id="vehicle-model" placeholder="e.g. 3 Series" />
+              <Input id="vehicle-model" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} placeholder="e.g. 3 Series" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="vehicle-year">Year</Label>
-              <Input id="vehicle-year" placeholder="e.g. 2023" />
+              <Input id="vehicle-year" value={vehicleYear} onChange={(e) => setVehicleYear(e.target.value)} placeholder="e.g. 2023" />
             </div>
           </div>
 
-          {/* Tire size */}
           <div className="space-y-2">
             <Label htmlFor="tire-size">Tire Size</Label>
-            <Input id="tire-size" placeholder="e.g. 225/45R17" />
+            <Input id="tire-size" value={tireSize} onChange={(e) => setTireSize(e.target.value)} placeholder="e.g. 225/45R17" />
           </div>
 
-          {/* Photo upload */}
           <div className="space-y-2">
             <Label>Photos</Label>
             <div
@@ -133,13 +173,12 @@ export function WriteReviewDialog({ open, onOpenChange }: WriteReviewDialogProps
 
           <Separator />
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={rating === 0}>
-              Submit Review
+            <Button type="submit" disabled={rating === 0 || submitting}>
+              {submitting ? "Submitting..." : "Submit Review"}
             </Button>
           </div>
         </form>

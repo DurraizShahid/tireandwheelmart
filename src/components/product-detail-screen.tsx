@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import Image from "next/image";
 import {
   ShoppingCart,
@@ -24,7 +24,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/cart-context";
+
+const ProductReviews = lazy(() => import("./product/ProductReviews").then((m) => ({ default: m.ProductReviews })));
 
 interface Product {
   id: string;
@@ -47,9 +50,10 @@ interface Product {
 
 interface ProductDetailScreenProps {
   product: Product;
+  openReview?: boolean;
 }
 
-const ProductDetailScreen = ({ product }: ProductDetailScreenProps) => {
+const ProductDetailScreen = ({ product, openReview }: ProductDetailScreenProps) => {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
@@ -380,6 +384,15 @@ const ProductDetailScreen = ({ product }: ProductDetailScreenProps) => {
             </Card>
           </section>
         )}
+
+        <section className="mt-12 max-w-7xl mx-auto">
+          <Separator />
+          <div className="mt-10">
+            <Suspense fallback={<div className="h-48 rounded-2xl bg-gray-50 animate-pulse" />}>
+              <ProductReviews productId={product.id} openReview={openReview} />
+            </Suspense>
+          </div>
+        </section>
       </div>
     </div>
   );

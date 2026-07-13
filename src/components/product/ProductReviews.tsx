@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { Star, ThumbsUp, ShieldCheck, MessageSquare, Flag, Camera } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Star, ThumbsUp, ShieldCheck, MessageSquare, Flag, Camera, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -22,6 +22,7 @@ interface ProductReviewsProps {
   rating?: number;
   reviewCount?: number;
   productId?: string;
+  openReview?: boolean;
 }
 
 type ReviewFilter = "all" | "5" | "4" | "3" | "2" | "1" | "photos" | "verified";
@@ -38,7 +39,7 @@ const filters: { label: string; value: ReviewFilter }[] = [
   { label: "Verified", value: "verified" },
 ];
 
-export function ProductReviews({ rating, reviewCount, productId = "default" }: ProductReviewsProps) {
+export function ProductReviews({ rating, reviewCount, productId = "default", openReview }: ProductReviewsProps) {
   const [activeFilter, setActiveFilter] = useState<ReviewFilter>("all");
   const [sort, setSort] = useState<ReviewSort>("newest");
   const [writeOpen, setWriteOpen] = useState(false);
@@ -47,6 +48,7 @@ export function ProductReviews({ rating, reviewCount, productId = "default" }: P
   const [helpfulMap, setHelpfulMap] = useState<Record<string, boolean>>({});
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [breakdown, setBreakdown] = useState<RatingBreakdown | null>(null);
+  const [canReview, setCanReview] = useState<{ allowed: boolean; reason?: string } | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -62,9 +64,40 @@ export function ProductReviews({ rating, reviewCount, productId = "default" }: P
     });
   }, [productId]);
 
-  const avgRating = rating ?? breakdown?.averageRating ?? 4.5;
-  const totalReviews = reviewCount ?? breakdown?.totalReviews ?? reviews.length;
-  const recommendPercent = breakdown?.recommendPercent ?? 82;
+  useEffect(() => {
+    if (productId === "default") return;
+    fetch(`/api/reviews/can-review?productId=${encodeURIComponent(productId)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setCanReview({ allowed: data.canReview, reason: data.reason });
+        if (openReview && data.canReview) setWriteOpen(true);
+      });
+  }, [productId, openReview]);
+
+  useEffect(() => {
+    if (openReview && canReview && !canReview.allowed) setWriteOpen(false);
+  }, [openReview, canReview]);
+
+  const refreshCanReview = useCallback(() => {
+    if (productId === "default") return;
+    fetch(`/api/reviews/can-review?productId=${encodeURIComponent(productId)}`)
+      .then((r) => r.json())
+      .then((data) => setCanReview({ allowed: data.canReview, reason: data.reason }));
+  }, [productId]);
+
+  const handleReviewSuccess = useCallback(() => {
+    getServices().review.getProductReviews(productId).then((r) => {
+      if (r.success) {
+        setReviews(r.data.reviews);
+        setBreakdown(r.data.breakdown);
+      }
+    });
+    refreshCanReview();
+  }, [productId, refreshCanReview]);
+
+  const avgRating = breakdown?.averageRating ?? rating ?? 0;
+  const totalReviews = breakdown?.totalReviews ?? reviewCount ?? reviews.length;
+  const recommendPercent = breakdown?.recommendPercent ?? 0;
 
   const filteredReviews = useMemo(() => {
     let result = [...reviews];
@@ -88,7 +121,7 @@ export function ProductReviews({ rating, reviewCount, productId = "default" }: P
     }
 
     return result;
-  }, [activeFilter, sort]);
+  }, [activeFilter, sort, reviews]);
 
   const handleHelpful = (id: string) => {
     setHelpfulMap((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -150,43 +183,47 @@ export function ProductReviews({ rating, reviewCount, productId = "default" }: P
       </div>
 
       {/* Overall rating summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 p-6 rounded-2xl border border-gray-100 bg-gray-50/30">
-        <div className="text-center sm:text-left space-y-2">
-          <p className="text-5xl font-bold text-foreground">{avgRating.toFixed(1)}</p>
-          <div className="flex items-center justify-center sm:justify-start gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={cn(
-                  "h-4 w-4",
-                  star <= Math.round(avgRating) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"
-                )}
-              />
-            ))}
+      {totalReviews > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 p-6 rounded-2xl border border-gray-100 bg-gray-50/30">
+          <div className="text-center sm:text-left space-y-2">
+            <p className="text-5xl font-bold text-foreground">{avgRating.toFixed(1)}</p>
+            <div className="flex items-center justify-center sm:justify-start gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className={cn(
+                    "h-4 w-4",
+                    star <= Math.round(avgRating) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"
+                  )}
+                />
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground">{totalReviews} total reviews</p>
+            {recommendPercent > 0 && (
+              <p className="text-sm font-medium text-green-700">{recommendPercent}% of customers recommend this product</p>
+            )}
           </div>
-          <p className="text-sm text-muted-foreground">{totalReviews} total reviews</p>
-          <p className="text-sm font-medium text-green-700">{recommendPercent}% of customers recommend this product</p>
-        </div>
 
-        {/* Rating breakdown */}
-        <div className="sm:col-span-2 space-y-2">
-          {breakdown && [5, 4, 3, 2, 1].map((s) => {
-            const row = breakdown.stars[s] ?? { count: 0, percentage: 0 };
-            return (
-              <div key={s} className="flex items-center gap-3">
-                <span className="text-sm font-medium text-muted-foreground w-12 text-right">{s} stars</span>
-                <div className="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-amber-400 rounded-full transition-all duration-500"
-                    style={{ width: `${row.percentage}%` }}
-                  />
+          {/* Rating breakdown */}
+          <div className="sm:col-span-2 space-y-2">
+            {breakdown && [5, 4, 3, 2, 1].map((s) => {
+              const row = breakdown.stars[s] ?? { count: 0, percentage: 0 };
+              return (
+                <div key={s} className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground w-12 text-right">{s} stars</span>
+                  <div className="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                      style={{ width: `${row.percentage}%` }}
+                    />
+                  </div>
+                  <span className="text-sm text-muted-foreground w-8">{row.percentage}%</span>
                 </div>
-                <span className="text-sm text-muted-foreground w-8">{row.percentage}%</span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Filters + Sort */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -328,13 +365,24 @@ export function ProductReviews({ rating, reviewCount, productId = "default" }: P
         <Button variant="outline" className="w-full sm:w-auto">
           Load More Reviews
         </Button>
-        <Button className="w-full sm:w-auto" onClick={() => setWriteOpen(true)}>
-          Write a Review
-        </Button>
+        {canReview?.allowed ? (
+          <Button className="w-full sm:w-auto" onClick={() => setWriteOpen(true)}>
+            Write a Review
+          </Button>
+        ) : canReview?.reason === "already-reviewed" ? (
+          <div className="flex items-center gap-2 text-sm text-green-600 font-medium">
+            <CheckCircle2 className="h-4 w-4" />
+            You reviewed this product
+          </div>
+        ) : canReview?.reason === "no-purchase" ? (
+          <div className="h-9" />
+        ) : canReview === null ? (
+          <div className="h-9" />
+        ) : null}
       </div>
 
       {/* Write Review Dialog */}
-      <WriteReviewDialog open={writeOpen} onOpenChange={setWriteOpen} />
+      <WriteReviewDialog open={writeOpen} onOpenChange={setWriteOpen} productId={productId} onSuccess={handleReviewSuccess} />
     </section>
   );
 }
