@@ -35,10 +35,10 @@ export function createSupabaseReviewService(): ReviewService {
       let reviews: any[];
       try {
         const res = await fetch(`/api/reviews?productId=${encodeURIComponent(productId)}`);
-        if (!res.ok) return failure("FETCH_ERROR", "Failed to load reviews");
+        if (!res.ok) return failure("UNKNOWN", "Failed to load reviews");
         reviews = await res.json();
       } catch {
-        return failure("NETWORK_ERROR", "Network error loading reviews");
+        return failure("NETWORK", "Network error loading reviews");
       }
 
       const mapped: ReviewData[] = (reviews ?? []).map((r: any) => ({
@@ -98,7 +98,7 @@ export function createSupabaseReviewService(): ReviewService {
         if (!res.ok) return failure("UNKNOWN", "Failed to submit review");
         reviewResult = await res.json();
       } catch {
-        return failure("NETWORK_ERROR", "Network error submitting review");
+        return failure("NETWORK", "Network error submitting review");
       }
 
       return success({
