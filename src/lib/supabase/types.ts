@@ -144,6 +144,20 @@ export interface Promotion {
   updated_at: string;
 }
 
+export interface Lead {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  company: string | null;
+  status: string;
+  source: string | null;
+  notes: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Faq {
   id: string;
   category: string;
