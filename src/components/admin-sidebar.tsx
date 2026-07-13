@@ -21,6 +21,7 @@ import {
   MessageSquare,
   MessageCircle,
   PhoneCall,
+  Phone,
   LayoutList,
 } from "lucide-react";
 import { useState } from "react";
@@ -46,6 +47,7 @@ const adminLinks = [
   { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
   { name: "Customers", href: "/admin/customers", icon: Users },
   { name: "Leads", href: "/admin/leads", icon: PhoneCall },
+  { name: "Dialer", href: "/admin/dialer", icon: Phone },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Homepage Stats", href: "/admin/site-settings", icon: LayoutList },
   { name: "Settings", href: "/admin/settings", icon: Settings },
