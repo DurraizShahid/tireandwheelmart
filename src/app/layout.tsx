@@ -7,7 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { CartProvider } from "@/contexts/cart-context";
 import { WishlistProvider } from "@/contexts/wishlist-context";
 import { CompareProvider } from "@/contexts/compare-context";
-import Header from "@/components/header"; // Import the new Header
+import Header from "@/components/header";
+import { LeadCreator } from "@/components/LeadCreator";
 import Footer from "@/components/footer"; // Import the new Footer
 import { AnnouncementBar } from "@/components/promotions/AnnouncementBar";
 
@@ -83,6 +84,7 @@ export default function RootLayout({
           <main id="main-content" className="flex-grow outline-none">
           {children}
           </main>
+          <LeadCreator />
           <Toaster />
           <Footer /> {/* Render the Footer */}
           </CompareProvider>
