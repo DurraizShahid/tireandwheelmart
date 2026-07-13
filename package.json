@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.17",
-    "@clerk/ui": "^0.3.24",
+    "@clerk/ui": "^1.25.2",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -50,7 +50,7 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.511.0",
     "motion": "^12.23.25",
-    "next": "^15.5.20",
+    "next": "15.3.8",
     "next-themes": "^0.4.6",
     "pg": "^8.22.0",
     "react": "^19.0.0",
