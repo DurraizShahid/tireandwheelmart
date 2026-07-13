@@ -37,6 +37,12 @@ export type SortOption =
   | "name-asc"
   | "name-desc";
 
+export interface VehicleFilter {
+  make: string;
+  model: string;
+  year: number;
+}
+
 export interface ProductFilters {
   categories?: string[];
   brands?: string[];
@@ -44,6 +50,8 @@ export interface ProductFilters {
   maxPrice?: number;
   tireSize?: string;
   wheelSize?: string;
+  tireSizes?: string[];
+  vehicle?: VehicleFilter;
   rating?: number;
   inStock?: boolean;
   featured?: boolean;

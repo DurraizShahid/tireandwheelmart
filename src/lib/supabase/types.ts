@@ -158,6 +158,18 @@ export interface Lead {
   updated_at: string;
 }
 
+export interface VehicleFitment {
+  id: string;
+  make: string;
+  model: string;
+  year_start: number;
+  year_end: number;
+  tire_size: string;
+  bolt_pattern: string | null;
+  offset_range: string | null;
+  created_at: string;
+}
+
 export interface Faq {
   id: string;
   category: string;

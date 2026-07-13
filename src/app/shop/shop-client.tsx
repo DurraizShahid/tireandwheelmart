@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Breadcrumb } from "@/components/catalog/Breadcrumb";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
@@ -8,7 +8,8 @@ import { Pagination } from "@/components/catalog/Pagination";
 import { FilterSidebar } from "@/components/catalog/FilterSidebar";
 import { useShop } from "@/lib/shop-utils";
 import { getServices } from "@/lib/services/service-registry";
-import type { Product } from "@/lib/catalog-types";
+import { VehicleSelector } from "@/components/vehicle/VehicleSelector";
+import type { Product, VehicleFilter } from "@/lib/catalog-types";
 import { ShopHero } from "@/components/shop/ShopHero";
 import { ShopToolbar } from "@/components/shop/ShopToolbar";
 import { RecentlyViewed } from "@/components/shop/RecentlyViewed";
@@ -39,7 +40,21 @@ export function ShopClient() {
     setViewMode,
     setPage,
     clearFilters,
+    updateFilter,
   } = useShop({ products, defaultPageSize: 12 });
+
+  const handleFitmentSelect = useCallback(
+    (vehicle: VehicleFilter, tireSizes: string[]) => {
+      updateFilter("vehicle", vehicle);
+      updateFilter("tireSizes", tireSizes);
+    },
+    [updateFilter]
+  );
+
+  const handleClearFitment = useCallback(() => {
+    updateFilter("vehicle", undefined);
+    updateFilter("tireSizes", undefined);
+  }, [updateFilter]);
 
   return (
     <div>
@@ -60,6 +75,15 @@ export function ShopClient() {
           activeFilterCount={activeFilterCount}
           onOpenFilters={() => setMobileFiltersOpen(true)}
         />
+
+        {/* Vehicle Fitment Lookup */}
+        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <VehicleSelector
+            onFitmentSelect={handleFitmentSelect}
+            onClear={handleClearFitment}
+            selectedVehicle={filters.vehicle}
+          />
+        </div>
 
         {/* Content */}
         <div className="flex gap-8" id="products">

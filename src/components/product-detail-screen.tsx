@@ -27,6 +27,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/contexts/cart-context";
+import { VehicleFitment } from "./product/VehicleFitment";
+import type { Product as CatalogProduct } from "@/lib/catalog-types";
 
 const ProductReviews = lazy(() => import("./product/ProductReviews").then((m) => ({ default: m.ProductReviews })));
 
@@ -380,6 +382,13 @@ const ProductDetailScreen = ({ product, openReview }: ProductDetailScreenProps) 
             )}
           </div>
         </div>
+
+        {/* Vehicle Fitment */}
+        {size && (
+          <section className="mt-12 max-w-7xl mx-auto">
+            <VehicleFitment product={{ size } as CatalogProduct} />
+          </section>
+        )}
 
         {/* Detailed Specs Table */}
         {Object.keys(specs).length > 0 && (

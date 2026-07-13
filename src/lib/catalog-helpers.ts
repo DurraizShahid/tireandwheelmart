@@ -38,6 +38,7 @@ export function filterProducts(products: Product[], filters: ProductFilters): Pr
     if (filters.brands && filters.brands.length > 0 && p.brand && !filters.brands.includes(p.brand)) return false;
     if (filters.minPrice !== undefined && p.price < filters.minPrice) return false;
     if (filters.maxPrice !== undefined && p.price > filters.maxPrice) return false;
+    if (filters.tireSizes && filters.tireSizes.length > 0 && !(p.size && filters.tireSizes.includes(p.size))) return false;
     if (filters.tireSize && !p.size?.includes(filters.tireSize)) return false;
     if (filters.wheelSize && !p.size?.includes(filters.wheelSize)) return false;
     if (filters.rating !== undefined && (p.rating ?? 0) < filters.rating) return false;
@@ -88,8 +89,10 @@ export function countActiveFilters(filters: ProductFilters): number {
   if (filters.brands?.length) count += filters.brands.length;
   if (filters.minPrice !== undefined) count++;
   if (filters.maxPrice !== undefined) count++;
+  if (filters.tireSizes?.length) count += filters.tireSizes.length;
   if (filters.tireSize) count++;
   if (filters.wheelSize) count++;
+  if (filters.vehicle) count++;
   if (filters.rating !== undefined) count++;
   if (filters.inStock) count++;
   if (filters.featured) count++;

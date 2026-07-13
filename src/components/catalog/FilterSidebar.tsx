@@ -80,6 +80,12 @@ export function FilterSidebar({ brands, filters, onChange, onClear, showCategori
           {filters.rating !== undefined && (
             <Chip label={`${filters.rating}+ stars`} onRemove={() => onChange({ ...filters, rating: undefined })} />
           )}
+          {filters.vehicle && (
+            <Chip
+              label={`${filters.vehicle.make} ${filters.vehicle.model} (${filters.vehicle.year})`}
+              onRemove={() => onChange({ ...filters, vehicle: undefined, tireSizes: undefined })}
+            />
+          )}
           {filters.inStock && <Chip label="In Stock" onRemove={() => onChange({ ...filters, inStock: undefined })} />}
           {filters.featured && <Chip label="Featured" onRemove={() => onChange({ ...filters, featured: undefined })} />}
           {filters.isNew && <Chip label="New" onRemove={() => onChange({ ...filters, isNew: undefined })} />}

@@ -1,5 +1,5 @@
 import { createServerClient } from "./server";
-import type { Product, ProductWithCategory, Category, Supplier, Promotion, Brand, Testimonial, Faq } from "./types";
+import type { Product, ProductWithCategory, Category, Supplier, Promotion, Brand, Testimonial, VehicleFitment, Faq } from "./types";
 
 export async function getCategories(): Promise<Category[]> {
   const supabase = createServerClient();
@@ -158,6 +158,55 @@ export async function getTestimonials(): Promise<Testimonial[]> {
     .eq("is_active", true)
     .eq("is_approved", true)
     .order("display_order");
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+// ---- Vehicle Fitment Queries ----
+
+export async function getMakes(): Promise<string[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("vehicle_fitments")
+    .select("make")
+    .order("make");
+
+  if (error) throw error;
+  return [...new Set(data?.map((r) => r.make) ?? [])];
+}
+
+export async function getModels(make: string): Promise<{ model: string; year_start: number; year_end: number }[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("vehicle_fitments")
+    .select("model, year_start, year_end")
+    .eq("make", make)
+    .order("model");
+
+  if (error) throw error;
+  const seen = new Set<string>();
+  return (data ?? []).filter((r) => {
+    const key = r.model;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+export async function lookupFitment(
+  make: string,
+  model: string,
+  year: number
+): Promise<VehicleFitment[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("vehicle_fitments")
+    .select("*")
+    .eq("make", make)
+    .eq("model", model)
+    .lte("year_start", year)
+    .gte("year_end", year);
 
   if (error) throw error;
   return data ?? [];
