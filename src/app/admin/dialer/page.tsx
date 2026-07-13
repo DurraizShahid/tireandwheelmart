@@ -5,9 +5,8 @@ import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Phone, PhoneOff, Mic, Bot, AlertCircle, History, Clock, User } from "lucide-react";
+import { Phone, PhoneOff, Mic, Bot, AlertCircle, History, User } from "lucide-react";
 import { toast } from "sonner";
 
 const keypadKeys = [

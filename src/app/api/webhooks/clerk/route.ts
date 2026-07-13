@@ -40,8 +40,6 @@ export async function POST(req: NextRequest) {
     const name = [data.first_name, data.last_name].filter(Boolean).join(" ") || "Unknown";
     const email = data.email_addresses?.[0]?.email_address || null;
     const phone = data.phone_numbers?.[0]?.phone_number || null;
-    const clerkId = data.id;
-
     const supabase = createServerClient();
 
     if (type === "user.created") {
