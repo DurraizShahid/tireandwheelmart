@@ -28,7 +28,12 @@ export function CartPromotions({ items, subtotal, className }: CartPromotionsPro
     return { results: r, totalDiscount: computeTotalPromotionDiscount(r) };
   }, [promoItems, subtotal]);
 
-  const hasResults = results.length > 0;
+  const promoResults = useMemo(
+    () => results.filter((r) => PROMOTIONS.find((p) => p.id === r.promotionId)?.type !== "free_shipping"),
+    [results]
+  );
+
+  const hasResults = promoResults.length > 0;
   const unlockedPromos = PROMOTIONS.filter((p) => {
     if (p.type === "free_shipping") return false;
     if (!p.minSubtotal) return false;
@@ -36,15 +41,15 @@ export function CartPromotions({ items, subtotal, className }: CartPromotionsPro
   }).slice(0, 2);
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn("space-y-2", className)}>
       <FreeShippingProgress subtotal={subtotal} />
 
       {hasResults && (
-        <div className="space-y-2">
+        <div className="space-y-1">
           <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Applied Promotions</p>
-          <div className="space-y-1">
-            {results.map((r) => (
-              <div key={r.promotionId} className="flex items-center justify-between text-xs bg-green-50 border border-green-200 rounded-md px-3 py-1.5">
+          <div className="space-y-0.5">
+            {promoResults.map((r) => (
+              <div key={r.promotionId} className="flex items-center justify-between text-xs bg-green-50 border border-green-200 rounded-md px-2 py-1">
                 <span className="text-green-800 font-medium">{formatDiscountLabel(r)}</span>
               </div>
             ))}
@@ -53,9 +58,9 @@ export function CartPromotions({ items, subtotal, className }: CartPromotionsPro
       )}
 
       {unlockedPromos.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-1">
           <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Available Deals</p>
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             {unlockedPromos.map((p) => (
               <PromotionCard key={p.id} promotion={p} variant="minimal" />
             ))}

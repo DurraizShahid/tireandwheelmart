@@ -25,20 +25,20 @@ export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSu
   };
 
   return (
-    <div className={compact ? "space-y-3" : "space-y-4"}>
+    <div className={compact ? "space-y-2" : "space-y-4"}>
       <div>
         <div className="flex items-center gap-2">
           <Tag className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium text-foreground">Promo Code</span>
         </div>
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 mt-1.5">
           <Input
             type="text"
             placeholder="SAVE10, FREESHIP"
             value={couponCode}
             onChange={(e) => setCouponCode(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
-            className="h-9 text-sm"
+            className="h-8 text-sm"
             disabled={!!appliedCoupon}
             aria-label="Promo code"
           />
@@ -47,13 +47,13 @@ export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSu
             size="sm"
             onClick={handleApplyCoupon}
             disabled={isApplyingCoupon || !!appliedCoupon || !couponCode.trim()}
-            className="h-9 shrink-0"
+            className="h-8 shrink-0"
           >
             {isApplyingCoupon ? <Loader2 className="h-4 w-4 animate-spin" /> : "Apply"}
           </Button>
         </div>
         {appliedCoupon && (
-          <p className="text-xs text-green-600 mt-1">Coupon &quot;{appliedCoupon}&quot; applied</p>
+          <p className="text-xs text-green-600 mt-0.5">Coupon &quot;{appliedCoupon}&quot; applied</p>
         )}
       </div>
 
@@ -66,7 +66,7 @@ export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSu
 
       <CartPromotions items={items} subtotal={subtotal} />
 
-      <div className={compact ? "space-y-1.5" : "space-y-2"}>
+      <div className={compact ? "space-y-1" : "space-y-2"}>
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Subtotal</span>
           <span className="font-medium">{formattedSubtotal}</span>
@@ -84,8 +84,8 @@ export function CartSummary({ showCheckout = true, onCheckout, compact }: CartSu
       <Separator />
 
       <div className="flex justify-between font-bold text-foreground">
-        <span className={compact ? "text-base" : "text-lg"}>Total</span>
-        <span className={`text-blue-600 ${compact ? "text-base" : "text-lg"}`}>{formattedTotal}</span>
+        <span className={compact ? "text-sm" : "text-lg"}>Total</span>
+        <span className={`text-blue-600 ${compact ? "text-sm" : "text-lg"}`}>{formattedTotal}</span>
       </div>
 
       {showCheckout && (

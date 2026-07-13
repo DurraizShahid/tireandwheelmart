@@ -16,9 +16,9 @@ interface CartItemProps {
 
 export function CartItem({ item, onUpdateQuantity, onRemove, compact }: CartItemProps) {
   return (
-    <div className={`flex gap-3 ${compact ? "py-3" : "p-4 sm:p-6"} border-b last:border-b-0`}>
+    <div className={`flex gap-3 ${compact ? "py-2" : "p-4 sm:p-6"} border-b last:border-b-0`}>
       <div className={`relative flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden ${
-        compact ? "w-16 h-16" : "w-20 h-20 sm:w-24 sm:h-24"
+        compact ? "w-14 h-14" : "w-20 h-20 sm:w-24 sm:h-24"
       }`}>
         <Image
           src={item.imageSrc}
