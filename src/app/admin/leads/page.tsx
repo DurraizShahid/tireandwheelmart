@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Plus, ExternalLink, Trash2, Search } from "lucide-react";
+import { Plus, ExternalLink, Trash2, Search, Filter } from "lucide-react";
 import { toast } from "sonner";
 import {
   Pagination,
@@ -19,12 +19,23 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Lead } from "@/lib/supabase/types";
 
 const statusLabels: Record<string, string> = {
   new: "New",
   contacted: "Contacted",
   qualified: "Qualified",
+  proposal_sent: "Proposal Sent",
+  negotiating: "Negotiating",
+  won: "Won",
+  lost: "Lost",
   converted: "Converted",
   closed: "Closed",
 };
@@ -33,8 +44,18 @@ const statusColors: Record<string, string> = {
   new: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
   contacted: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
   qualified: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+  proposal_sent: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+  negotiating: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400",
+  won: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  lost: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
   converted: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
   closed: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+};
+
+const priorityColors: Record<string, string> = {
+  high: "bg-red-100 text-red-800 dark:bg-red-900/30",
+  medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30",
+  low: "bg-green-100 text-green-800 dark:bg-green-900/30",
 };
 
 const PAGE_SIZE = 20;
@@ -43,18 +64,22 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
-  const fetchLeads = useCallback(async (q: string, p: number) => {
+  const fetchLeads = useCallback(async (q: string, s: string, p: string, pg: number) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (q) params.set("search", q);
-      params.set("page", String(p));
+      if (s) params.set("status", s);
+      if (p) params.set("priority", p);
+      params.set("page", String(pg));
       params.set("pageSize", String(PAGE_SIZE));
       const res = await fetch(`/api/admin/leads?${params}`);
       if (!res.ok) throw new Error("Failed to fetch");
@@ -69,8 +94,8 @@ export default function LeadsPage() {
   }, []);
 
   useEffect(() => {
-    fetchLeads(search, page);
-  }, [page, search, fetchLeads]);
+    fetchLeads(search, statusFilter, priorityFilter, page);
+  }, [page, search, statusFilter, priorityFilter, fetchLeads]);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -113,14 +138,41 @@ export default function LeadsPage() {
               </Link>
             </div>
 
-            <div className="relative w-full max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name, email, phone, company..."
-                className="pl-9"
-                value={search}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative w-full max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name, email, phone, company..."
+                  className="pl-9"
+                  value={search}
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="All statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value=" ">All statuses</SelectItem>
+                    {Object.entries(statusLabels).map(([k, v]) => (
+                      <SelectItem key={k} value={k}>{v}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="All priorities" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value=" ">All priorities</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <Card>
@@ -140,10 +192,10 @@ export default function LeadsPage() {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Contact</TableHead>
-                      <TableHead>Company</TableHead>
+                      <TableHead>Priority</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Created</TableHead>
+                      <TableHead>Assigned To</TableHead>
+                      <TableHead>Next Follow-up</TableHead>
                       <TableHead className="w-24">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -159,20 +211,34 @@ export default function LeadsPage() {
                     ) : (
                       leads.map((lead) => (
                         <TableRow key={lead.id}>
-                          <TableCell className="font-medium">{lead.name}</TableCell>
+                          <TableCell className="font-medium">
+                            <Link href={`/admin/leads/${lead.id}`} className="hover:underline">
+                              {lead.name}
+                            </Link>
+                          </TableCell>
                           <TableCell>
                             <div className="text-sm">{lead.email && <div>{lead.email}</div>}</div>
                             <div className="text-sm text-muted-foreground">{lead.phone}</div>
                           </TableCell>
-                          <TableCell>{lead.company || "-"}</TableCell>
+                          <TableCell>
+                            {lead.priority ? (
+                              <Badge className={priorityColors[lead.priority] || ""} variant="outline">
+                                {lead.priority}
+                              </Badge>
+                            ) : "-"}
+                          </TableCell>
                           <TableCell>
                             <Badge className={statusColors[lead.status] || ""} variant="outline">
                               {statusLabels[lead.status] || lead.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="capitalize">{lead.source || "-"}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">
-                            {new Date(lead.created_at).toLocaleDateString()}
+                            {lead.assigned_to || "-"}
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {lead.next_follow_up_at
+                              ? new Date(lead.next_follow_up_at).toLocaleDateString()
+                              : "-"}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-1">

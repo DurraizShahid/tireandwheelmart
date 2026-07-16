@@ -26,6 +26,7 @@ import {
   Puzzle,
   Mail,
   Smartphone,
+  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -72,6 +73,12 @@ const sidebarGroups: SidebarGroup[] = [
       { name: "Dialer", href: "/admin/dialer", icon: Phone },
       { name: "Reviews", href: "/admin/reviews", icon: MessageCircle },
       { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Sales",
+    links: [
+      { name: "Pipeline", href: "/admin/opportunities", icon: TrendingUp },
     ],
   },
   {

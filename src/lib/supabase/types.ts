@@ -154,8 +154,66 @@ export interface Lead {
   source: string | null;
   notes: string | null;
   is_active: boolean;
+  assigned_to: string | null;
+  priority: string;
+  tags: string[];
+  last_contacted_at: string | null;
+  next_follow_up_at: string | null;
+  converted_to_customer_id: string | null;
+  converted_at: string | null;
+  deleted_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface LeadActivity {
+  id: string;
+  lead_id: string;
+  type: string;
+  description: string;
+  metadata: Record<string, unknown>;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface LeadCall {
+  id: string;
+  lead_id: string;
+  status: string;
+  duration_seconds: number;
+  outcome: string | null;
+  summary: string | null;
+  transcript: Record<string, unknown> | null;
+  conversation: Record<string, unknown> | null;
+  scheduled_at: string | null;
+  started_at: string | null;
+  ended_at: string | null;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface LeadVehicle {
+  id: string;
+  lead_id: string;
+  make: string;
+  model: string;
+  year: number | null;
+  vin: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface LeadNotification {
+  id: string;
+  lead_id: string;
+  type: string;
+  title: string;
+  message: string;
+  channel: string;
+  status: string;
+  read: boolean;
+  created_at: string;
+  sent_at: string | null;
 }
 
 export interface VehicleFitment {
@@ -179,4 +237,28 @@ export interface Faq {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface Opportunity {
+  id: string;
+  name: string;
+  customer_id: string | null;
+  lead_id: string | null;
+  converted_from_lead_id: string | null;
+  assigned_to: string | null;
+  estimated_value: number;
+  currency: string;
+  expected_close_date: string | null;
+  win_probability: number;
+  stage: "discovery" | "qualification" | "proposal" | "negotiation" | "closed_won" | "closed_lost";
+  notes: string | null;
+  tags: string[];
+  priority: string;
+  lost_reason: string | null;
+  won_at: string | null;
+  lost_at: string | null;
+  last_activity_at: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
 }

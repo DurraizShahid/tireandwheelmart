@@ -6,6 +6,8 @@ import { AdminHeader } from "@/components/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 import { TrendingUp, Users, ShoppingCart, DollarSign, Loader2 } from "lucide-react";
+import { LeadDashboardWidgets } from "@/components/leads/lead-dashboard-widgets";
+import { OpportunityDashboardWidgets } from "@/components/opportunities/opportunity-dashboard-widgets";
 
 const statusColors: Record<string, string> = {
   delivered: "text-green-600",
@@ -125,6 +127,10 @@ export default function AdminDashboard() {
                     </CardContent>
                   </Card>
                 </div>
+
+                <LeadDashboardWidgets />
+
+                <OpportunityDashboardWidgets />
 
                 <div className="grid gap-4 lg:grid-cols-2">
                   <Card>

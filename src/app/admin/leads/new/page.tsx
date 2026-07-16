@@ -19,6 +19,10 @@ const statusOptions = [
   { value: "new", label: "New" },
   { value: "contacted", label: "Contacted" },
   { value: "qualified", label: "Qualified" },
+  { value: "proposal_sent", label: "Proposal Sent" },
+  { value: "negotiating", label: "Negotiating" },
+  { value: "won", label: "Won" },
+  { value: "lost", label: "Lost" },
   { value: "converted", label: "Converted" },
   { value: "closed", label: "Closed" },
 ];
@@ -33,6 +37,12 @@ const sourceOptions = [
   { value: "other", label: "Other" },
 ];
 
+const priorityOptions = [
+  { value: "low", label: "Low" },
+  { value: "medium", label: "Medium" },
+  { value: "high", label: "High" },
+];
+
 export default function NewLeadPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -45,6 +55,10 @@ export default function NewLeadPage() {
     source: "",
     notes: "",
     is_active: "true",
+    assigned_to: "",
+    priority: "medium",
+    tags: "",
+    next_follow_up_at: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,6 +79,10 @@ export default function NewLeadPage() {
           source: form.source || undefined,
           notes: form.notes || undefined,
           is_active: form.is_active === "true",
+          assigned_to: form.assigned_to || undefined,
+          priority: form.priority,
+          tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+          next_follow_up_at: form.next_follow_up_at || undefined,
         }),
       });
       if (!res.ok) {
@@ -138,16 +156,41 @@ export default function NewLeadPage() {
                       </Select>
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="status">Status</Label>
+                      <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+                        <SelectTrigger id="status"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {statusOptions.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="priority">Priority</Label>
+                      <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
+                        <SelectTrigger id="priority"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {priorityOptions.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                   <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                      <SelectTrigger id="status"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {statusOptions.map((o) => (
-                          <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="assigned_to">Assigned To</Label>
+                    <Input id="assigned_to" value={form.assigned_to} onChange={(e) => setForm({ ...form, assigned_to: e.target.value })} placeholder="Name of assignee" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="tags">Tags (comma-separated)</Label>
+                    <Input id="tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="e.g. hot, vip, callback" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="next_follow_up_at">Next Follow-up Date</Label>
+                    <Input id="next_follow_up_at" type="date" value={form.next_follow_up_at} onChange={(e) => setForm({ ...form, next_follow_up_at: e.target.value })} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="notes">Notes</Label>

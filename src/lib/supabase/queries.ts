@@ -1,5 +1,5 @@
 import { createServerClient } from "./server";
-import type { Product, ProductWithCategory, Category, Supplier, Promotion, Brand, Testimonial, VehicleFitment, Faq } from "./types";
+import type { Product, ProductWithCategory, Category, Supplier, Promotion, Brand, Testimonial, VehicleFitment, Lead, LeadActivity, LeadCall, Faq } from "./types";
 
 export async function getCategories(): Promise<Category[]> {
   const supabase = createServerClient();
@@ -280,4 +280,130 @@ export async function getSupplierOrders(
 
   if (error) throw error;
   return data ?? [];
+}
+
+// ---- Lead Queries ----
+
+export async function getLeads(options?: {
+  search?: string;
+  status?: string;
+  source?: string;
+  priority?: string;
+  assignedTo?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<{ data: Lead[]; total: number }> {
+  const supabase = createServerClient();
+  const page = options?.page ?? 1;
+  const pageSize = options?.pageSize ?? 20;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
+    .from("leads")
+    .select("*", { count: "exact", head: false })
+    .is("deleted_at", null);
+
+  if (options?.search) {
+    const s = options.search;
+    query = query.or(`name.ilike.%${s}%,email.ilike.%${s}%,phone.ilike.%${s}%,company.ilike.%${s}%`);
+  }
+  if (options?.status) query = query.eq("status", options.status);
+  if (options?.source) query = query.eq("source", options.source);
+  if (options?.priority) query = query.eq("priority", options.priority);
+  if (options?.assignedTo) query = query.eq("assigned_to", options.assignedTo);
+
+  const { data, error, count } = await query
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) throw error;
+  return { data: data ?? [], total: count ?? 0 };
+}
+
+export async function getLeadById(id: string): Promise<Lead | null> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("leads")
+    .select("*")
+    .eq("id", id)
+    .is("deleted_at", null)
+    .single();
+  if (error) return null;
+  return data;
+}
+
+export async function getLeadActivities(leadId: string): Promise<LeadActivity[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("lead_activities")
+    .select("*")
+    .eq("lead_id", leadId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getLeadCalls(leadId: string): Promise<LeadCall[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("lead_calls")
+    .select("*")
+    .eq("lead_id", leadId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getLeadDashboardStats(): Promise<{
+  total: number;
+  new: number;
+  qualified: number;
+  won: number;
+  lost: number;
+  followupsDue: number;
+  sourceDistribution: { source: string; count: number }[];
+  statusDistribution: { status: string; count: number }[];
+}> {
+  const supabase = createServerClient();
+
+
+
+  const { data: leads, error } = await supabase
+    .from("leads")
+    .select("id, status, source, next_follow_up_at, created_at")
+    .is("deleted_at", null);
+
+  if (error) throw error;
+
+  const total = leads?.length ?? 0;
+  const newLeads = leads?.filter((l) => l.status === "new").length ?? 0;
+  const qualified = leads?.filter((l) => l.status === "qualified").length ?? 0;
+  const won = leads?.filter((l) => l.status === "won" || l.status === "converted").length ?? 0;
+  const lost = leads?.filter((l) => l.status === "lost" || l.status === "closed").length ?? 0;
+
+  const followupsDue = leads?.filter((l) => {
+    if (!l.next_follow_up_at) return false;
+    const d = new Date(l.next_follow_up_at);
+    return d <= new Date() && (l.status !== "won" && l.status !== "lost" && l.status !== "converted" && l.status !== "closed");
+  }).length ?? 0;
+
+  const sourceMap = new Map<string, number>();
+  const statusMap = new Map<string, number>();
+  for (const l of leads ?? []) {
+    const src = l.source || "unknown";
+    sourceMap.set(src, (sourceMap.get(src) ?? 0) + 1);
+    statusMap.set(l.status, (statusMap.get(l.status) ?? 0) + 1);
+  }
+
+  return {
+    total,
+    new: newLeads,
+    qualified,
+    won,
+    lost,
+    followupsDue,
+    sourceDistribution: Array.from(sourceMap.entries()).map(([source, count]) => ({ source, count })),
+    statusDistribution: Array.from(statusMap.entries()).map(([status, count]) => ({ status, count })),
+  };
 }
