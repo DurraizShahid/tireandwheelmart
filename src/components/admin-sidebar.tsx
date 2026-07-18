@@ -31,6 +31,8 @@ import {
   Bell,
   CreditCard,
   Bot,
+  Radio,
+  FileText,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -152,11 +154,12 @@ export function AdminSidebar() {
       ],
     },
     {
-      label: t("admin.sidebar.marketing"),
+      label: t("admin.sidebar.communications"),
       links: [
-        { name: t("admin.sidebar.emailAutomations"), href: "/admin/email-automations", icon: Mail },
-        { name: t("admin.sidebar.smsAutomations"), href: "/admin/sms-automations", icon: Smartphone },
-        { name: t("admin.sidebar.integrations"), href: "/admin/integrations", icon: Puzzle },
+        { name: t("admin.sidebar.commDashboard"), href: "/admin/communications", icon: Radio },
+        { name: t("admin.sidebar.commTemplates"), href: "/admin/communications/templates", icon: FileText },
+        { name: t("admin.sidebar.commHistory"), href: "/admin/communications/history", icon: Mail },
+        { name: t("admin.sidebar.commSettings"), href: "/admin/communications/settings", icon: Settings },
       ],
     },
     {
