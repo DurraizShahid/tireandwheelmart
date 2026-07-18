@@ -29,6 +29,7 @@ import {
   Smartphone,
   TrendingUp,
   Bell,
+  CreditCard,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -105,6 +106,9 @@ export function AdminSidebar() {
   const sidebarGroups: SidebarGroup[] = [
     {
       links: [{ name: t("admin.sidebar.dashboard"), href: "/admin", icon: LayoutDashboard }],
+    },
+    {
+      links: [{ name: t("admin.sidebar.pointOfSale"), href: "/admin/pos", icon: CreditCard }],
     },
     {
       label: t("admin.sidebar.commerce"),

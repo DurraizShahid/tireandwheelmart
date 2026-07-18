@@ -43,9 +43,9 @@ export function OpportunityDashboardWidgets() {
 
   useEffect(() => {
     fetch("/api/admin/opportunities/dashboard")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setStats)
-      .catch(() => {})
+      .catch(() => setStats(null))
       .finally(() => setLoading(false));
   }, []);
 

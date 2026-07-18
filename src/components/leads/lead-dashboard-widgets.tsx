@@ -28,9 +28,9 @@ export function LeadDashboardWidgets() {
 
   useEffect(() => {
     fetch("/api/admin/leads/dashboard")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setData)
-      .catch(() => {})
+      .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, []);
 

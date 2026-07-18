@@ -28,9 +28,9 @@ export function LeadCallsTab({ leadId }: { leadId: string }) {
 
   useEffect(() => {
     fetch(`/api/admin/leads/${leadId}/calls`)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setCalls)
-      .catch(() => {})
+      .catch(() => setCalls([]))
       .finally(() => setLoading(false));
   }, [leadId]);
 

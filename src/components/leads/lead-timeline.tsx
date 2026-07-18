@@ -30,9 +30,9 @@ export function LeadTimeline({ leadId }: { leadId: string }) {
 
   useEffect(() => {
     fetch(`/api/admin/leads/${leadId}/activities`)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setActivities)
-      .catch(() => {})
+      .catch(() => setActivities([]))
       .finally(() => setLoading(false));
   }, [leadId]);
 
