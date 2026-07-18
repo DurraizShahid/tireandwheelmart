@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import type { Lead } from "@/lib/supabase/types";
+import { useTranslation } from "@/i18n/use-locale";
 
 const statusOptions = [
   { value: "new", label: "New" },
@@ -45,6 +46,7 @@ const priorityOptions = [
 ];
 
 export default function EditLeadPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(true);
@@ -98,7 +100,7 @@ export default function EditLeadPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name) { toast.error("Lead name is required"); return; }
+    if (!form.name) { toast.error(t("admin.leads.new.nameRequired")); return; }
 
     setSaving(true);
     try {
@@ -125,11 +127,11 @@ export default function EditLeadPage() {
         const err = await res.json();
         throw new Error(err.error || "Failed to update");
       }
-      toast.success("Lead updated");
+      toast.success(t("admin.common.success"));
       router.push(`/admin/leads/${params.id}`);
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update lead");
+      toast.error(err instanceof Error ? err.message : t("admin.common.error"));
     } finally {
       setSaving(false);
     }
@@ -156,9 +158,9 @@ export default function EditLeadPage() {
         <div className="flex-1 flex flex-col">
           <AdminHeader />
           <div className="flex-1 items-center justify-center flex flex-col gap-4">
-            <p className="text-lg font-medium">Lead not found</p>
+            <p className="text-lg font-medium">{t("admin.common.notFound")}</p>
             <Link href="/admin/leads">
-              <Button variant="outline">Back to Leads</Button>
+              <Button variant="outline">{t("admin.common.backToLeads")}</Button>
             </Link>
           </div>
         </div>
@@ -180,41 +182,41 @@ export default function EditLeadPage() {
                 </Link>
               </Button>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Edit Lead</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t("admin.common.editLead")}</h1>
                 <p className="text-muted-foreground">{form.name}</p>
               </div>
             </div>
 
             <Card>
               <CardHeader>
-                <CardTitle>Lead Details</CardTitle>
-                <CardDescription>Update contact information and lead status</CardDescription>
+                <CardTitle>{t("admin.leads.new.details")}</CardTitle>
+                <CardDescription>{t("admin.common.updateDetails")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name *</Label>
+                    <Label htmlFor="name">{t("admin.common.name")} *</Label>
                     <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t("admin.leads.new.email")}</Label>
                       <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="phone">{t("admin.common.phone")}</Label>
                       <Input id="phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="company">Company</Label>
+                      <Label htmlFor="company">{t("admin.common.company")}</Label>
                       <Input id="company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="source">Source</Label>
+                      <Label htmlFor="source">{t("admin.common.source")}</Label>
                       <Select value={form.source} onValueChange={(v) => setForm({ ...form, source: v })}>
-                        <SelectTrigger id="source"><SelectValue placeholder="Select source..." /></SelectTrigger>
+                        <SelectTrigger id="source"><SelectValue placeholder={t("admin.common.selectSource")} /></SelectTrigger>
                         <SelectContent>
                           {sourceOptions.map((o) => (
                             <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
@@ -225,7 +227,7 @@ export default function EditLeadPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="status">Status</Label>
+                      <Label htmlFor="status">{t("admin.common.status")}</Label>
                       <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
                         <SelectTrigger id="status"><SelectValue /></SelectTrigger>
                         <SelectContent>
@@ -236,7 +238,7 @@ export default function EditLeadPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="priority">Priority</Label>
+                      <Label htmlFor="priority">{t("admin.common.priority")}</Label>
                       <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
                         <SelectTrigger id="priority"><SelectValue /></SelectTrigger>
                         <SelectContent>
@@ -248,32 +250,32 @@ export default function EditLeadPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="assigned_to">Assigned To</Label>
-                    <Input id="assigned_to" value={form.assigned_to} onChange={(e) => setForm({ ...form, assigned_to: e.target.value })} placeholder="Name of assignee" />
+                    <Label htmlFor="assigned_to">{t("admin.common.assignedTo")}</Label>
+                    <Input id="assigned_to" value={form.assigned_to} onChange={(e) => setForm({ ...form, assigned_to: e.target.value })} placeholder={t("admin.common.assigneePlaceholder")} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="tags">Tags (comma-separated)</Label>
-                    <Input id="tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="e.g. hot, vip, callback" />
+                    <Label htmlFor="tags">{t("admin.leads.new.tags")}</Label>
+                    <Input id="tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder={t("admin.leads.new.tagsPlaceholder")} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="next_follow_up_at">Next Follow-up Date</Label>
+                    <Label htmlFor="next_follow_up_at">{t("admin.leads.new.followUpDate")}</Label>
                     <Input id="next_follow_up_at" type="date" value={form.next_follow_up_at} onChange={(e) => setForm({ ...form, next_follow_up_at: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="notes">Notes</Label>
+                    <Label htmlFor="notes">{t("admin.common.notes")}</Label>
                     <Textarea id="notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={4} />
                   </div>
                   <div className="flex items-center gap-2">
                     <Switch id="active" checked={form.is_active === "true"} onCheckedChange={(v) => setForm({ ...form, is_active: String(v) })} />
-                    <Label htmlFor="active">Active</Label>
+                    <Label htmlFor="active">{t("admin.leads.new.active")}</Label>
                   </div>
                   <div className="flex gap-4 pt-2">
                     <Link href={`/admin/leads/${params.id}`}>
-                      <Button type="button" variant="outline">Cancel</Button>
+                      <Button type="button" variant="outline">{t("admin.common.cancel")}</Button>
                     </Link>
                     <Button type="submit" disabled={saving}>
-                      {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                      Save Changes
+                      {saving && <Loader2 className="h-4 w-4 rtl:ml-2 ltr:mr-2 animate-spin" />}
+                      {t("admin.common.save")}
                     </Button>
                   </div>
                 </form>

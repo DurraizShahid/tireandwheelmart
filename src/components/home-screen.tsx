@@ -29,6 +29,7 @@ import { CATEGORIES } from "@/lib/catalog-constants";
 import { HomepageDeals } from "@/components/promotions/HomepageDeals";
 import { supabase } from "@/lib/supabase";
 import type { Promotion as DbPromotion, Brand as DbBrand, Testimonial as DbTestimonial, Category as DbCategory } from "@/lib/supabase/types";
+import { useTranslation } from "@/i18n/use-locale";
 
 interface DbProduct {
   id: string;
@@ -111,6 +112,7 @@ const CountUp = ({
 };
 
 const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [], brands = [], testimonials = [], siteSettings = {}, homepageCategories = [] }: HomeScreenProps) => {
+  const { t } = useTranslation();
   const [liveDeals, setLiveDeals] = useState<DbPromotion[]>(featuredDeals);
 
   useEffect(() => {
@@ -264,7 +266,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
       <section className="w-full px-4 sm:px-6 lg:px-8 py-12 bg-white">
         <div className="max-w-7xl mx-auto w-full">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-8">
-            Featured Categories
+{t("home.featuredCategories")}
           </h2>
           <ProductCarousel autoScrollSpeed={2000}>
             <ProductCard
@@ -332,7 +334,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
         <section className="w-full py-16">
           <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
-              Our Featured Products
+              {t("home.ourFeaturedProducts")}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {featuredProducts.slice(0, 8).map((product) => {
@@ -356,7 +358,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
               href="/shop"
               className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-300 shadow-lg"
             >
-              View All Products
+              {t("home.viewAllProducts")}
             </Link>
           </div>
         </section>
@@ -367,7 +369,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
         <section className="w-full bg-gray-50 py-16">
           <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
-              Featured Tires
+              {t("home.featuredTires")}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {summerTires.slice(0, 4).map((tire) => {
@@ -391,7 +393,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
               href="/shop/summer-tires"
               className="mt-12 inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-300 shadow-lg"
             >
-              View All Tires
+              {t("home.viewAllTires")}
             </Link>
           </div>
         </section>
@@ -401,17 +403,17 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
       <section className="w-full py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-10">
-            Why Choose Tire&amp;Wheel?
+            {t("home.whyChooseUs")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="p-6 flex flex-col items-center text-center shadow-lg border-none bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-0 flex flex-col items-center">
                 <Truck className="h-12 w-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">
-                  Fast &amp; Reliable Shipping
+                  {t("home.fastShipping")}
                 </h3>
                 <p className="text-muted-foreground">
-                  Get your wheels and tires delivered quickly and safely.
+                  {t("home.fastShippingDesc")}
                 </p>
               </CardContent>
             </Card>
@@ -419,10 +421,10 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
               <CardContent className="p-0 flex flex-col items-center">
                 <ShieldCheck className="h-12 w-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">
-                  Quality Guaranteed
+                  {t("home.qualityGuaranteed")}
                 </h3>
                 <p className="text-muted-foreground">
-                  We source only the best wheels and tires from trusted manufacturers.
+                  {t("home.qualityGuaranteedDesc")}
                 </p>
               </CardContent>
             </Card>
@@ -430,10 +432,10 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
               <CardContent className="p-0 flex flex-col items-center">
                 <Headset className="h-12 w-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">
-                  24/7 Customer Support
+                  {t("home.support247")}
                 </h3>
                 <p className="text-muted-foreground">
-                  Our dedicated team is always here to help you.
+                  {t("home.support247Desc")}
                 </p>
               </CardContent>
             </Card>
@@ -445,10 +447,10 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
       <section className="w-full bg-gray-50 py-16">
         <div className="px-4 sm:px-6 lg:px-8 text-center max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
-            BEST PRICE GUARANTEE ON ALL BRANDS
+            {t("home.bestPriceGuarantee")}
           </h2>
           <p className="text-lg text-muted-foreground mb-12">
-            Shop from the most trusted tire and wheel brands in the industry
+            {t("home.trustedBrands")}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
             {displayBrands.map((brand, index) => (
@@ -468,10 +470,10 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="text-left mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-              <span className="font-light text-black">Customers love Us.</span>
+              <span className="font-light text-black">{t("home.customersLoveUs")}</span>
             </h2>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-              <span className="font-bold text-red-600">Discover why.</span>
+              <span className="font-bold text-red-600">{t("home.discoverWhy")}</span>
             </h2>
             <div className="flex items-center mt-4">
               <svg
@@ -487,7 +489,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
                 />
               </svg>
               <span className="text-sm text-muted-foreground">
-                Trusted by customers nationwide
+                {t("home.trustedNationwide")}
               </span>
             </div>
           </div>
@@ -541,7 +543,7 @@ const HomeScreen = ({ featuredProducts = [], summerTires = [], featuredDeals = [
       <section className="w-full py-16 bg-white">
         <div className="px-0 sm:px-0 lg:px-0 max-w-full mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
-            Shop with confidence
+            {t("home.shopWithConfidence")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 px-4 sm:px-6 lg:px-8">
             <div className="text-left border-r border-gray-200 pr-8 lg:last:border-r-0">

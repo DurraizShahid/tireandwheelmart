@@ -6,8 +6,11 @@ import { AdminHeader } from "@/components/admin-header";
 import { Button } from "@/components/ui/button";
 import { OpportunityTable } from "@/components/opportunities/opportunity-table";
 import { Plus, ArrowLeft } from "lucide-react";
+import { useTranslation } from "@/i18n/use-locale";
 
 export default function OpportunitiesTableView() {
+  const { t } = useTranslation();
+
   return (
     <div className="flex min-h-screen bg-muted/30">
       <AdminSidebar />
@@ -23,14 +26,14 @@ export default function OpportunitiesTableView() {
                   </Link>
                 </Button>
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight">All Opportunities</h1>
-                  <p className="text-muted-foreground">Table view of all deals</p>
+                  <h1 className="text-3xl font-bold tracking-tight">{t("admin.opportunities.allOpportunities")}</h1>
+                  <p className="text-muted-foreground">{t("admin.opportunities.tableDesc")}</p>
                 </div>
               </div>
               <Link href="/admin/opportunities/new">
                 <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Opportunity
+                  <Plus className="h-4 w-4 rtl:ml-2 ltr:mr-2" />
+                  {t("admin.opportunities.newOpportunity")}
                 </Button>
               </Link>
             </div>

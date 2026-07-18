@@ -15,15 +15,11 @@ import { WishlistBadge } from "@/components/wishlist/WishlistBadge";
 import { WishlistDrawer } from "@/components/wishlist/WishlistDrawer";
 import { CompareBar } from "@/components/compare/CompareBar";
 import { SearchModal } from "@/components/search/SearchModal";
-
-const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
-  { name: "Track Order", href: "/track-order" },
-];
+import { useTranslation } from "@/i18n/use-locale";
+import { LanguageSelector } from "@/i18n/language-selector";
 
 const Header = () => {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -34,7 +30,7 @@ const Header = () => {
       <div className="w-full flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-foreground">
-          <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
+          <img src="/logo.svg" alt={t("nav.logo")} className="h-8 w-auto" />
           Tire&Wheel
         </Link>
 
@@ -46,7 +42,7 @@ const Header = () => {
               pathname === "/" ? "text-red-600" : ""
             }`}
           >
-            Home
+            {t("nav.home")}
           </Link>
           <Link
             href="/about"
@@ -54,7 +50,7 @@ const Header = () => {
               pathname === "/about" ? "text-red-600" : ""
             }`}
           >
-            About
+            {t("nav.about")}
           </Link>
           <CategoryDropdown />
           <Link
@@ -63,7 +59,7 @@ const Header = () => {
               pathname === "/contact" ? "text-red-600" : ""
             }`}
           >
-            Contact
+            {t("nav.contact")}
           </Link>
           <Link
             href="/track-order"
@@ -71,7 +67,7 @@ const Header = () => {
               pathname === "/track-order" ? "text-red-600" : ""
             }`}
           >
-            Track Order
+            {t("nav.trackOrder")}
           </Link>
         </nav>
 
@@ -81,13 +77,14 @@ const Header = () => {
             suppressHydrationWarning
             onClick={() => setSearchModalOpen(true)}
             className="relative w-[200px] h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors"
-            aria-label="Open search"
+            aria-label={t("nav.search")}
           >
             <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
-            <span className="text-sm text-muted-foreground">Search...</span>
+                <span className="text-sm text-muted-foreground">{t("nav.search")}</span>
           </button>
           <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
-          <Link href="/admin" aria-label="Admin panel">
+          <LanguageSelector />
+          <Link href="/admin" aria-label={t("nav.admin")}>
             <Button variant="ghost" size="icon" className="relative" suppressHydrationWarning>
               <Shield className="h-5 w-5" />
             </Button>
@@ -97,15 +94,15 @@ const Header = () => {
           <div className="flex items-center gap-2">
             <Show when="signed-out">
               <SignInButton mode="modal">
-                <Button variant="ghost" size="sm">Sign In</Button>
+                <Button variant="ghost" size="sm">{t("nav.signIn")}</Button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <Button size="sm">Sign Up</Button>
+                <Button size="sm">{t("nav.signUp")}</Button>
               </SignUpButton>
             </Show>
             <Show when="signed-in">
               <Link href="/account/orders">
-                <Button variant="ghost" size="sm">My Orders</Button>
+                <Button variant="ghost" size="sm">{t("nav.myOrders")}</Button>
               </Link>
               <UserButton />
             </Show>
@@ -120,27 +117,51 @@ const Header = () => {
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle navigation menu</span>
+                <span className="sr-only">{t("nav.toggleMenu")}</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[250px] sm:w-[300px]">
               <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-foreground mb-6">
-                <img src="/logo.svg" alt="Tire&Wheel Logo" className="h-8 w-auto" />
+                <img src="/logo.svg" alt={t("nav.logo")} className="h-8 w-auto" />
                 Tire&Wheel
               </Link>
               <nav className="flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className={cn(
-                      "text-lg font-medium transition-colors hover:text-primary",
-                      pathname === link.href ? "text-primary" : "text-muted-foreground"
-                    )}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
+                <Link
+                  href="/"
+                  className={cn(
+                    "text-lg font-medium transition-colors hover:text-primary",
+                    pathname === "/" ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  {t("nav.home")}
+                </Link>
+                <Link
+                  href="/about"
+                  className={cn(
+                    "text-lg font-medium transition-colors hover:text-primary",
+                    pathname === "/about" ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  {t("nav.about")}
+                </Link>
+                <Link
+                  href="/contact"
+                  className={cn(
+                    "text-lg font-medium transition-colors hover:text-primary",
+                    pathname === "/contact" ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  {t("nav.contact")}
+                </Link>
+                <Link
+                  href="/track-order"
+                  className={cn(
+                    "text-lg font-medium transition-colors hover:text-primary",
+                    pathname === "/track-order" ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  {t("nav.trackOrder")}
+                </Link>
                 <Link
                   href="/admin"
                   className={cn(
@@ -149,15 +170,18 @@ const Header = () => {
                   )}
                 >
                   <Shield className="h-4 w-4" />
-                  Admin
+                  {t("nav.admin")}
                 </Link>
+                <div className="mt-2">
+                  <LanguageSelector />
+                </div>
                 <Show when="signed-out">
                   <div className="flex items-center gap-2 mt-2">
                     <SignInButton mode="modal">
-                      <Button variant="ghost" size="sm">Sign In</Button>
+                      <Button variant="ghost" size="sm">{t("nav.signIn")}</Button>
                     </SignInButton>
                     <SignUpButton mode="modal">
-                      <Button size="sm">Sign Up</Button>
+                      <Button size="sm">{t("nav.signUp")}</Button>
                     </SignUpButton>
                   </div>
                 </Show>
@@ -166,7 +190,7 @@ const Header = () => {
                     href="/account/orders"
                     className="text-lg font-medium transition-colors hover:text-primary text-muted-foreground"
                   >
-                    My Orders
+                    {t("nav.myOrders")}
                   </Link>
                   <div className="flex justify-center mt-2">
                     <UserButton />
@@ -177,10 +201,10 @@ const Header = () => {
                 suppressHydrationWarning
                 onClick={() => setSearchModalOpen(true)}
                 className="relative w-full h-9 flex items-center gap-2 pl-9 pr-3 rounded-md bg-muted/50 border border-muted hover:border-primary transition-colors mt-6"
-                aria-label="Open search"
+                aria-label={t("nav.search")}
               >
                 <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
-                <span className="text-sm text-muted-foreground">Search...</span>
+            <span className="text-sm text-muted-foreground">{t("nav.search")}</span>
               </button>
               <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
             </SheetContent>

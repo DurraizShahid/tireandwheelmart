@@ -16,6 +16,7 @@ import { ConvertLeadToOpportunityDialog } from "@/components/opportunities/conve
 import { ArrowLeft, Edit, Loader2, Mail, Phone, Building2, Tag, Calendar, User } from "lucide-react";
 import Link from "next/link";
 import type { Lead } from "@/lib/supabase/types";
+import { useTranslation } from "@/i18n/use-locale";
 
 const statusColors: Record<string, string> = {
   new: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
@@ -36,6 +37,7 @@ const priorityColors: Record<string, string> = {
 };
 
 export default function LeadDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const [lead, setLead] = useState<Lead | null>(null);
@@ -107,8 +109,8 @@ export default function LeadDetailPage() {
                 )}
                 <Button variant="outline" asChild>
                   <Link href={`/admin/leads/${lead.id}/edit`}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                    <Edit className="h-4 w-4 rtl:ml-2 ltr:mr-2" />
+                    {t("admin.common.edit")}
                   </Link>
                 </Button>
               </div>
@@ -117,7 +119,7 @@ export default function LeadDetailPage() {
             <div className="grid gap-4 lg:grid-cols-3">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Contact Info</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.leads.detail.contactInfo")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   {lead.email && (
@@ -137,27 +139,27 @@ export default function LeadDetailPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Details</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.leads.detail.details")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span>Assigned to: {lead.assigned_to || "Unassigned"}</span>
+                    <span>{t("admin.leads.detail.assignedTo")}: {lead.assigned_to || t("admin.common.unassigned")}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>Created: {new Date(lead.created_at).toLocaleDateString()}</span>
+                    <span>{t("admin.leads.detail.created")}: {new Date(lead.created_at).toLocaleDateString()}</span>
                   </div>
                   {lead.next_follow_up_at && (
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>Next follow-up: {new Date(lead.next_follow_up_at).toLocaleDateString()}</span>
+                      <span>{t("admin.leads.detail.nextFollowUp")}: {new Date(lead.next_follow_up_at).toLocaleDateString()}</span>
                     </div>
                   )}
                   {lead.converted_at && (
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-green-500" />
-                      <span>Converted: {new Date(lead.converted_at).toLocaleDateString()}</span>
+                      <span>{t("admin.leads.detail.converted")}: {new Date(lead.converted_at).toLocaleDateString()}</span>
                     </div>
                   )}
                 </CardContent>
@@ -165,7 +167,7 @@ export default function LeadDetailPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Tags & Source</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.leads.detail.tagsAndSource")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   {lead.tags && lead.tags.length > 0 && (
@@ -179,8 +181,8 @@ export default function LeadDetailPage() {
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Source:</span>
-                    <span className="capitalize">{lead.source || "Unknown"}</span>
+                    <span className="text-muted-foreground">{t("admin.leads.detail.source")}:</span>
+                    <span className="capitalize">{lead.source || t("admin.common.unknown")}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -189,7 +191,7 @@ export default function LeadDetailPage() {
             {lead.notes && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Notes</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.common.notes")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm whitespace-pre-wrap">{lead.notes}</p>
@@ -199,8 +201,8 @@ export default function LeadDetailPage() {
 
             <Tabs defaultValue="timeline" className="w-full">
               <TabsList>
-                <TabsTrigger value="timeline">Timeline</TabsTrigger>
-                <TabsTrigger value="calls">Calls</TabsTrigger>
+                <TabsTrigger value="timeline">{t("admin.leads.detail.timeline")}</TabsTrigger>
+                <TabsTrigger value="calls">{t("admin.leads.detail.calls")}</TabsTrigger>
               </TabsList>
               <TabsContent value="timeline" className="mt-4">
                 <LeadTimeline leadId={lead.id} />

@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { TrendingUp, Users, ShoppingCart, DollarSign, Loader2 } from "lucide-react";
 import { LeadDashboardWidgets } from "@/components/leads/lead-dashboard-widgets";
 import { OpportunityDashboardWidgets } from "@/components/opportunities/opportunity-dashboard-widgets";
+import { useTranslation } from "@/i18n/use-locale";
 
 const statusColors: Record<string, string> = {
   delivered: "text-green-600",
@@ -39,6 +40,7 @@ interface DashboardData {
 }
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -60,8 +62,8 @@ export default function AdminDashboard() {
         <main className="flex-1 overflow-auto p-6">
           <div className="space-y-8">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-              <p className="text-muted-foreground">Welcome back to your admin panel</p>
+              <h1 className="text-3xl font-bold tracking-tight">{t("admin.dashboard.title")}</h1>
+              <p className="text-muted-foreground">{t("admin.dashboard.subtitle")}</p>
             </div>
 
             {loading ? (
@@ -69,52 +71,52 @@ export default function AdminDashboard() {
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : !kpis ? (
-              <p className="text-center text-muted-foreground py-16">Failed to load dashboard data.</p>
+              <p className="text-center text-muted-foreground py-16">{t("admin.dashboard.failedToLoad")}</p>
             ) : (
               <>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                      <CardTitle className="text-sm font-medium">{t("admin.dashboard.totalRevenue")}</CardTitle>
                       <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">${kpis.totalRevenue.toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
                       <p className="text-xs text-muted-foreground">
-                        {kpis.revenueChange >= 0 ? "+" : ""}{kpis.revenueChange.toFixed(1)}% from last month
+                        {kpis.revenueChange >= 0 ? "+" : ""}{kpis.revenueChange.toFixed(1)}% {t("admin.dashboard.fromLastMonth")}
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+                      <CardTitle className="text-sm font-medium">{t("admin.dashboard.totalSales")}</CardTitle>
                       <ShoppingCart className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">{kpis.totalSales.toLocaleString()}</div>
                       <p className="text-xs text-muted-foreground">
-                        {kpis.orderChange >= 0 ? "+" : ""}{kpis.orderChange.toFixed(1)}% from last month
+                        {kpis.orderChange >= 0 ? "+" : ""}{kpis.orderChange.toFixed(1)}% {t("admin.dashboard.fromLastMonth")}
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
+                      <CardTitle className="text-sm font-medium">{t("admin.dashboard.totalCustomers")}</CardTitle>
                       <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">{kpis.totalCustomers.toLocaleString()}</div>
                       <p className="text-xs text-muted-foreground">
-                        {kpis.customerChange >= 0 ? "+" : ""}{kpis.customerChange.toFixed(1)}% from last month
+                        {kpis.customerChange >= 0 ? "+" : ""}{kpis.customerChange.toFixed(1)}% {t("admin.dashboard.fromLastMonth")}
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+                      <CardTitle className="text-sm font-medium">{t("admin.dashboard.conversionRate")}</CardTitle>
                       <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -123,7 +125,7 @@ export default function AdminDashboard() {
                           ? ((kpis.totalSales / kpis.totalCustomers) * 100).toFixed(1)
                           : "0"}%
                       </div>
-                      <p className="text-xs text-muted-foreground">orders per customer</p>
+                      <p className="text-xs text-muted-foreground">{t("admin.dashboard.ordersPerCustomer")}</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -135,8 +137,8 @@ export default function AdminDashboard() {
                 <div className="grid gap-4 lg:grid-cols-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Sales Overview</CardTitle>
-                      <CardDescription>Monthly sales and revenue trend</CardDescription>
+                      <CardTitle>{t("admin.dashboard.salesOverview")}</CardTitle>
+                      <CardDescription>{t("admin.dashboard.salesOverviewDesc")}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {data.chartData.length > 0 ? (
@@ -148,20 +150,20 @@ export default function AdminDashboard() {
                             <YAxis yAxisId="right" orientation="right" />
                             <Tooltip />
                             <Legend />
-                            <Bar yAxisId="left" dataKey="sales" fill="#dc2626" name="Orders" />
-                            <Bar yAxisId="right" dataKey="revenue" fill="#2563eb" name="Revenue" />
+                            <Bar yAxisId="left" dataKey="sales" fill="#dc2626" name={t("admin.dashboard.totalSales")} />
+                            <Bar yAxisId="right" dataKey="revenue" fill="#2563eb" name={t("admin.dashboard.totalRevenue")} />
                           </BarChart>
                         </ResponsiveContainer>
                       ) : (
-                        <p className="text-center text-muted-foreground py-12">No sales data yet.</p>
+                        <p className="text-center text-muted-foreground py-12">{t("admin.dashboard.noSalesData")}</p>
                       )}
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader>
-                      <CardTitle>Revenue Trend</CardTitle>
-                      <CardDescription>Monthly revenue progression</CardDescription>
+                      <CardTitle>{t("admin.dashboard.revenueTrend")}</CardTitle>
+                      <CardDescription>{t("admin.dashboard.revenueTrendDesc")}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {data.chartData.length > 0 ? (
@@ -170,12 +172,12 @@ export default function AdminDashboard() {
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="month" />
                             <YAxis />
-                            <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]} />
+                            <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, t("admin.dashboard.totalRevenue")]} />
                             <Line type="monotone" dataKey="revenue" stroke="#dc2626" strokeWidth={2} />
                           </LineChart>
                         </ResponsiveContainer>
                       ) : (
-                        <p className="text-center text-muted-foreground py-12">No revenue data yet.</p>
+                        <p className="text-center text-muted-foreground py-12">{t("admin.dashboard.noRevenueData")}</p>
                       )}
                     </CardContent>
                   </Card>
@@ -183,18 +185,18 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Recent Orders</CardTitle>
-                    <CardDescription>Latest 5 orders from customers</CardDescription>
+                    <CardTitle>{t("admin.dashboard.recentOrders")}</CardTitle>
+                    <CardDescription>{t("admin.dashboard.recentOrdersDesc")}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {kpis.recentOrders.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-8">No orders yet.</p>
+                      <p className="text-center text-muted-foreground py-8">{t("admin.dashboard.noOrdersYet")}</p>
                     ) : (
                       <div className="space-y-4">
                         {kpis.recentOrders.map((order) => (
                           <div key={order.id} className="flex items-center justify-between p-3 border rounded-lg">
                             <div>
-                              <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
+                              <p className="font-medium">{t("admin.common.order")} #{order.id.slice(0, 8)}</p>
                               <p className="text-sm text-muted-foreground">{order.customer}</p>
                             </div>
                             <div className="text-right">

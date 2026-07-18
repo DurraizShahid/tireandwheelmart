@@ -71,7 +71,7 @@ export function createLeadService(): LeadService {
       await this.logActivity(leadId, "call", `Call ${data.status || "scheduled"}`, {
         call_id: call.id,
         outcome: data.outcome,
-      }, data.created_by);
+      }, data.created_by ?? undefined);
 
       return call;
     },

@@ -32,6 +32,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import type { Opportunity } from "@/lib/supabase/types";
+import { useTranslation } from "@/i18n/use-locale";
 
 const stageLabels: Record<string, string> = {
   discovery: "Discovery",
@@ -58,6 +59,7 @@ const priorityColors: Record<string, string> = {
 };
 
 export default function OpportunityDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
@@ -86,9 +88,9 @@ export default function OpportunityDetailPage() {
       if (!res.ok) throw new Error("Failed to change stage");
       const updated = await res.json();
       setOpportunity(updated);
-      toast.success(`Moved to ${stageLabels[newStage] || newStage}`);
+      toast.success(`${t("admin.opportunities.moveTo")} ${stageLabels[newStage] || newStage}`);
     } catch {
-      toast.error("Failed to change stage");
+      toast.error(t("admin.common.error"));
     } finally {
       setChangingStage(false);
     }
@@ -132,13 +134,13 @@ export default function OpportunityDetailPage() {
                     </Badge>
                   </div>
                   <p className="text-muted-foreground text-sm mt-1">
-                    {opportunity.assigned_to ? `Assigned to ${opportunity.assigned_to}` : "Unassigned"}
+                    {opportunity.assigned_to ? `${t("admin.opportunities.detail.assignedTo")} ${opportunity.assigned_to}` : t("admin.common.unassigned")}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-muted-foreground">Move to:</span>
+                  <span className="text-xs text-muted-foreground">{t("admin.opportunities.moveTo")}:</span>
                   <Select
                     value={opportunity.stage}
                     onValueChange={handleStageChange}
@@ -156,8 +158,8 @@ export default function OpportunityDetailPage() {
                 </div>
                 <Button variant="outline" asChild>
                   <Link href={`/admin/opportunities/${opportunity.id}/edit`}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                    <Edit className="h-4 w-4 rtl:ml-2 ltr:mr-2" />
+                    {t("admin.common.edit")}
                   </Link>
                 </Button>
               </div>
@@ -166,7 +168,7 @@ export default function OpportunityDetailPage() {
             <div className="grid gap-4 lg:grid-cols-3">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Deal Info</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.opportunities.detail.dealInfo")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div className="flex items-center gap-2">
@@ -177,22 +179,22 @@ export default function OpportunityDetailPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Target className="h-4 w-4 text-muted-foreground" />
-                    <span>Probability: {opportunity.win_probability}%</span>
+                    <span>{t("admin.opportunities.detail.probability")}: {opportunity.win_probability}%</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>Close: {opportunity.expected_close_date ? new Date(opportunity.expected_close_date).toLocaleDateString() : "Not set"}</span>
+                    <span>{t("admin.opportunities.detail.closeDate")}: {opportunity.expected_close_date ? new Date(opportunity.expected_close_date).toLocaleDateString() : t("admin.common.notSet")}</span>
                   </div>
                   {opportunity.won_at && (
                     <div className="flex items-center gap-2">
                       <Trophy className="h-4 w-4 text-green-500" />
-                      <span>Won: {new Date(opportunity.won_at).toLocaleDateString()}</span>
+                      <span>{t("admin.opportunities.detail.won")}: {new Date(opportunity.won_at).toLocaleDateString()}</span>
                     </div>
                   )}
                   {opportunity.lost_at && (
                     <div className="flex items-center gap-2">
                       <XCircle className="h-4 w-4 text-red-500" />
-                      <span>Lost: {new Date(opportunity.lost_at).toLocaleDateString()}</span>
+                      <span>{t("admin.opportunities.detail.lost")}: {new Date(opportunity.lost_at).toLocaleDateString()}</span>
                     </div>
                   )}
                 </CardContent>
@@ -200,27 +202,27 @@ export default function OpportunityDetailPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Assignment</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.opportunities.detail.assignment")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span>Owner: {opportunity.assigned_to || "Unassigned"}</span>
+                    <span>{t("admin.opportunities.detail.owner")}: {opportunity.assigned_to || t("admin.common.unassigned")}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                    <span>Stage: {stageLabels[opportunity.stage] || opportunity.stage}</span>
+                    <span>{t("admin.opportunities.detail.stage")}: {stageLabels[opportunity.stage] || opportunity.stage}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>Created: {new Date(opportunity.created_at).toLocaleDateString()}</span>
+                    <span>{t("admin.opportunities.detail.created")}: {new Date(opportunity.created_at).toLocaleDateString()}</span>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Tags & Priority</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.opportunities.detail.tagsAndPriority")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   {opportunity.tags && opportunity.tags.length > 0 && (
@@ -237,7 +239,7 @@ export default function OpportunityDetailPage() {
                     <div className="flex items-start gap-2">
                       <XCircle className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
                       <div>
-                        <span className="text-muted-foreground">Lost reason:</span>
+                        <span className="text-muted-foreground">{t("admin.opportunities.detail.lostReason")}:</span>
                         <p className="text-sm mt-0.5">{opportunity.lost_reason}</p>
                       </div>
                     </div>
@@ -249,7 +251,7 @@ export default function OpportunityDetailPage() {
             {opportunity.notes && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Notes</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("admin.opportunities.detail.notes")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm whitespace-pre-wrap">{opportunity.notes}</p>
@@ -259,7 +261,7 @@ export default function OpportunityDetailPage() {
 
             <Tabs defaultValue="timeline" className="w-full">
               <TabsList>
-                <TabsTrigger value="timeline">Timeline</TabsTrigger>
+                <TabsTrigger value="timeline">{t("admin.opportunities.detail.timeline")}</TabsTrigger>
               </TabsList>
               <TabsContent value="timeline" className="mt-4">
                 <OpportunityTimeline opportunityId={opportunity.id} />

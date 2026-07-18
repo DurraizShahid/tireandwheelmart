@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Lead } from "@/lib/supabase/types";
+import { useTranslation } from "@/i18n/use-locale";
 
 const statusLabels: Record<string, string> = {
   new: "New",
@@ -61,6 +62,7 @@ const priorityColors: Record<string, string> = {
 const PAGE_SIZE = 20;
 
 export default function LeadsPage() {
+  const { t } = useTranslation();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -87,11 +89,11 @@ export default function LeadsPage() {
       setLeads(json.data);
       setTotal(json.total);
     } catch {
-      toast.error("Failed to load leads");
+      toast.error(t("admin.leads.deleteFailed"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchLeads(search, statusFilter, priorityFilter, page);
@@ -106,15 +108,15 @@ export default function LeadsPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Delete lead "${name}"? This cannot be undone.`)) return;
+    if (!confirm(t("admin.leads.deleteConfirm", { name }))) return;
     try {
       const res = await fetch(`/api/admin/leads/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       setLeads((prev) => prev.filter((l) => l.id !== id));
       setTotal((t) => t - 1);
-      toast.success("Lead deleted");
+      toast.success(t("admin.leads.deleteSuccess"));
     } catch {
-      toast.error("Failed to delete lead");
+      toast.error(t("admin.leads.deleteFailed"));
     }
   };
 
@@ -127,23 +129,23 @@ export default function LeadsPage() {
           <div className="max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Leads</h1>
-                <p className="text-muted-foreground">Manage customer leads</p>
+                <h1 className="text-3xl font-bold tracking-tight">{t("admin.leads.title")}</h1>
+                <p className="text-muted-foreground">{t("admin.leads.subtitle")}</p>
               </div>
               <Link href="/admin/leads/new">
                 <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Lead
+                  <Plus className="h-4 w-4 rtl:ml-2 ltr:mr-2" />
+                  {t("admin.leads.addLead")}
                 </Button>
               </Link>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative w-full max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground rtl:left-auto rtl:right-3" />
                 <Input
-                  placeholder="Search by name, email, phone, company..."
-                  className="pl-9"
+                  placeholder={t("admin.leads.searchPlaceholder")}
+                  className="ltr:pl-9 rtl:pr-9"
                   value={search}
                   onChange={(e) => handleSearch(e.target.value)}
                 />
@@ -152,10 +154,10 @@ export default function LeadsPage() {
                 <Filter className="h-4 w-4 text-muted-foreground" />
                 <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
                   <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="All statuses" />
+                    <SelectValue placeholder={t("admin.leads.allStatuses")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value=" ">All statuses</SelectItem>
+                    <SelectItem value=" ">{t("admin.leads.allStatuses")}</SelectItem>
                     {Object.entries(statusLabels).map(([k, v]) => (
                       <SelectItem key={k} value={k}>{v}</SelectItem>
                     ))}
@@ -163,13 +165,13 @@ export default function LeadsPage() {
                 </Select>
                 <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
                   <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="All priorities" />
+                    <SelectValue placeholder={t("admin.leads.allPriorities")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value=" ">All priorities</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value=" ">{t("admin.leads.allPriorities")}</SelectItem>
+                    <SelectItem value="high">{t("common.priorityHigh") || "High"}</SelectItem>
+                    <SelectItem value="medium">{t("common.priorityMedium") || "Medium"}</SelectItem>
+                    <SelectItem value="low">{t("common.priorityLow") || "Low"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -178,10 +180,10 @@ export default function LeadsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  All Leads
+                  {t("admin.leads.allLeads")}
                   {total > 0 && (
-                    <span className="ml-2 text-sm font-normal text-muted-foreground">
-                      ({total} total)
+                    <span className="ml-2 rtl:mr-2 rtl:ml-0 text-sm font-normal text-muted-foreground">
+                      ({total} {t("admin.common.total")})
                     </span>
                   )}
                 </CardTitle>
@@ -190,23 +192,23 @@ export default function LeadsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Priority</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Assigned To</TableHead>
-                      <TableHead>Next Follow-up</TableHead>
-                      <TableHead className="w-24">Actions</TableHead>
+                      <TableHead>{t("admin.leads.name")}</TableHead>
+                      <TableHead>{t("admin.leads.contact")}</TableHead>
+                      <TableHead>{t("admin.leads.priority")}</TableHead>
+                      <TableHead>{t("admin.leads.status")}</TableHead>
+                      <TableHead>{t("admin.leads.assignedTo")}</TableHead>
+                      <TableHead>{t("admin.leads.nextFollowUp")}</TableHead>
+                      <TableHead className="w-24">{t("admin.leads.actions")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {loading ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground py-8">Loading...</TableCell>
+                        <TableCell colSpan={7} className="text-center text-muted-foreground py-8">{t("admin.leads.loading")}</TableCell>
                       </TableRow>
                     ) : leads.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground py-8">No leads yet</TableCell>
+                        <TableCell colSpan={7} className="text-center text-muted-foreground py-8">{t("admin.leads.noLeads")}</TableCell>
                       </TableRow>
                     ) : (
                       leads.map((lead) => (

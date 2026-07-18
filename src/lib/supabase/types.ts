@@ -183,7 +183,7 @@ export interface LeadCall {
   duration_seconds: number;
   outcome: string | null;
   summary: string | null;
-  transcript: Record<string, unknown> | null;
+  transcript: string | null;
   conversation: Record<string, unknown> | null;
   scheduled_at: string | null;
   started_at: string | null;

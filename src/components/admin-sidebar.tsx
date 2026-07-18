@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/contexts/admin-context";
+import { useTranslation } from "@/i18n/use-locale";
 import {
   LayoutDashboard,
   Package,
@@ -48,59 +49,6 @@ interface SidebarGroup {
   label?: string;
   links: SidebarLink[];
 }
-
-const sidebarGroups: SidebarGroup[] = [
-  {
-    links: [{ name: "Dashboard", href: "/admin", icon: LayoutDashboard }],
-  },
-  {
-    label: "Commerce",
-    links: [
-      { name: "Products", href: "/admin/products", icon: Package },
-      { name: "Brands", href: "/admin/brands", icon: Building2 },
-      { name: "Categories", href: "/admin/categories", icon: Tag },
-      { name: "Promotions", href: "/admin/promotions", icon: Percent },
-      { name: "Featured Deals", href: "/admin/featured-deals", icon: Star },
-      { name: "Suppliers", href: "/admin/suppliers", icon: Users },
-      { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
-    ],
-  },
-  {
-    label: "Customers",
-    links: [
-      { name: "Customers", href: "/admin/customers", icon: Users },
-      { name: "Leads", href: "/admin/leads", icon: PhoneCall },
-      { name: "Dialer", href: "/admin/dialer", icon: Phone },
-      { name: "Reviews", href: "/admin/reviews", icon: MessageCircle },
-      { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
-    ],
-  },
-  {
-    label: "Sales",
-    links: [
-      { name: "Pipeline", href: "/admin/opportunities", icon: TrendingUp },
-    ],
-  },
-  {
-    label: "Marketing",
-    links: [
-      { name: "Email Automations", href: "/admin/email-automations", icon: Mail },
-      { name: "SMS Automations", href: "/admin/sms-automations", icon: Smartphone },
-      { name: "Integrations", href: "/admin/integrations", icon: Puzzle },
-    ],
-  },
-  {
-    label: "Insights",
-    links: [
-      { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-      { name: "Site Settings", href: "/admin/site-settings", icon: LayoutList },
-    ],
-  },
-  {
-    label: "System",
-    links: [{ name: "Settings", href: "/admin/settings", icon: Settings }],
-  },
-];
 
 function SidebarLinkItem({
   link,
@@ -151,6 +99,60 @@ export function AdminSidebar() {
   const { sidebarCollapsed: collapsed } = useAdmin();
   const { signOut } = useClerk();
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
+
+  const sidebarGroups: SidebarGroup[] = [
+    {
+      links: [{ name: t("admin.sidebar.dashboard"), href: "/admin", icon: LayoutDashboard }],
+    },
+    {
+      label: t("admin.sidebar.commerce"),
+      links: [
+        { name: t("admin.sidebar.products"), href: "/admin/products", icon: Package },
+        { name: t("admin.sidebar.brands"), href: "/admin/brands", icon: Building2 },
+        { name: t("admin.sidebar.categories"), href: "/admin/categories", icon: Tag },
+        { name: t("admin.sidebar.promotions"), href: "/admin/promotions", icon: Percent },
+        { name: t("admin.sidebar.featuredDeals"), href: "/admin/featured-deals", icon: Star },
+        { name: t("admin.sidebar.suppliers"), href: "/admin/suppliers", icon: Users },
+        { name: t("admin.sidebar.orders"), href: "/admin/orders", icon: ShoppingCart },
+      ],
+    },
+    {
+      label: t("admin.sidebar.customers"),
+      links: [
+        { name: t("admin.sidebar.customers"), href: "/admin/customers", icon: Users },
+        { name: t("admin.sidebar.leads"), href: "/admin/leads", icon: PhoneCall },
+        { name: t("admin.sidebar.dialer"), href: "/admin/dialer", icon: Phone },
+        { name: t("admin.sidebar.reviews"), href: "/admin/reviews", icon: MessageCircle },
+        { name: t("admin.sidebar.testimonials"), href: "/admin/testimonials", icon: MessageSquare },
+      ],
+    },
+    {
+      label: t("admin.sidebar.sales"),
+      links: [
+        { name: t("admin.sidebar.pipeline"), href: "/admin/opportunities", icon: TrendingUp },
+      ],
+    },
+    {
+      label: t("admin.sidebar.marketing"),
+      links: [
+        { name: t("admin.sidebar.emailAutomations"), href: "/admin/email-automations", icon: Mail },
+        { name: t("admin.sidebar.smsAutomations"), href: "/admin/sms-automations", icon: Smartphone },
+        { name: t("admin.sidebar.integrations"), href: "/admin/integrations", icon: Puzzle },
+      ],
+    },
+    {
+      label: t("admin.sidebar.insights"),
+      links: [
+        { name: t("admin.sidebar.analytics"), href: "/admin/analytics", icon: BarChart3 },
+        { name: t("admin.sidebar.siteSettings"), href: "/admin/site-settings", icon: LayoutList },
+      ],
+    },
+    {
+      label: t("admin.sidebar.system"),
+      links: [{ name: t("admin.sidebar.settings"), href: "/admin/settings", icon: Settings }],
+    },
+  ];
 
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className="flex flex-col h-full">
@@ -195,7 +197,7 @@ export function AdminSidebar() {
                 <LogOut className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="right">Logout</TooltipContent>
+            <TooltipContent side="right">{t("admin.sidebar.logout")}</TooltipContent>
           </Tooltip>
         ) : (
           <Button
@@ -204,7 +206,7 @@ export function AdminSidebar() {
             className="w-full"
           >
             <LogOut className="h-4 w-4 mr-2" />
-            Logout
+            {t("admin.sidebar.logout")}
           </Button>
         )}
       </div>
@@ -225,7 +227,7 @@ export function AdminSidebar() {
       <div className="lg:hidden flex items-center gap-2 mb-4">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Toggle sidebar menu">
+            <Button variant="ghost" size="icon" aria-label={t("admin.sidebar.toggleSidebar")}>
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>

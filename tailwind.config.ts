@@ -93,5 +93,10 @@ export default {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addVariant }: { addVariant: (name: string, rule: string) => void }) {
+      addVariant("rtl", '[dir="rtl"] &');
+    },
+  ],
 } satisfies Config;

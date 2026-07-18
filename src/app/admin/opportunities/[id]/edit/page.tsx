@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import type { Opportunity } from "@/lib/supabase/types";
+import { useTranslation } from "@/i18n/use-locale";
 
 const stageOptions = [
   { value: "discovery", label: "Discovery" },
@@ -25,6 +26,7 @@ const stageOptions = [
 ];
 
 export default function EditOpportunityPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(true);
@@ -74,7 +76,7 @@ export default function EditOpportunityPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name) { toast.error("Opportunity name is required"); return; }
+    if (!form.name) { toast.error(t("admin.opportunities.new.nameRequired")); return; }
 
     setSaving(true);
     try {
@@ -99,11 +101,11 @@ export default function EditOpportunityPage() {
         const err = await res.json();
         throw new Error(err.error || "Failed to update");
       }
-      toast.success("Opportunity updated");
+      toast.success(t("admin.common.success"));
       router.push(`/admin/opportunities/${params.id}`);
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update opportunity");
+      toast.error(err instanceof Error ? err.message : t("admin.common.error"));
     } finally {
       setSaving(false);
     }
@@ -130,9 +132,9 @@ export default function EditOpportunityPage() {
         <div className="flex-1 flex flex-col">
           <AdminHeader />
           <div className="flex-1 items-center justify-center flex flex-col gap-4">
-            <p className="text-lg font-medium">Opportunity not found</p>
+            <p className="text-lg font-medium">{t("admin.common.notFound")}</p>
             <Link href="/admin/opportunities">
-              <Button variant="outline">Back to Pipeline</Button>
+              <Button variant="outline">{t("admin.common.backToPipeline")}</Button>
             </Link>
           </div>
         </div>
@@ -154,52 +156,52 @@ export default function EditOpportunityPage() {
                 </Link>
               </Button>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Edit Opportunity</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t("admin.common.editOpportunity")}</h1>
                 <p className="text-muted-foreground">{form.name}</p>
               </div>
             </div>
 
             <Card>
               <CardHeader>
-                <CardTitle>Opportunity Details</CardTitle>
-                <CardDescription>Update deal information</CardDescription>
+                <CardTitle>{t("admin.opportunities.new.details")}</CardTitle>
+                <CardDescription>{t("admin.common.updateDetails")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Opportunity Name *</Label>
+                    <Label htmlFor="name">{t("admin.opportunities.name")} *</Label>
                     <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="assigned_to">Assigned To</Label>
+                      <Label htmlFor="assigned_to">{t("admin.opportunities.new.assignedTo")}</Label>
                       <Input id="assigned_to" value={form.assigned_to} onChange={(e) => setForm({ ...form, assigned_to: e.target.value })} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="priority">Priority</Label>
+                      <Label htmlFor="priority">{t("admin.common.priority")}</Label>
                       <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
                         <SelectTrigger id="priority"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="low">{t("common.priorityLow") || "Low"}</SelectItem>
+                          <SelectItem value="medium">{t("common.priorityMedium") || "Medium"}</SelectItem>
+                          <SelectItem value="high">{t("common.priorityHigh") || "High"}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="estimated_value">Estimated Value ($)</Label>
+                      <Label htmlFor="estimated_value">{t("admin.opportunities.new.estimatedValue")}</Label>
                       <Input id="estimated_value" type="number" step="0.01" value={form.estimated_value} onChange={(e) => setForm({ ...form, estimated_value: e.target.value })} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="win_probability">Win Probability (%)</Label>
+                      <Label htmlFor="win_probability">{t("admin.opportunities.new.winProbability")}</Label>
                       <Input id="win_probability" type="number" min={0} max={100} value={form.win_probability} onChange={(e) => setForm({ ...form, win_probability: e.target.value })} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="stage">Stage</Label>
+                      <Label htmlFor="stage">{t("admin.opportunities.stage")}</Label>
                       <Select value={form.stage} onValueChange={(v) => setForm({ ...form, stage: v })}>
                         <SelectTrigger id="stage"><SelectValue /></SelectTrigger>
                         <SelectContent>
@@ -210,29 +212,29 @@ export default function EditOpportunityPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="expected_close_date">Expected Close Date</Label>
+                      <Label htmlFor="expected_close_date">{t("admin.opportunities.new.expectedCloseDate")}</Label>
                       <Input id="expected_close_date" type="date" value={form.expected_close_date} onChange={(e) => setForm({ ...form, expected_close_date: e.target.value })} />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="tags">Tags (comma-separated)</Label>
+                    <Label htmlFor="tags">{t("admin.opportunities.new.tags")}</Label>
                     <Input id="tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lost_reason">Lost Reason (if closed lost)</Label>
+                    <Label htmlFor="lost_reason">{t("admin.common.lostReason")}</Label>
                     <Input id="lost_reason" value={form.lost_reason} onChange={(e) => setForm({ ...form, lost_reason: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="notes">Notes</Label>
+                    <Label htmlFor="notes">{t("admin.opportunities.new.notes")}</Label>
                     <Textarea id="notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={4} />
                   </div>
                   <div className="flex gap-4 pt-2">
                     <Link href={`/admin/opportunities/${params.id}`}>
-                      <Button type="button" variant="outline">Cancel</Button>
+                      <Button type="button" variant="outline">{t("admin.common.cancel")}</Button>
                     </Link>
                     <Button type="submit" disabled={saving}>
-                      {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                      Save Changes
+                      {saving && <Loader2 className="h-4 w-4 rtl:ml-2 ltr:mr-2 animate-spin" />}
+                      {t("admin.common.save")}
                     </Button>
                   </div>
                 </form>
