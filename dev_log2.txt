@@ -1,0 +1,23 @@
+ ⚠ Found lockfile missing swc dependencies, patching...
+ ⚠ Found lockfile missing swc dependencies, patching...
+ ⨯ Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+[TypeError: Cannot read properties of undefined (reading 'os')]
+   ▲ Next.js 15.3.8
+   - Local:        http://localhost:3008
+   - Network:      http://10.2.0.2:3008
+   - Environments: .env
+
+ ✓ Starting...
+[Error: EPERM: operation not permitted, open 'F:\tireandwheelmart\.next\trace'] {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'open',
+  path: 'F:\\tireandwheelmart\\.next\\trace'
+}
+ ✓ Ready in 6.7s
+ ⨯ Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+[TypeError: Cannot read properties of undefined (reading 'os')]
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 649ms (208 modules)
+Clerk - DEPRECATION WARNING: "createRouteMatcher" is deprecated and will be removed in the next major release.
+Use resource-based auth checks instead. Move auth checks into each page, layout, API route, or Server Function that accesses protected data. Middleware-based auth checks rely on path matching, which can diverge from how Next.js routes requests and leave protected resources reachable. For a migration guide, see: https://clerk.com/docs/guides/development/upgrading/upgrade-guides/migrate-from-create-route-matcher

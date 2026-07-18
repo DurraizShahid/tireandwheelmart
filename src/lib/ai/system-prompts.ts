@@ -1,8 +1,4 @@
-import type { AIVoiceConfig, LeadContext, BusinessKnowledge, CallObjective } from "@/lib/ai/types";
-
-function formatBusinessHours(hours: string): string {
-  return hours || "Not specified";
-}
+import type { AIVoiceConfig, LeadContext, BusinessKnowledge, CallObjective, ToolDefinitionConfig, ConversationGuideline } from "@/lib/ai/types";
 
 function formatVehicles(vehicles: LeadContext["vehicles"]): string {
   if (!vehicles || vehicles.length === 0) return "None on file";
@@ -11,10 +7,10 @@ function formatVehicles(vehicles: LeadContext["vehicles"]): string {
     .join(", ");
 }
 
-function formatRecentCalls(calls: LeadContext["recentCalls"]): string {
+function formatRecentCalls(calls: LeadContext["recentCalls"], maxRecentCalls: number): string {
   if (!calls || calls.length === 0) return "None";
   return calls
-    .slice(0, 5)
+    .slice(0, maxRecentCalls)
     .map((c) => `- ${c.status} (${c.durationSeconds}s) on ${c.createdAt}${c.outcome ? ` - Outcome: ${c.outcome}` : ""}`)
     .join("\n");
 }
@@ -26,20 +22,48 @@ function formatObjectives(objectives: CallObjective[]): string {
     .join("\n");
 }
 
-function formatTools(): string {
-  return [
-    "Available Tools:",
-    "- get_lead_info(leadId): Fetch lead details from CRM",
-    "- get_customer_history(customerId): View customer order history",
-    "- get_opportunity_status(leadId): Check opportunity pipeline status",
-    "- get_vehicle_fitments(make, model, year): Look up tire/wheel fitments",
-    "- get_active_promotions(): List current deals and promotions",
-    "- search_products(query): Search product inventory",
-    "- update_lead_status(leadId, status): Change lead status",
-    "- schedule_callback(leadId, datetime, notes): Schedule follow-up call",
-    "- create_task(leadId, description, dueDate): Create internal task",
-    "- transfer_to_human(reason): Transfer to human agent when needed",
-  ].join("\n");
+function getParameterNames(params: ToolDefinitionConfig["parameters"]): string[] {
+  if (Array.isArray(params)) return params;
+  if (params && typeof params === "object") {
+    const p = params as Record<string, unknown>;
+    if (Array.isArray(p.required)) return p.required as string[];
+    if (p.properties && typeof p.properties === "object") return Object.keys(p.properties as Record<string, unknown>);
+  }
+  return [];
+}
+
+function formatToolDefinitions(tools: ToolDefinitionConfig[]): string {
+  return tools
+    .filter((t) => t.enabled)
+    .map((t) => {
+      const paramNames = getParameterNames(t.parameters);
+      return `- ${t.name}(${paramNames.join(", ")}): ${t.description}`;
+    })
+    .join("\n");
+}
+
+function formatGuidelines(guidelines: ConversationGuideline[]): string {
+  return guidelines
+    .filter((g) => g.enabled)
+    .map((g) => `- ${g.rule}`)
+    .join("\n");
+}
+
+function applyTemplateVariables(text: string, config: AIVoiceConfig): string {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return text
+    .replace(/\{\{business_name\}\}/g, config.businessInfo.name)
+    .replace(/\{\{current_date\}\}/g, dateStr)
+    .replace(/\{\{business_phone\}\}/g, config.businessInfo.phone)
+    .replace(/\{\{business_hours\}\}/g, config.businessInfo.hours)
+    .replace(/\{\{business_website\}\}/g, config.businessInfo.website);
 }
 
 export function buildSystemPrompt(
@@ -50,13 +74,13 @@ export function buildSystemPrompt(
 ): string {
   const sections: string[] = [];
 
-  sections.push(config.systemPrompt);
+  sections.push(applyTemplateVariables(config.systemPrompt, config));
 
   sections.push("─── BUSINESS INFORMATION ───");
   const info = config.businessInfo;
   sections.push(`Business: ${info.name}`);
   sections.push(`Description: ${info.description}`);
-  sections.push(`Hours: ${formatBusinessHours(info.hours)}`);
+  sections.push(`Hours: ${info.hours}`);
   sections.push(`Phone: ${info.phone}`);
   sections.push(`Website: ${info.website}`);
   sections.push(`Address: ${info.address}`);
@@ -81,7 +105,7 @@ export function buildSystemPrompt(
 
     if (businessKnowledge.products.length > 0) {
       sections.push("Featured Products:");
-      for (const product of businessKnowledge.products.slice(0, 10)) {
+      for (const product of businessKnowledge.products.slice(0, config.promptAssembly.maxFeaturedProducts)) {
         sections.push(`- ${product.name} ($${product.price})${product.brand ? ` by ${product.brand}` : ""}${product.inStock ? " [In Stock]" : " [Out of Stock]"}`);
       }
     }
@@ -102,24 +126,28 @@ export function buildSystemPrompt(
     if (leadContext.nextFollowUpAt) sections.push(`Next Follow-up: ${leadContext.nextFollowUpAt}`);
     sections.push(`Vehicles: ${formatVehicles(leadContext.vehicles)}`);
     sections.push("Recent Calls:");
-    sections.push(formatRecentCalls(leadContext.recentCalls));
+    sections.push(formatRecentCalls(leadContext.recentCalls, config.promptAssembly.maxRecentCalls));
   }
 
   sections.push("─── CALL OBJECTIVES ───");
   sections.push(formatObjectives(activeObjectives ?? config.callObjectives));
 
   sections.push("─── AVAILABLE TOOLS ───");
-  sections.push(formatTools());
+  const toolsSection = formatToolDefinitions(config.toolDefinitions);
+  sections.push(toolsSection || "No tools available.");
 
   sections.push("─── CONVERSATION GUIDELINES ───");
-  sections.push("- Be concise and conversational. Speak naturally.");
-  sections.push("- Verify the caller's identity if they claim to be a known contact.");
-  sections.push("- Do not make up pricing or availability — use the tools to check.");
-  sections.push("- If you cannot answer with confidence, transfer to a human agent using transfer_to_human.");
-  sections.push("- If the customer asks to speak to a human, use transfer_to_human immediately.");
-  sections.push("- Complete all required call objectives before ending the call.");
-  sections.push("- Use the tools provided to look up information rather than guessing.");
-  sections.push("- End the conversation politely after objectives are met or the customer indicates they are done.");
+  const guidelinesSection = formatGuidelines(config.conversationGuidelines);
+  sections.push(guidelinesSection || "No specific guidelines.");
 
-  return sections.join("\n\n");
+  sections.push(`Max duration: ${config.promptAssembly.defaultMaxDurationSeconds}s. Max turns: ${config.promptAssembly.defaultMaxTurns}.`);
+
+  let result = sections.join("\n\n");
+  if (result.length > config.promptAssembly.maxPromptLength) {
+    result = result.substring(0, config.promptAssembly.maxPromptLength);
+  }
+
+  return result;
 }
+
+export { formatToolDefinitions, formatGuidelines };

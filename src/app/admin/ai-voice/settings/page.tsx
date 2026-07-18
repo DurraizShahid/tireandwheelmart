@@ -15,8 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Save, Plus, Trash2, AlertCircle, Play, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-import type { AIVoiceConfig, VoiceId, TransferRule, CallObjective, AIProviderType } from "@/lib/ai/types";
-import { DEFAULT_AI_VOICE_CONFIG } from "@/lib/ai/types";
+import type { AIVoiceConfig, VoiceId, TransferRule, CallObjective, AIProviderType, ConversationGuideline, ToolDefinitionConfig, PromptAssemblyConfig } from "@/lib/ai/types";
+import { DEFAULT_AI_VOICE_CONFIG, mergeAIConfig } from "@/lib/ai/types";
 
 const LANGUAGES = [
   { value: "en", label: "English" },
@@ -73,13 +73,16 @@ export default function AIVoiceSettingsPage() {
   const [error, setError] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [serviceInput, setServiceInput] = useState("");
+  const [previewPrompt, setPreviewPrompt] = useState("");
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/ai-voice/config")
       .then((r) => r.json())
       .then((data) => {
         if (data.error) throw new Error(data.error);
-        setConfig({ ...DEFAULT_AI_VOICE_CONFIG, ...data });
+        setConfig(mergeAIConfig(data));
       })
       .catch(() => setError("Failed to load AI voice configuration"))
       .finally(() => setLoading(false));
@@ -173,6 +176,71 @@ export default function AIVoiceSettingsPage() {
       ...prev,
       callObjectives: prev.callObjectives.filter((_, i) => i !== index),
     }));
+  };
+
+  const addGuideline = () => {
+    const newGuideline: ConversationGuideline = {
+      id: `guideline-${Date.now()}`,
+      rule: "",
+      enabled: true,
+    };
+    setConfig((prev) => ({
+      ...prev,
+      conversationGuidelines: [...prev.conversationGuidelines, newGuideline],
+    }));
+  };
+
+  const updateGuideline = (index: number, field: keyof ConversationGuideline, value: unknown) => {
+    setConfig((prev) => {
+      const guidelines = [...prev.conversationGuidelines];
+      guidelines[index] = { ...guidelines[index], [field]: value };
+      return { ...prev, conversationGuidelines: guidelines };
+    });
+  };
+
+  const removeGuideline = (index: number) => {
+    setConfig((prev) => ({
+      ...prev,
+      conversationGuidelines: prev.conversationGuidelines.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updatePromptAssembly = (field: keyof PromptAssemblyConfig, value: number) => {
+    setConfig((prev) => ({
+      ...prev,
+      promptAssembly: { ...prev.promptAssembly, [field]: value },
+    }));
+  };
+
+  const updateToolDefinition = (index: number, field: keyof ToolDefinitionConfig, value: unknown) => {
+    setConfig((prev) => {
+      const tools = [...prev.toolDefinitions];
+      tools[index] = { ...tools[index], [field]: value };
+      return { ...prev, toolDefinitions: tools };
+    });
+  };
+
+  const loadPromptPreview = async () => {
+    setPreviewLoading(true);
+    setPreviewError("");
+    setPreviewPrompt("");
+    try {
+      const res = await fetch("/api/admin/ai-voice/prompt-preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to generate preview");
+      }
+      const data = await res.json();
+      setPreviewPrompt(data.prompt);
+    } catch (err) {
+      setPreviewError((err as Error).message);
+    } finally {
+      setPreviewLoading(false);
+    }
   };
 
   const previewVoice = (voice: VoiceId) => {
@@ -320,8 +388,11 @@ export default function AIVoiceSettingsPage() {
                     <Input
                       id="maxDuration"
                       type="number"
-                      value={config.maxDurationSeconds}
-                      onChange={(e) => setConfig((prev) => ({ ...prev, maxDurationSeconds: parseInt(e.target.value) || 600 }))}
+                      value={config.promptAssembly.defaultMaxDurationSeconds}
+                      onChange={(e) => setConfig((prev) => ({
+                        ...prev,
+                        promptAssembly: { ...prev.promptAssembly, defaultMaxDurationSeconds: parseInt(e.target.value) || 600 },
+                      }))}
                     />
                   </div>
                   <div className="space-y-2">
@@ -329,8 +400,11 @@ export default function AIVoiceSettingsPage() {
                     <Input
                       id="maxTurns"
                       type="number"
-                      value={config.maxTurns}
-                      onChange={(e) => setConfig((prev) => ({ ...prev, maxTurns: parseInt(e.target.value) || 50 }))}
+                      value={config.promptAssembly.defaultMaxTurns}
+                      onChange={(e) => setConfig((prev) => ({
+                        ...prev,
+                        promptAssembly: { ...prev.promptAssembly, defaultMaxTurns: parseInt(e.target.value) || 50 },
+                      }))}
                     />
                   </div>
                 </div>
@@ -666,6 +740,158 @@ export default function AIVoiceSettingsPage() {
                     </div>
                   </div>
                 ))}
+              </CardContent>
+            </Card>
+
+            {/* Section 6: Conversation Guidelines */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Conversation Guidelines</CardTitle>
+                <Button variant="outline" size="sm" onClick={addGuideline}>
+                  <Plus className="h-4 w-4 mr-1" /> Add Guideline
+                </Button>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {config.conversationGuidelines.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No guidelines configured. These rules steer the AI&apos;s behavior during calls.</p>
+                )}
+                {config.conversationGuidelines.map((guideline, i) => (
+                  <div key={guideline.id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Guideline {i + 1}</span>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={guideline.enabled}
+                          onCheckedChange={(checked) => updateGuideline(i, "enabled", checked)}
+                        />
+                        <Button variant="ghost" size="icon" onClick={() => removeGuideline(i)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Rule</Label>
+                      <Textarea
+                        value={guideline.rule}
+                        onChange={(e) => updateGuideline(i, "rule", e.target.value)}
+                        rows={2}
+                        placeholder="e.g., Be concise and conversational — keep responses brief and natural."
+                      />
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Section 7: Prompt Assembly */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Prompt Assembly</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">Control how the AI prompt is assembled and what context is included.</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="maxFeaturedProducts">Max Featured Products</Label>
+                    <Input
+                      id="maxFeaturedProducts"
+                      type="number"
+                      value={config.promptAssembly.maxFeaturedProducts}
+                      onChange={(e) => updatePromptAssembly("maxFeaturedProducts", parseInt(e.target.value) || 10)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="maxRecentCalls">Max Recent Calls Shown</Label>
+                    <Input
+                      id="maxRecentCalls"
+                      type="number"
+                      value={config.promptAssembly.maxRecentCalls}
+                      onChange={(e) => updatePromptAssembly("maxRecentCalls", parseInt(e.target.value) || 5)}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxPromptLength">Max Prompt Length (characters)</Label>
+                  <Input
+                    id="maxPromptLength"
+                    type="number"
+                    value={config.promptAssembly.maxPromptLength}
+                    onChange={(e) => updatePromptAssembly("maxPromptLength", parseInt(e.target.value) || 8000)}
+                  />
+                  <p className="text-xs text-muted-foreground">The assembled prompt will be truncated to this length.</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Section 8: Tool Definitions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Tool Definitions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {config.toolDefinitions.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No tools configured. Tools allow the AI to interact with your CRM and perform actions.</p>
+                )}
+                {config.toolDefinitions.map((tool, i) => (
+                  <div key={tool.id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{tool.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">{tool.enabled ? "Enabled" : "Disabled"}</span>
+                        <Switch
+                          checked={tool.enabled}
+                          onCheckedChange={(checked) => updateToolDefinition(i, "enabled", checked)}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Description</Label>
+                      <Textarea
+                        value={tool.description}
+                        onChange={(e) => updateToolDefinition(i, "description", e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+                    <details className="text-xs text-muted-foreground">
+                      <summary className="cursor-pointer hover:text-foreground">Parameters Schema</summary>
+                      <pre className="mt-2 bg-muted p-2 rounded-md overflow-auto max-h-40">
+                        {JSON.stringify(tool.parameters, null, 2)}
+                      </pre>
+                    </details>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Section 9: Prompt Preview */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Prompt Preview</CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadPromptPreview}
+                  disabled={previewLoading}
+                >
+                  {previewLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                  ) : (
+                    <Play className="h-4 w-4 mr-1" />
+                  )}
+                  Preview Assembled Prompt
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {previewError && (
+                  <p className="text-sm text-red-600 mb-2">{previewError}</p>
+                )}
+                {previewPrompt ? (
+                  <pre className="bg-muted p-4 rounded-md overflow-auto max-h-96 text-xs whitespace-pre-wrap font-mono">
+                    {previewPrompt}
+                  </pre>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Click &quot;Preview Assembled Prompt&quot; to see how your configuration will be combined into the final AI prompt.</p>
+                )}
               </CardContent>
             </Card>
 

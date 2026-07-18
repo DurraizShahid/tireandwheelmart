@@ -56,7 +56,7 @@ function buildSystemMessage(config: AIVoiceConfig, leadContext?: any, businessKn
   }
 
   parts.push(`\nYou are calling from ${config.businessInfo.name}. Your name is an AI assistant.`);
-  parts.push(`Keep responses concise and conversational. Max duration: ${config.maxDurationSeconds}s.`);
+  parts.push(`Keep responses concise and conversational. Max duration: ${config.promptAssembly.defaultMaxDurationSeconds}s.`);
 
   return parts.join("\n");
 }

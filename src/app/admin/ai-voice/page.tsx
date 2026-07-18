@@ -47,7 +47,14 @@ export default function AIVoiceDashboardPage() {
       fetch("/api/admin/ai-voice/analytics?withLogs=true&limit=10").then((r) => r.json()),
     ])
       .then(([analyticsData, logsData]) => {
-        if (!analyticsData.error) setAnalytics(analyticsData);
+        if (!analyticsData.error && analyticsData.summary) {
+          setAnalytics({
+            totalCalls: analyticsData.summary.totalCalls,
+            successRate: analyticsData.summary.successRate / 100,
+            avgDuration: analyticsData.summary.avgDurationSeconds,
+            totalCost: analyticsData.summary.totalCost,
+          });
+        }
         if (!logsData.error) setRecentSessions(logsData.logs || logsData.sessions || []);
       })
       .catch(() => {})

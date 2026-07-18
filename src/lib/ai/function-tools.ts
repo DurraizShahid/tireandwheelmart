@@ -1,9 +1,33 @@
-import type { AIToolDefinition } from "@/lib/ai/types";
+import type { AIToolDefinition, ToolDefinitionConfig } from "@/lib/ai/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const TRANSFER_SIGNAL = { __signal: "transfer_to_human" as const };
 
-export function buildTools(supabase: SupabaseClient): AIToolDefinition[] {
+export function buildTools(
+  supabase: SupabaseClient,
+  toolConfigs?: ToolDefinitionConfig[]
+): AIToolDefinition[] {
+  const allTools = buildAllTools(supabase);
+
+  if (toolConfigs && toolConfigs.length > 0) {
+    const enabledNames = new Set(
+      toolConfigs.filter((t) => t.enabled).map((t) => t.name)
+    );
+    return allTools
+      .filter((t) => enabledNames.has(t.name))
+      .map((t) => {
+        const config = toolConfigs.find((c) => c.name === t.name);
+        if (config && config.description) {
+          return { ...t, description: config.description };
+        }
+        return t;
+      });
+  }
+
+  return allTools;
+}
+
+function buildAllTools(supabase: SupabaseClient): AIToolDefinition[] {
   return [
     {
       name: "get_lead_info",

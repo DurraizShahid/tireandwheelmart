@@ -1,0 +1,35 @@
+ ⚠ Found lockfile missing swc dependencies, patching...
+ ⚠ Found lockfile missing swc dependencies, patching...
+ ⨯ Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+[TypeError: Cannot read properties of undefined (reading 'os')]
+   ▲ Next.js 15.3.8
+   - Local:        http://localhost:3007
+   - Network:      http://10.2.0.2:3007
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 5.4s
+ ⨯ Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+[TypeError: Cannot read properties of undefined (reading 'os')]
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1696ms (208 modules)
+Clerk - DEPRECATION WARNING: "createRouteMatcher" is deprecated and will be removed in the next major release.
+Use resource-based auth checks instead. Move auth checks into each page, layout, API route, or Server Function that accesses protected data. Middleware-based auth checks rely on path matching, which can diverge from how Next.js routes requests and leave protected resources reachable. For a migration guide, see: https://clerk.com/docs/guides/development/upgrading/upgrade-guides/migrate-from-create-route-matcher
+ ○ Compiling /api/admin/ai-voice/config ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (263kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /api/admin/ai-voice/config in 3.6s (529 modules)
+⚠️  Node.js 20 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 22 or later. For more information, visit: https://github.com/orgs/supabase/discussions/45715
+ GET /api/admin/ai-voice/config 401 in 4252ms
+ ○ Compiling /sign-in/[[...sign-in]] ...
+ ✓ Compiled /sign-in/[[...sign-in]] in 14.4s (1860 modules)
+ GET /sign-in?redirect_url=http%3A%2F%2Flocalhost%3A3007%2Fadmin%2Fai-voice%2Fsettings 200 in 15206ms
+ ✓ Compiled in 921ms (749 modules)
+Attention: Clerk collects telemetry data from its SDKs when connected to development instances.
+The data collected is used to inform Clerk's product roadmap.
+To learn more, including how to opt-out from the telemetry program, visit: https://clerk.com/docs/telemetry.
+
+ ○ Compiling / ...
+ ✓ Compiled / in 1363ms (1924 modules)
+⚠️  Node.js 20 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 22 or later. For more information, visit: https://github.com/orgs/supabase/discussions/45715
+⚠️  Node.js 20 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 22 or later. For more information, visit: https://github.com/orgs/supabase/discussions/45715
+ GET / 200 in 5346ms

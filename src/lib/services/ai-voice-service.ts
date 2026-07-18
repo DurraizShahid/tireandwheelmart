@@ -9,10 +9,12 @@ import type {
   AICallSession,
   ConversationMessage,
   LeadContext,
-  BusinessKnowledge,
+  CallObjective,
 } from "@/lib/ai/types";
-import { DEFAULT_AI_VOICE_CONFIG } from "@/lib/ai/types";
+import { DEFAULT_AI_VOICE_CONFIG, mergeAIConfig } from "@/lib/ai/types";
 import type { CallStatus } from "@/lib/calling-types";
+import { buildSystemPrompt } from "@/lib/ai/system-prompts";
+import { loadBusinessKnowledge } from "@/lib/ai/business-context";
 
 function createAIVoiceProvider(config: AIVoiceConfig, supabase: any): AIVoiceProvider {
   switch (config.provider) {
@@ -47,8 +49,7 @@ export function createAIVoiceService(client?: ReturnType<typeof createServerClie
       return { ...DEFAULT_AI_VOICE_CONFIG };
     }
 
-    const stored = data.value as Partial<AIVoiceConfig>;
-    return { ...DEFAULT_AI_VOICE_CONFIG, ...stored };
+    return mergeAIConfig(data.value as Partial<AIVoiceConfig>);
   }
 
   async function saveConfig(config: AIVoiceConfig, userId: string): Promise<void> {
@@ -128,52 +129,6 @@ export function createAIVoiceService(client?: ReturnType<typeof createServerClie
       })),
       opportunities: [],
       orders: [],
-    };
-  }
-
-  async function loadBusinessKnowledge(): Promise<BusinessKnowledge> {
-    const { data: faqs } = await db
-      .from("faqs")
-      .select("*")
-      .eq("is_active", true)
-      .order("display_order");
-
-    const { data: promotions } = await db
-      .from("promotions")
-      .select("*")
-      .eq("is_active", true);
-
-    const { data: products } = await db
-      .from("products")
-      .select("name, price, brand, description, in_stock, category_id")
-      .limit(20);
-
-    const config = await getConfig();
-
-    return {
-      companyInfo: config.businessInfo,
-      faqs: (faqs || []).map((f: any) => ({
-        category: f.category,
-        question: f.question,
-        answer: f.answer,
-      })),
-      promotions: (promotions || []).map((p: any) => ({
-        name: p.name,
-        description: p.description,
-        type: p.type,
-        value: p.value,
-        badgeText: p.badge_text,
-        isActive: p.is_active,
-      })),
-      products: (products || []).map((p: any) => ({
-        name: p.name,
-        price: p.price,
-        brand: p.brand,
-        description: p.description,
-        inStock: p.in_stock,
-        category: p.category_id,
-      })),
-      commonQuestions: {},
     };
   }
 
@@ -297,7 +252,11 @@ export function createAIVoiceService(client?: ReturnType<typeof createServerClie
 
     const businessKnowledge = await loadBusinessKnowledge();
 
-    const systemPrompt = buildSystemPrompt(config, leadContext, businessKnowledge, request.callObjective);
+    const activeObjectives: CallObjective[] | undefined = request.callObjective
+      ? config.callObjectives.filter((o) => o.name === request.callObjective)
+      : undefined;
+
+    const systemPrompt = buildSystemPrompt(config, leadContext, businessKnowledge, activeObjectives);
 
     const provider = createAIVoiceProvider(config, db);
 
@@ -439,106 +398,6 @@ export function createAIVoiceService(client?: ReturnType<typeof createServerClie
     getSession,
     endSession,
   };
-}
-
-function buildSystemPrompt(
-  config: AIVoiceConfig,
-  leadContext: LeadContext | null,
-  businessKnowledge: BusinessKnowledge,
-  callObjective?: string,
-): string {
-  const parts: string[] = [];
-
-  parts.push(config.systemPrompt);
-
-  parts.push(`\nBusiness: ${config.businessInfo.name}`);
-  parts.push(`Hours: ${config.businessInfo.hours}`);
-  parts.push(`Services: ${config.businessInfo.services.join(", ")}`);
-
-  if (businessKnowledge.faqs?.length) {
-    parts.push("\nFAQs:");
-    businessKnowledge.faqs.forEach((f) => {
-      parts.push(`Q: ${f.question}\nA: ${f.answer}`);
-    });
-  }
-
-  if (businessKnowledge.promotions?.length) {
-    const activePromos = businessKnowledge.promotions.filter((p) => p.isActive);
-    if (activePromos.length) {
-      parts.push("\nActive Promotions:");
-      activePromos.forEach((p) => {
-        parts.push(`- ${p.name}${p.badgeText ? ` [${p.badgeText}]` : ""}`);
-      });
-    }
-  }
-
-  if (callObjective) {
-    parts.push(`\nCall Objective: ${callObjective}`);
-    const matching = config.callObjectives?.find((o) => o.name === callObjective);
-    if (matching) {
-      parts.push(`Objective Details: ${matching.description}`);
-      parts.push(`Objective Prompt: ${matching.prompt}`);
-    }
-  }
-
-  if (leadContext) {
-    parts.push("\nCustomer Context:");
-    parts.push(`Name: ${leadContext.name}`);
-    if (leadContext.email) parts.push(`Email: ${leadContext.email}`);
-    if (leadContext.phone) parts.push(`Phone: ${leadContext.phone}`);
-    if (leadContext.company) parts.push(`Company: ${leadContext.company}`);
-    parts.push(`Status: ${leadContext.status}`);
-    parts.push(`Priority: ${leadContext.priority}`);
-    if (leadContext.notes) parts.push(`Notes: ${leadContext.notes}`);
-    if (leadContext.tags?.length) parts.push(`Tags: ${leadContext.tags.join(", ")}`);
-
-    if (leadContext.vehicles?.length) {
-      parts.push("Vehicles:");
-      leadContext.vehicles.forEach((v) => {
-        parts.push(`- ${v.year} ${v.make} ${v.model}${v.vin ? ` (VIN: ${v.vin})` : ""}`);
-      });
-    }
-
-    if (leadContext.recentCalls?.length) {
-      parts.push("Recent Calls:");
-      leadContext.recentCalls.forEach((c) => {
-        parts.push(`- ${c.status} (${c.durationSeconds}s)${c.outcome ? ` - ${c.outcome}` : ""}`);
-      });
-    }
-
-    if (leadContext.recentActivities?.length) {
-      parts.push("Recent Activities:");
-      leadContext.recentActivities.forEach((a) => {
-        parts.push(`- ${a.type}: ${a.description}`);
-      });
-    }
-
-    if (leadContext.opportunities?.length) {
-      parts.push("Opportunities:");
-      leadContext.opportunities.forEach((o) => {
-        parts.push(`- ${o.name} (${o.stage}, $${o.estimatedValue}, ${o.winProbability}%)`);
-      });
-    }
-
-    if (leadContext.orders?.length) {
-      parts.push("Orders:");
-      leadContext.orders.forEach((o) => {
-        parts.push(`- Order #${o.id} - $${o.total} (${o.status})`);
-      });
-    }
-  }
-
-  if (config.transferRules?.length) {
-    parts.push("\nTransfer Rules:");
-    config.transferRules.forEach((r) => {
-      parts.push(`- If ${r.trigger} matches "${r.value}", transfer to ${r.target} (priority: ${r.priority})`);
-    });
-  }
-
-  parts.push(`\nMax duration: ${config.maxDurationSeconds}s. Max turns: ${config.maxTurns}.`);
-  parts.push("Keep responses concise and conversational.");
-
-  return parts.join("\n");
 }
 
 export type AIVoiceService = ReturnType<typeof createAIVoiceService>;

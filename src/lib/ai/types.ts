@@ -17,14 +17,15 @@ export interface AIVoiceConfig {
   model: string;
   voice: VoiceId;
   temperature: number;
-  maxDurationSeconds: number;
-  maxTurns: number;
   systemPrompt: string;
   greeting: string;
   businessInfo: BusinessInfo;
   languages: string[];
   transferRules: TransferRule[];
   callObjectives: CallObjective[];
+  conversationGuidelines: ConversationGuideline[];
+  toolDefinitions: ToolDefinitionConfig[];
+  promptAssembly: PromptAssemblyConfig;
   enabled: boolean;
   updatedAt: string;
   updatedBy: string;
@@ -363,6 +364,28 @@ export interface ProductRaw {
   category: string | null;
 }
 
+export interface ToolDefinitionConfig {
+  id: string;
+  name: string;
+  description: string;
+  parameters: Record<string, unknown>;
+  enabled: boolean;
+}
+
+export interface ConversationGuideline {
+  id: string;
+  rule: string;
+  enabled: boolean;
+}
+
+export interface PromptAssemblyConfig {
+  maxFeaturedProducts: number;
+  maxRecentCalls: number;
+  maxPromptLength: number;
+  defaultMaxTurns: number;
+  defaultMaxDurationSeconds: number;
+}
+
 // ── Default Configuration ──
 
 export const DEFAULT_AI_VOICE_CONFIG: AIVoiceConfig = {
@@ -372,8 +395,6 @@ export const DEFAULT_AI_VOICE_CONFIG: AIVoiceConfig = {
   model: "gpt-4o-realtime-preview",
   voice: "alloy",
   temperature: 0.7,
-  maxDurationSeconds: 600,
-  maxTurns: 50,
   systemPrompt: "You are a helpful AI assistant for Tire & Wheel Mart. Your goal is to assist customers with their tire and wheel needs, qualify leads, and schedule appointments. Be friendly, professional, and concise.",
   greeting: "Hello! This is an AI assistant from Tire & Wheel Mart. How can I help you today?",
   businessInfo: {
@@ -388,7 +409,59 @@ export const DEFAULT_AI_VOICE_CONFIG: AIVoiceConfig = {
   languages: ["en"],
   transferRules: [],
   callObjectives: [],
+  conversationGuidelines: [
+    { id: "guideline-1", rule: "Be concise and conversational — keep responses brief and natural.", enabled: true },
+    { id: "guideline-2", rule: "Verify the caller's identity if they claim to be a known contact.", enabled: true },
+    { id: "guideline-3", rule: "Do not make up pricing or availability — use available tools to check.", enabled: true },
+    { id: "guideline-4", rule: "If you cannot answer with confidence, transfer to a human agent.", enabled: true },
+    { id: "guideline-5", rule: "If the customer asks to speak to a human, transfer immediately.", enabled: true },
+    { id: "guideline-6", rule: "Complete all required call objectives before ending the call.", enabled: true },
+    { id: "guideline-7", rule: "Use tools to look up information rather than guessing.", enabled: true },
+    { id: "guideline-8", rule: "End the conversation politely after objectives are met or the customer indicates they are done.", enabled: true },
+  ],
+  toolDefinitions: [
+    { id: "tool-1", name: "get_lead_info", description: "Fetch detailed lead information by lead ID", parameters: { type: "object", properties: { leadId: { type: "string", description: "The lead UUID" } }, required: ["leadId"] }, enabled: true },
+    { id: "tool-2", name: "get_customer_history", description: "Fetch customer order history by customer ID", parameters: { type: "object", properties: { customerId: { type: "string", description: "The customer UUID" } }, required: ["customerId"] }, enabled: true },
+    { id: "tool-3", name: "get_opportunity_status", description: "Fetch opportunity details linked to a lead", parameters: { type: "object", properties: { leadId: { type: "string", description: "The lead UUID" } }, required: ["leadId"] }, enabled: true },
+    { id: "tool-4", name: "get_vehicle_fitments", description: "Look up tire and wheel fitments by vehicle make, model, and year", parameters: { type: "object", properties: { make: { type: "string", description: "Vehicle make" }, model: { type: "string", description: "Vehicle model" }, year: { type: "number", description: "Vehicle year" } }, required: ["make", "model", "year"] }, enabled: true },
+    { id: "tool-5", name: "get_active_promotions", description: "Get currently active promotions and deals", parameters: { type: "object", properties: {} }, enabled: true },
+    { id: "tool-6", name: "search_products", description: "Search for products by name, brand, or keyword", parameters: { type: "object", properties: { query: { type: "string", description: "Search query text" } }, required: ["query"] }, enabled: true },
+    { id: "tool-7", name: "update_lead_status", description: "Update the status of a lead", parameters: { type: "object", properties: { leadId: { type: "string", description: "The lead UUID" }, status: { type: "string", enum: ["new", "contacted", "qualified", "disqualified", "won", "lost"], description: "New status value" } }, required: ["leadId", "status"] }, enabled: true },
+    { id: "tool-8", name: "schedule_callback", description: "Schedule a callback for a lead at a specific date/time", parameters: { type: "object", properties: { leadId: { type: "string", description: "The lead UUID" }, datetime: { type: "string", description: "ISO 8601 datetime for the callback" }, notes: { type: "string", description: "Notes about the callback" } }, required: ["leadId", "datetime"] }, enabled: true },
+    { id: "tool-9", name: "create_task", description: "Create a task activity for a lead", parameters: { type: "object", properties: { leadId: { type: "string", description: "The lead UUID" }, description: { type: "string", description: "Task description" }, dueDate: { type: "string", description: "ISO 8601 due date" } }, required: ["leadId", "description", "dueDate"] }, enabled: true },
+    { id: "tool-10", name: "transfer_to_human", description: "Transfer the conversation to a human agent. Call this when the customer requests a human, asks about pricing you cannot confirm, or the conversation requires human judgment.", parameters: { type: "object", properties: { reason: { type: "string", description: "Reason for the transfer" } }, required: ["reason"] }, enabled: true },
+  ],
+  promptAssembly: {
+    maxFeaturedProducts: 10,
+    maxRecentCalls: 5,
+    maxPromptLength: 8000,
+    defaultMaxTurns: 50,
+    defaultMaxDurationSeconds: 600,
+  },
   enabled: false,
   updatedAt: new Date().toISOString(),
   updatedBy: "",
 };
+
+// Deep merge a partial config with defaults (handles nested objects)
+export function mergeAIConfig(
+  stored: Partial<AIVoiceConfig>,
+  defaults: AIVoiceConfig = DEFAULT_AI_VOICE_CONFIG,
+): AIVoiceConfig {
+  const result = { ...defaults };
+  for (const key of Object.keys(stored) as (keyof AIVoiceConfig)[]) {
+    const val = stored[key];
+    if (val === undefined || val === null) continue;
+    if (
+      typeof val === "object" &&
+      !Array.isArray(val) &&
+      typeof result[key] === "object" &&
+      !Array.isArray(result[key])
+    ) {
+      (result as any)[key] = { ...(result[key] as any), ...(val as any) };
+    } else {
+      (result as any)[key] = val;
+    }
+  }
+  return result;
+}

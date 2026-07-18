@@ -31,7 +31,7 @@ function buildSystemPrompt(config: AIVoiceConfig, leadContext?: any): string {
     parts.push(`\nTransfer Rules:\n${transferText}`);
   }
 
-  parts.push(`Keep responses concise and conversational. Max ${config.maxTurns} turns.`);
+  parts.push(`Keep responses concise and conversational. Max ${config.promptAssembly.defaultMaxTurns} turns.`);
 
   return parts.join("\n");
 }
