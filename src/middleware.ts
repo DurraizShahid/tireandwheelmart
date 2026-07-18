@@ -1,8 +1,10 @@
 import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { isPOSAllowed } from "@/lib/pos-auth";
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 const isVendorRoute = createRouteMatcher(["/vendor(.*)"]);
+const isPOSRoute = createRouteMatcher(["/pos(.*)"]);
 
 async function getUserRole(userId: string): Promise<string | undefined> {
   const client = await clerkClient();
@@ -21,6 +23,11 @@ export default clerkMiddleware(async (auth, request) => {
 
   if (!role && userId) {
     role = await getUserRole(userId);
+  }
+
+  // Allow all access to the unauthorized page (prevent redirect loops)
+  if (request.nextUrl.pathname.startsWith("/pos/unauthorized")) {
+    return;
   }
 
   // Protect admin routes — require signed-in user with admin role
@@ -48,6 +55,21 @@ export default clerkMiddleware(async (auth, request) => {
 
     if (role !== "vendor" && role !== "admin") {
       return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    return;
+  }
+
+  // Protect POS routes — require signed-in user with POS role
+  if (isPOSRoute(request)) {
+    if (!userId) {
+      const signInUrl = new URL("/sign-in", request.url);
+      signInUrl.searchParams.set("redirect_url", request.url);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    if (!isPOSAllowed(role)) {
+      return NextResponse.redirect(new URL("/pos/unauthorized", request.url));
     }
 
     return;

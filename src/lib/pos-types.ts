@@ -25,6 +25,107 @@ export interface POSCartItem {
   maxQuantity: number;
 }
 
+export type POSRegisterStatus = "open" | "closed";
+
+export interface POSRegister {
+  id: string;
+  name: string;
+  store_id?: string;
+  is_active: boolean;
+}
+
+export interface POSShift {
+  id: string;
+  register_id: string;
+  user_id: string;
+  opened_at: string;
+  closed_at?: string;
+  opening_cash: number;
+  expected_closing_cash?: number;
+  actual_closing_cash?: number;
+  variance?: number;
+  status: POSRegisterStatus;
+  notes?: string;
+}
+
+export interface POSShiftSummary {
+  shift: POSShift;
+  total_sales: number;
+  total_orders: number;
+  total_refunds: number;
+  cash_sales: number;
+  card_sales: number;
+  payment_breakdown: { method: string; count: number; total: number }[];
+}
+
+export interface PaymentProviderResult {
+  success: boolean;
+  transactionId?: string;
+  authorizationCode?: string;
+  error?: string;
+}
+
+export interface PaymentProvider {
+  name: string;
+  processPayment(amount: number, currency?: string, metadata?: Record<string, unknown>): Promise<PaymentProviderResult>;
+  refundPayment(transactionId: string, amount?: number): Promise<PaymentProviderResult>;
+  voidPayment(transactionId: string): Promise<PaymentProviderResult>;
+  isConfigured(): boolean;
+}
+
+export interface POSRefundRequest {
+  order_id: string;
+  items: { product_id: string; quantity: number; price: number }[];
+  reason: string;
+  refundPaymentMethod?: POSPaymentMethod;
+}
+
+export interface POSRefundResponse {
+  refund_id: string;
+  order_id: string;
+  refunded_items: { product_id: string; quantity: number; amount: number }[];
+  total_refund: number;
+  status: string;
+  created_at: string;
+}
+
+export type POSAuditAction =
+  | "login" | "logout"
+  | "sale" | "refund" | "discount" | "void_sale" | "price_override"
+  | "register_open" | "register_close"
+  | "customer_create" | "payment_process";
+
+export interface POSAuditLogEntry {
+  id: string;
+  user_id: string;
+  user_name?: string;
+  action: POSAuditAction;
+  details: Record<string, unknown>;
+  ip_address?: string;
+  created_at: string;
+}
+
+export interface POSOrder {
+  id: string;
+  order_number: string;
+  customer_id?: string;
+  customer_name?: string;
+  status: string;
+  subtotal: number;
+  tax: number;
+  discount: number;
+  total: number;
+  payment_method: string;
+  created_at: string;
+  items: { product_id: string; name: string; quantity: number; unit_price: number; total_price: number }[];
+}
+
+export interface POSDiscountRequest {
+  type: "percentage" | "fixed";
+  value: number;
+  reason?: string;
+}
+
 export interface POSCustomer {
   id: string;
   first_name: string;

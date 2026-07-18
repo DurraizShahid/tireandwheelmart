@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { X, ArrowRight, Sparkles } from "lucide-react";
@@ -12,9 +13,10 @@ interface AnnouncementBarProps {
 }
 
 export function AnnouncementBar({ className, dismissable = true }: AnnouncementBarProps) {
+  const pathname = usePathname();
   const [dismissed, setDismissed] = useState(false);
 
-  if (dismissed) return null;
+  if (dismissed || pathname.startsWith("/admin")) return null;
 
   return (
     <div

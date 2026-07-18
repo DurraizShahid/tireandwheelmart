@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { createInventoryService } from "@/lib/services/inventory-service";
-import { generateMockOrderNumber, getMockPOSAnalytics } from "@/lib/pos-mock-data";
-import type { POSCheckoutRequest, POSCheckoutResponse, POSReceipt, POSAnalytics, POSProduct, POSCategory, POSCustomer, POSPayment } from "@/lib/pos-types";
+import { getMockPOSAnalytics } from "@/lib/pos-mock-data";
+import type { POSCheckoutRequest, POSCheckoutResponse, POSReceipt, POSAnalytics, POSProduct, POSCategory, POSCustomer, POSPayment, POSRefundRequest, POSRefundResponse, POSDiscountRequest, POSOrder } from "@/lib/pos-types";
 
 export function createPOSService(client?: ReturnType<typeof createServerClient>) {
   const db = client ?? createServerClient();
@@ -107,7 +107,7 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
     }
 
     // 2. Create order
-    const orderNumber = generateMockOrderNumber();
+    const orderNumber = await generateOrderNumber();
     const { data: order, error: orderError } = await db
       .from("orders")
       .insert({
@@ -250,6 +250,236 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
     return data ?? [];
   }
 
+  // ── Order Number Generation ──
+
+  async function generateOrderNumber(): Promise<string> {
+    const { data: lastOrder } = await db
+      .from("orders")
+      .select("order_number")
+      .ilike("order_number", "POS-%")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    let nextNum = 1;
+    if (lastOrder?.order_number) {
+      const match = (lastOrder.order_number as string).match(/POS-(\d+)/i);
+      if (match) nextNum = parseInt(match[1], 10) + 1;
+    }
+    return `POS-${String(nextNum).padStart(5, "0")}`;
+  }
+
+  // ── Tax ──
+
+  async function getTaxRate(): Promise<number> {
+    try {
+      const { data } = await db
+        .from("pos_settings")
+        .select("value")
+        .eq("key", "tax_rate")
+        .single();
+      if (data?.value) return parseFloat(data.value as string) / 100;
+    } catch {
+      // Fall through to default
+    }
+    return 0.08;
+  }
+
+  // ── Discount ──
+
+  function applyDiscount(subtotal: number, discount: POSDiscountRequest, tax: number): { discountAmount: number; newTotal: number } {
+    let discountAmount = 0;
+    if (discount.type === "percentage") {
+      discountAmount = subtotal * (discount.value / 100);
+    } else {
+      discountAmount = Math.min(discount.value, subtotal);
+    }
+    const taxableAmount = Math.max(0, subtotal - discountAmount);
+    const newTotal = taxableAmount + tax;
+    return { discountAmount: Math.round(discountAmount * 100) / 100, newTotal: Math.round(newTotal * 100) / 100 };
+  }
+
+  // ── Cancel Order ──
+
+  async function cancelOrder(orderId: string, reason: string, userId?: string): Promise<void> {
+    const { data: order, error: orderError } = await db
+      .from("orders")
+      .select("id, status")
+      .eq("id", orderId)
+      .single();
+
+    if (orderError || !order) throw new Error("Order not found");
+    if (order.status === "cancelled" || order.status === "refunded") {
+      throw new Error(`Order is already ${order.status}`);
+    }
+
+    const { data: items } = await db
+      .from("order_items")
+      .select("product_id, quantity")
+      .eq("order_id", orderId);
+
+    await inventory.onOrderCancelled(
+      orderId,
+      (items ?? []).map((i) => ({ product_id: i.product_id, quantity: i.quantity })),
+      userId,
+    );
+
+    const { error: updateError } = await db
+      .from("orders")
+      .update({ status: "cancelled", notes: reason || "Cancelled" })
+      .eq("id", orderId);
+
+    if (updateError) throw new Error(updateError.message);
+  }
+
+  // ── Refund ──
+
+  async function processRefund(request: POSRefundRequest, userId?: string): Promise<POSRefundResponse> {
+    const { data: order, error: orderError } = await db
+      .from("orders")
+      .select("id, status, total, notes")
+      .eq("id", request.order_id)
+      .single();
+
+    if (orderError || !order) throw new Error("Order not found");
+    if (order.status === "refunded") throw new Error("Order is already refunded");
+
+    const { data: orderItems } = await db
+      .from("order_items")
+      .select("product_id, quantity, unit_price, total_price")
+      .eq("order_id", request.order_id);
+
+    if (!orderItems || orderItems.length === 0) throw new Error("No items found for this order");
+
+    // Validate refund items exist in original order
+    const orderItemMap = new Map(orderItems.map((i) => [i.product_id, i]));
+    let totalRefund = 0;
+    const refundedItems: { product_id: string; quantity: number; amount: number }[] = [];
+
+    for (const item of request.items) {
+      const original = orderItemMap.get(item.product_id);
+      if (!original) throw new Error(`Product ${item.product_id} not found in original order`);
+      if (item.quantity > original.quantity) {
+        throw new Error(`Refund quantity (${item.quantity}) exceeds ordered quantity (${original.quantity}) for product ${item.product_id}`);
+      }
+      const amount = item.price * item.quantity;
+      totalRefund += amount;
+      refundedItems.push({ product_id: item.product_id, quantity: item.quantity, amount });
+    }
+
+    // Restore stock
+    await inventory.onOrderRefunded(
+      request.order_id,
+      request.items.map((i) => ({ product_id: i.product_id, quantity: i.quantity })),
+      userId,
+    );
+
+    // Determine new status: if all items fully refunded, mark as refunded
+    const allRefunded = request.items.every((item) => {
+      const original = orderItemMap.get(item.product_id)!;
+      return item.quantity >= original.quantity;
+    });
+    const newStatus = allRefunded ? "refunded" : "partially_refunded";
+
+    // Store refund record in notes
+    const refundRecord = {
+      type: "refund",
+      timestamp: new Date().toISOString(),
+      reason: request.reason,
+      items: refundedItems,
+      total: totalRefund,
+      refunded_by: userId || null,
+    };
+
+    const existingNotes = order.notes ? (typeof order.notes === "string" ? order.notes : "") : "";
+    const refundNote = `[REFUND] ${JSON.stringify(refundRecord)}`;
+    const updatedNotes = existingNotes ? `${existingNotes}\n${refundNote}` : refundNote;
+
+    const { error: updateError } = await db
+      .from("orders")
+      .update({ status: newStatus, notes: updatedNotes })
+      .eq("id", request.order_id);
+
+    if (updateError) throw new Error(updateError.message);
+
+    return {
+      refund_id: `${request.order_id}-ref-${Date.now().toString(36)}`,
+      order_id: request.order_id,
+      refunded_items: refundedItems,
+      total_refund: Math.round(totalRefund * 100) / 100,
+      status: newStatus,
+      created_at: new Date().toISOString(),
+    };
+  }
+
+  // ── Order Queries ──
+
+  async function getPOSOrders(options?: { status?: string; limit?: number; offset?: number }): Promise<POSOrder[]> {
+    let query = db
+      .from("orders")
+      .select("*, customers(first_name, last_name, email), order_items(*, products(name))")
+      .order("created_at", { ascending: false });
+
+    if (options?.status) query = query.eq("status", options.status);
+    if (options?.limit) query = query.limit(options.limit);
+    if (options?.offset) query = query.range(options.offset, options.offset + (options?.limit ?? 50) - 1);
+
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map((o) => ({
+      id: o.id,
+      order_number: o.order_number,
+      customer_id: o.customer_id ?? undefined,
+      customer_name: o.customers ? [o.customers.first_name, o.customers.last_name].filter(Boolean).join(" ") : undefined,
+      status: o.status,
+      subtotal: o.subtotal ?? 0,
+      tax: o.tax ?? 0,
+      discount: (o.payment_method as Record<string, unknown>)?.discount as number ?? 0,
+      total: o.total ?? 0,
+      payment_method: ((o.payment_method as { method?: string })?.method ?? "cash").replace(/_/g, " "),
+      created_at: o.created_at,
+      items: (o.order_items ?? []).map((oi: { product_id: string; quantity: number; unit_price: number; total_price: number; products?: { name: string } }) => ({
+        product_id: oi.product_id,
+        name: (oi.products as { name?: string })?.name ?? "Unknown",
+        quantity: oi.quantity,
+        unit_price: oi.unit_price,
+        total_price: oi.total_price,
+      })),
+    }));
+  }
+
+  async function getPOSOrder(orderId: string): Promise<POSOrder | null> {
+    const { data: order, error } = await db
+      .from("orders")
+      .select("*, customers(first_name, last_name, email), order_items(*, products(name))")
+      .eq("id", orderId)
+      .single();
+
+    if (error || !order) return null;
+
+    return {
+      id: order.id,
+      order_number: order.order_number,
+      customer_id: order.customer_id ?? undefined,
+      customer_name: order.customers ? [order.customers.first_name, order.customers.last_name].filter(Boolean).join(" ") : undefined,
+      status: order.status,
+      subtotal: order.subtotal ?? 0,
+      tax: order.tax ?? 0,
+      discount: (order.payment_method as Record<string, unknown>)?.discount as number ?? 0,
+      total: order.total ?? 0,
+      payment_method: ((order.payment_method as { method?: string })?.method ?? "cash").replace(/_/g, " "),
+      created_at: order.created_at,
+      items: (order.order_items ?? []).map((oi: { product_id: string; quantity: number; unit_price: number; total_price: number; products?: { name: string } }) => ({
+        product_id: oi.product_id,
+        name: (oi.products as { name?: string })?.name ?? "Unknown",
+        quantity: oi.quantity,
+        unit_price: oi.unit_price,
+        total_price: oi.total_price,
+      })),
+    };
+  }
+
   // ── Analytics ──
 
   async function getAnalytics(): Promise<POSAnalytics> {
@@ -359,6 +589,13 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
     getCustomerById,
     getCustomerOrders,
     getAnalytics,
+    getTaxRate,
+    applyDiscount,
+    generateOrderNumber,
+    processRefund,
+    cancelOrder,
+    getPOSOrders,
+    getPOSOrder,
   };
 }
 

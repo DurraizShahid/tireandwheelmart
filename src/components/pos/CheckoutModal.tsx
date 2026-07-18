@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import type { POSCartItem, POSCustomer, POSPaymentMethod, POSPayment } from "@/lib/pos-types"
+import type { POSCartItem, POSCustomer, POSPaymentMethod, POSPayment, POSCheckoutResponse } from "@/lib/pos-types"
 import { cn } from "@/lib/utils"
 import { useTranslation } from "@/i18n/use-locale"
 import {
@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { CustomerSearch } from "./CustomerSearch"
+import { toast } from "sonner"
 
 interface CheckoutModalProps {
   open: boolean
@@ -31,7 +32,7 @@ interface CheckoutModalProps {
   total: number
   customer?: POSCustomer | null
   onCustomerChange: (customer: POSCustomer | null) => void
-  onComplete: () => void
+  onComplete: (response: POSCheckoutResponse) => void
 }
 
 type CheckoutStep = "payment" | "processing" | "success"
@@ -125,17 +126,72 @@ export function CheckoutModal({
   const [splitPayments, setSplitPayments] = useState<POSPayment[]>([
     { method: "cash", amount: 0 },
   ])
+  const [lastResponse, setLastResponse] = useState<POSCheckoutResponse | null>(null)
 
   const changeDue = Math.max(0, amountTendered - total)
   const cashMethods: POSPaymentMethod[] = ["cash"]
   const isCash = cashMethods.includes(paymentMethod)
 
-  const handleCompleteSale = useCallback(() => {
-    setStep("processing")
-    setTimeout(() => {
-      setStep("success")
-    }, 1500)
-  }, [])
+  const makePayments = useCallback((): POSPayment[] => {
+    if (useSplitPayment) {
+      return splitPayments.filter((p) => p.amount > 0);
+    }
+    if (paymentMethod === "cash") {
+      return [{ method: "cash", amount: total }];
+    }
+    return [{
+      method: paymentMethod,
+      amount: total,
+      card_last_four: cardLastFour || undefined,
+      cardholder_name: cardholderName || undefined,
+    }];
+  }, [useSplitPayment, splitPayments, paymentMethod, total, cardLastFour, cardholderName]);
+
+  const handleCompleteSale = useCallback(async () => {
+    setStep("processing");
+
+    const payments = makePayments();
+
+    const body = {
+      customer: {
+        first_name: customer?.first_name || "Walk-in",
+        last_name: customer?.last_name || "Customer",
+        email: customer?.email || "",
+        phone: customer?.phone || undefined,
+      },
+      customer_id: customer?.id && customer.id !== "new" ? customer.id : undefined,
+      items: items.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      payments,
+      subtotal,
+      tax,
+      discount,
+      total,
+    };
+
+    try {
+      const res = await fetch("/api/pos/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Checkout failed");
+      }
+
+      const response: POSCheckoutResponse = await res.json();
+      setLastResponse(response);
+      setStep("success");
+    } catch (err) {
+      toast.error((err as Error).message);
+      setStep("payment");
+    }
+  }, [items, customer, subtotal, tax, discount, total, onComplete, makePayments]);
 
   const handleSplitAmountChange = useCallback(
     (index: number, newAmount: number) => {
@@ -190,7 +246,7 @@ export function CheckoutModal({
             {t("pos.sale_complete_description")}
           </p>
           <div className="mt-8 flex w-full flex-col gap-3">
-            <Button size="lg" className="w-full min-h-[48px]" onClick={onComplete}>
+            <Button size="lg" className="w-full min-h-[48px]" onClick={() => lastResponse && onComplete(lastResponse)}>
               <Receipt className="mr-2 h-5 w-5" />
               {t("pos.view_receipt")}
             </Button>
@@ -198,7 +254,7 @@ export function CheckoutModal({
               variant="outline"
               size="lg"
               className="w-full min-h-[48px]"
-              onClick={onComplete}
+              onClick={() => lastResponse && onComplete(lastResponse)}
             >
               {t("pos.new_sale")}
             </Button>
