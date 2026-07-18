@@ -30,6 +30,7 @@ import {
   TrendingUp,
   Bell,
   CreditCard,
+  Bot,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -136,6 +137,14 @@ export function AdminSidebar() {
       label: t("admin.sidebar.sales"),
       links: [
         { name: t("admin.sidebar.pipeline"), href: "/admin/opportunities", icon: TrendingUp },
+      ],
+    },
+    {
+      label: t("admin.sidebar.ai"),
+      links: [
+        { name: t("admin.sidebar.aiDashboard"), href: "/admin/ai-voice", icon: Bot },
+        { name: t("admin.sidebar.aiSettings"), href: "/admin/ai-voice/settings", icon: Settings },
+        { name: t("admin.sidebar.aiCallLogs"), href: "/admin/ai-voice/logs", icon: BarChart3 },
       ],
     },
     {

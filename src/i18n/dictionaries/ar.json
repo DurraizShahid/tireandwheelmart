@@ -77,7 +77,11 @@
       "inventory": "Inventory",
       "inventoryDashboard": "Dashboard",
       "inventoryAlerts": "Alerts",
-      "pointOfSale": "نقطة البيع"
+      "pointOfSale": "نقطة البيع",
+      "ai": "AI Voice",
+      "aiDashboard": "AI Dashboard",
+      "aiSettings": "AI Settings",
+      "aiCallLogs": "AI Call Logs"
     },
     "header": {
       "expandSidebar": "توسيع الشريط الجانبي",

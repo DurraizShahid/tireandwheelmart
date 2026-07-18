@@ -228,6 +228,63 @@ export interface VehicleFitment {
   created_at: string;
 }
 
+export interface AICallSession {
+  id: string;
+  call_sid: string | null;
+  lead_id: string | null;
+  customer_id: string | null;
+  status: string;
+  direction: string;
+  conversation: Record<string, unknown>;
+  transcript: string | null;
+  summary: string | null;
+  outcome: string | null;
+  ai_provider: string;
+  speech_provider: string;
+  model: string;
+  duration_seconds: number;
+  token_usage: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  error: string | null;
+  started_at: string;
+  ended_at: string | null;
+  created_at: string;
+}
+
+export interface AICallLog {
+  id: string;
+  session_id: string | null;
+  lead_id: string | null;
+  call_sid: string | null;
+  direction: string;
+  duration_seconds: number;
+  outcome: string | null;
+  summary: string | null;
+  token_usage: Record<string, unknown>;
+  ai_provider: string;
+  speech_provider: string;
+  model: string;
+  status: string;
+  error: string | null;
+  created_at: string;
+}
+
+export interface AIAnalytics {
+  id: string;
+  date: string;
+  total_calls: number;
+  total_duration_seconds: number;
+  total_tokens: number;
+  total_cost: number;
+  successful_calls: number;
+  failed_calls: number;
+  transferred_calls: number;
+  voicemails: number;
+  avg_sentiment: number | null;
+  outcomes: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface Faq {
   id: string;
   category: string;

@@ -10,7 +10,7 @@ import { PhonePad } from "@/components/dialer/PhonePad";
 import { CallStatusCard } from "@/components/dialer/CallStatusCard";
 import { CallLogList } from "@/components/dialer/CallLogList";
 import { CallSettingsForm } from "@/components/dialer/CallSettingsForm";
-import { Settings, Phone, Loader2, AlertCircle } from "lucide-react";
+import { Settings, Phone, Loader2, AlertCircle, Bot } from "lucide-react";
 import { useTranslation } from "@/i18n/use-locale";
 import type { CallStatus } from "@/lib/calling-types";
 
@@ -21,6 +21,7 @@ export default function DialerPage() {
   const [isCalling, setIsCalling] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("dialer");
+  const [aiMode, setAiMode] = useState(false);
 
   const handleCall = useCallback(async () => {
     if (phoneNumber.length < 3) return;
@@ -29,7 +30,8 @@ export default function DialerPage() {
     setCallStatus("ringing");
 
     try {
-      const res = await fetch("/api/admin/calling/make-call", {
+      const endpoint = aiMode ? "/api/admin/ai-voice/call" : "/api/admin/calling/make-call";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ to: phoneNumber }),
@@ -43,7 +45,7 @@ export default function DialerPage() {
     } finally {
       setIsCalling(false);
     }
-  }, [phoneNumber]);
+  }, [phoneNumber, aiMode]);
 
   const handleEndCall = useCallback(async () => {
     setCallStatus("completed");
@@ -61,10 +63,21 @@ export default function DialerPage() {
                 <h1 className="text-3xl font-bold tracking-tight">{t("admin.sidebar.dialer") || "Dialer"}</h1>
                 <p className="text-muted-foreground">Make and manage phone calls</p>
               </div>
-              <Button variant="outline" onClick={() => setActiveTab("settings")}>
-                <Settings className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
-                Settings
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={aiMode ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setAiMode(!aiMode)}
+                  className={aiMode ? "bg-purple-600 hover:bg-purple-700" : ""}
+                >
+                  <Bot className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
+                  {aiMode ? "AI Active" : "AI Mode"}
+                </Button>
+                <Button variant="outline" onClick={() => setActiveTab("settings")}>
+                  <Settings className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
+                  Settings
+                </Button>
+              </div>
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -84,7 +97,10 @@ export default function DialerPage() {
                 <div className="grid gap-6 lg:grid-cols-[400px_1fr]">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-base">Phone</CardTitle>
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Phone
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <PhonePad
@@ -97,6 +113,13 @@ export default function DialerPage() {
                   </Card>
 
                   <div className="space-y-4">
+                    {aiMode && (
+                      <div className="flex items-center gap-2 text-sm text-purple-600 bg-purple-50 p-3 rounded-lg">
+                        <Bot className="h-4 w-4" />
+                        AI voice assistant will handle this call autonomously.
+                      </div>
+                    )}
+
                     {callStatus && (
                       <CallStatusCard
                         status={callStatus}
@@ -117,7 +140,7 @@ export default function DialerPage() {
                     {isCalling && (
                       <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground p-4">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Connecting call...
+                        {aiMode ? "Starting AI call..." : "Connecting call..."}
                       </div>
                     )}
                   </div>

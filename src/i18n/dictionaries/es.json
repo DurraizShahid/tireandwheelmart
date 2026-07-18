@@ -77,7 +77,11 @@
       "inventory": "Inventory",
       "inventoryDashboard": "Dashboard",
       "inventoryAlerts": "Alerts",
-      "pointOfSale": "Punto de Venta"
+      "pointOfSale": "Punto de Venta",
+      "ai": "IA de Voz",
+      "aiDashboard": "Panel de IA",
+      "aiSettings": "Configuración de IA",
+      "aiCallLogs": "Registros de IA"
     },
     "header": {
       "expandSidebar": "Expandir barra lateral",
