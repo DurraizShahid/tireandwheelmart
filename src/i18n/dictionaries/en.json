@@ -73,7 +73,10 @@
       "system": "System",
       "settings": "Settings",
       "logout": "Logout",
-      "toggleSidebar": "Toggle sidebar menu"
+      "toggleSidebar": "Toggle sidebar menu",
+      "inventory": "Inventory",
+      "inventoryDashboard": "Dashboard",
+      "inventoryAlerts": "Alerts"
     },
     "header": {
       "expandSidebar": "Expand sidebar",
@@ -385,5 +388,60 @@
     "unknown": "An unexpected error occurred.",
     "retry": "Try Again",
     "goHome": "Go Home"
+  },
+  "inventory": {
+    "dashboard": {
+      "title": "Inventory Dashboard",
+      "subtitle": "Monitor stock levels and inventory activity",
+      "totalValue": "Inventory Value",
+      "atCost": "at cost",
+      "totalStock": "Total Stock",
+      "units": "units across all products",
+      "lowStock": "Low Stock",
+      "belowThreshold": "products below threshold",
+      "outOfStock": "Out of Stock",
+      "needRestock": "need restock",
+      "overstock": "Overstocked",
+      "excess": "excess stock",
+      "movementChart": "Inventory Movement (30d)",
+      "movementDesc": "Sales, returns, and adjustments",
+      "sales": "Sales",
+      "returns": "Returns",
+      "adjustments": "Adjustments",
+      "topMoving": "Top Moving Products",
+      "topMovingDesc": "Highest transaction volume",
+      "unitsSold": "sold",
+      "recentActivity": "Recent Inventory Activity",
+      "type": "Type",
+      "quantity": "Qty",
+      "balance": "Balance",
+      "transactions": "Transactions",
+      "alerts": "Alerts"
+    },
+    "transactions": {
+      "title": "Inventory Transactions",
+      "subtitle": "Complete stock movement history",
+      "searchPlaceholder": "Search by product ID...",
+      "allTypes": "All types",
+      "history": "Transaction History",
+      "type": "Type",
+      "source": "Source",
+      "qtyChange": "Change",
+      "balance": "Balance",
+      "noData": "No transactions found"
+    },
+    "alerts": {
+      "title": "Inventory Alerts",
+      "subtitle": "Monitor stock notifications",
+      "activeAlerts": "Active Alerts",
+      "dismissedHistory": "Dismissed Alerts",
+      "showActive": "Show Active",
+      "showDismissed": "Show Dismissed",
+      "dismissAll": "Dismiss All",
+      "dismiss": "Dismiss",
+      "dismissed": "Alert dismissed",
+      "allDismissed": "All alerts dismissed",
+      "noAlerts": "No alerts to display"
+    }
   }
 }

@@ -262,3 +262,86 @@ export interface Opportunity {
   updated_at: string;
   deleted_at: string | null;
 }
+
+// Inventory Types
+export type InventoryStatus = "in_stock" | "low_stock" | "out_of_stock" | "overstock" | "reserved" | "unknown";
+
+export type InventoryTransactionType =
+  | "sale" | "return" | "reservation" | "release"
+  | "manual_adjustment" | "import" | "restock"
+  | "cancel" | "refund" | "transfer_out" | "transfer_in";
+
+export interface InventoryTransaction {
+  id: string;
+  product_id: string;
+  quantity: number;
+  previous_quantity: number;
+  new_quantity: number;
+  transaction_type: InventoryTransactionType;
+  user_id: string | null;
+  source_module: string;
+  source_reference_id: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export type InventoryAlertType = "low_stock" | "out_of_stock" | "overstock" | "reorder_reminder";
+export type AlertSeverity = "info" | "warning" | "critical";
+
+export interface InventoryAlert {
+  id: string;
+  product_id: string;
+  alert_type: InventoryAlertType;
+  message: string;
+  severity: AlertSeverity;
+  dismissed: boolean;
+  dismissed_at: string | null;
+  dismissed_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InventoryReorderPoint {
+  id: string;
+  product_id: string;
+  reorder_level: number;
+  low_stock_threshold: number;
+  overstock_threshold: number;
+  preferred_quantity: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Warehouse {
+  id: string;
+  name: string;
+  code: string;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProductWarehouseStock {
+  id: string;
+  product_id: string;
+  warehouse_id: string;
+  quantity: number;
+  reserved_quantity: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InventoryDashboardData {
+  totalInventoryValue: number;
+  totalStock: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  overstockCount: number;
+  recentTransactions: InventoryTransaction[];
+  movementChart: { date: string; sales: number; returns: number; adjustments: number }[];
+  topMovingProducts: { product_id: string; product_name: string; total_qty: number }[];
+}

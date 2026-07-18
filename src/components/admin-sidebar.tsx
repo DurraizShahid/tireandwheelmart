@@ -28,6 +28,7 @@ import {
   Mail,
   Smartphone,
   TrendingUp,
+  Bell,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -131,6 +132,13 @@ export function AdminSidebar() {
       label: t("admin.sidebar.sales"),
       links: [
         { name: t("admin.sidebar.pipeline"), href: "/admin/opportunities", icon: TrendingUp },
+      ],
+    },
+    {
+      label: t("admin.sidebar.inventory"),
+      links: [
+        { name: t("admin.sidebar.inventoryDashboard"), href: "/admin/inventory", icon: Package },
+        { name: t("admin.sidebar.inventoryAlerts"), href: "/admin/inventory/alerts", icon: Bell },
       ],
     },
     {
