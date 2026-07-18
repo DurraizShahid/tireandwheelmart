@@ -32,6 +32,7 @@ interface PosHeaderProps {
   onNewSale: () => void
   onEndOfDay?: () => void
   cartEmpty?: boolean
+  onRegisterClick?: () => void
 }
 
 export function PosHeader({
@@ -41,6 +42,7 @@ export function PosHeader({
   onNewSale,
   onEndOfDay,
   cartEmpty = true,
+  onRegisterClick,
 }: PosHeaderProps) {
   const { t } = useTranslation()
   const [currentTime, setCurrentTime] = useState("")
@@ -72,15 +74,19 @@ export function PosHeader({
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-card px-4 shadow-sm">
       <div className="flex items-center gap-2">
-        <Store className="h-5 w-5 text-primary" />
-        <span className="text-base font-bold tracking-tight">
+        <Store className="h-5 w-5 text-primary shrink-0" />
+        <span className="text-base font-bold tracking-tight hidden md:inline">
           Tire&Wheel Mart
         </span>
       </div>
 
       <div className="mx-3 h-6 w-px bg-border" />
 
-      <div className="flex items-center gap-2">
+      <button
+        onClick={() => onRegisterClick?.()}
+        className="flex items-center gap-2 active:scale-[0.97] transition-all duration-150"
+        type="button"
+      >
         <span
           className={`inline-block h-2 w-2 rounded-full ${
             registerStatus === "open" ? "bg-green-500" : "bg-red-500"
@@ -92,7 +98,7 @@ export function PosHeader({
         <span className="text-xs text-muted-foreground">
           &mdash; {registerStatus === "open" ? "Open" : "Closed"}
         </span>
-      </div>
+      </button>
 
       {cashierName && (
         <>
@@ -115,7 +121,7 @@ export function PosHeader({
         <Button
           variant="outline"
           size="sm"
-          className="h-8 gap-1.5 text-xs"
+          className="h-8 min-h-[40px] gap-1.5 text-xs active:scale-[0.97]"
           onClick={onNewSale}
           disabled={cartEmpty}
         >
@@ -125,7 +131,7 @@ export function PosHeader({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-10 w-10 md:h-8 md:w-8 min-h-[40px] min-w-[40px] active:scale-[0.97]">
               <Settings className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -169,7 +175,7 @@ export function PosHeader({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 gap-1.5 text-xs"
+            className="h-8 min-h-[40px] gap-1.5 text-xs active:scale-[0.97]"
             onClick={onEndOfDay}
           >
             <Clock className="h-3.5 w-3.5" />

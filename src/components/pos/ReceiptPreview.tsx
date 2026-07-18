@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import type { POSReceipt } from "@/lib/pos-types"
 import { useTranslation } from "@/i18n/use-locale"
 import {
@@ -22,9 +23,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 interface ReceiptPreviewProps {
   receipt: POSReceipt | null
   loading?: boolean
+  layout?: "thermal" | "a4"
   onPrint: () => void
   onEmail: () => void
   onNewSale: () => void
+  onDownloadPdf?: () => void
 }
 
 const STORE_INFO = {
@@ -107,11 +110,16 @@ function formatCurrency(amount: number): string {
 export function ReceiptPreview({
   receipt,
   loading,
+  layout: propLayout,
   onPrint,
   onEmail,
   onNewSale,
+  onDownloadPdf,
 }: ReceiptPreviewProps) {
   const { t } = useTranslation()
+  const [layout, setLayout] = useState<"thermal" | "a4">(propLayout ?? "thermal")
+
+  const currentLayout = propLayout ?? layout
 
   if (loading) {
     return (
@@ -132,13 +140,39 @@ export function ReceiptPreview({
     )
   }
 
+  const layoutToggle = propLayout === undefined && (
+    <div className="flex items-center gap-1 rounded-lg border p-0.5 bg-muted/50 no-print">
+      <button
+        onClick={() => setLayout("thermal")}
+        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+          currentLayout === "thermal"
+            ? "bg-background shadow-sm text-foreground"
+            : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        80mm
+      </button>
+      <button
+        onClick={() => setLayout("a4")}
+        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+          currentLayout === "a4"
+            ? "bg-background shadow-sm text-foreground"
+            : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        A4 Invoice
+      </button>
+    </div>
+  )
+
   return (
     <div className="space-y-6 print:space-y-0">
       <style jsx global>{`
+        /* ── Thermal (80mm) print styles ── */
         @media print {
-          body * { visibility: hidden; }
-          #receipt-area, #receipt-area * { visibility: visible; }
-          #receipt-area {
+          .layout-thermal body * { visibility: hidden; }
+          .layout-thermal #receipt-area, .layout-thermal #receipt-area * { visibility: visible; }
+          .layout-thermal #receipt-area {
             position: absolute;
             left: 0;
             top: 0;
@@ -147,152 +181,312 @@ export function ReceiptPreview({
             margin: 0;
             font-size: 10px;
           }
-          #receipt-area .no-print { display: none !important; }
-          #receipt-area .print-only { display: block !important; }
-          @page { margin: 0; size: 80mm auto; }
+          .layout-thermal #receipt-area .no-print { display: none !important; }
+          .layout-thermal #receipt-area .print-only { display: block !important; }
+          .layout-thermal .page-break { display: none; }
         }
-        .print-only { display: none; }
+        @media print {
+          .layout-thermal { --print-page-size: 80mm auto; }
+          .layout-thermal .no-print { display: none !important; }
+        }
+        .layout-thermal .print-only { display: none; }
+        @page { margin: 0; }
+
+        /* ── A4 print styles ── */
+        @media print {
+          .layout-a4 body * { visibility: hidden; }
+          .layout-a4 #receipt-area-a4, .layout-a4 #receipt-area-a4 * { visibility: visible; }
+          .layout-a4 #receipt-area-a4 {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+          }
+          .layout-a4 .no-print { display: none !important; }
+          .layout-a4 .page-break { page-break-before: always; }
+        }
+        @page { size: A4; margin: 15mm 20mm; }
       `}</style>
 
-      <div id="receipt-area" className="mx-auto max-w-sm rounded-xl border bg-white p-6 shadow-sm dark:bg-black">
-        <div className="text-center">
-          <div className="mb-1 flex items-center justify-center gap-1.5">
-            <Store className="h-4 w-4 text-primary print-only" />
-            <h2 className="text-base font-bold tracking-tight">
-              {STORE_INFO.name}
-            </h2>
+      {/* ── Thermal layout ── */}
+      {currentLayout === "thermal" && (
+        <div id="receipt-area" className="mx-auto max-w-sm rounded-xl border bg-white p-6 shadow-sm dark:bg-black layout-thermal">
+          <div className="text-center">
+            <div className="mb-1 flex items-center justify-center gap-1.5">
+              <Store className="h-4 w-4 text-primary print-only" />
+              <h2 className="text-base font-bold tracking-tight">
+                {STORE_INFO.name}
+              </h2>
+            </div>
+            <div className="mt-1 space-y-0.5 text-[10px] text-muted-foreground">
+              <div className="flex items-center justify-center gap-1">
+                <Building2 className="h-2.5 w-2.5" />
+                <span>{STORE_INFO.address}</span>
+              </div>
+              <span>{STORE_INFO.cityStateZip}</span>
+              <div className="flex items-center justify-center gap-1">
+                <Phone className="h-2.5 w-2.5" />
+                <span>{STORE_INFO.phone}</span>
+              </div>
+              <div className="flex items-center justify-center gap-1">
+                <FileDigit className="h-2.5 w-2.5" />
+                <span>Tax ID: {STORE_INFO.taxId}</span>
+              </div>
+            </div>
+            <h3 className="mt-2 text-xs text-muted-foreground">
+              {t("pos.receipt")}
+            </h3>
           </div>
-          <div className="mt-1 space-y-0.5 text-[10px] text-muted-foreground">
-            <div className="flex items-center justify-center gap-1">
-              <Building2 className="h-2.5 w-2.5" />
-              <span>{STORE_INFO.address}</span>
-            </div>
-            <span>{STORE_INFO.cityStateZip}</span>
-            <div className="flex items-center justify-center gap-1">
-              <Phone className="h-2.5 w-2.5" />
-              <span>{STORE_INFO.phone}</span>
-            </div>
-            <div className="flex items-center justify-center gap-1">
-              <FileDigit className="h-2.5 w-2.5" />
-              <span>Tax ID: {STORE_INFO.taxId}</span>
-            </div>
-          </div>
-          <h3 className="mt-2 text-xs text-muted-foreground">
-            {t("pos.receipt")}
-          </h3>
-        </div>
 
-        <Separator className="my-3" />
+          <Separator className="my-3" />
 
-        <div className="space-y-1 text-[10px]">
-          <div className="flex items-center gap-1">
-            <Hash className="h-2.5 w-2.5 text-muted-foreground" />
-            <span className="text-muted-foreground">{t("pos.order")}:</span>
-            <span className="font-medium">{receipt.order_number}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Calendar className="h-2.5 w-2.5 text-muted-foreground" />
-            <span className="text-muted-foreground">{t("pos.date")}:</span>
-            <span className="font-medium">
-              {formatDate(receipt.created_at)} {formatTime(receipt.created_at)}
-            </span>
-          </div>
-          {receipt.cashier && (
+          <div className="space-y-1 text-[10px]">
             <div className="flex items-center gap-1">
-              <User className="h-2.5 w-2.5 text-muted-foreground" />
-              <span className="text-muted-foreground">{t("pos.cashier")}:</span>
-              <span className="font-medium">{receipt.cashier}</span>
+              <Hash className="h-2.5 w-2.5 text-muted-foreground" />
+              <span className="text-muted-foreground">{t("pos.order")}:</span>
+              <span className="font-medium">{receipt.order_number}</span>
             </div>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-2.5 w-2.5 text-muted-foreground" />
+              <span className="text-muted-foreground">{t("pos.date")}:</span>
+              <span className="font-medium">
+                {formatDate(receipt.created_at)} {formatTime(receipt.created_at)}
+              </span>
+            </div>
+            {receipt.cashier && (
+              <div className="flex items-center gap-1">
+                <User className="h-2.5 w-2.5 text-muted-foreground" />
+                <span className="text-muted-foreground">{t("pos.cashier")}:</span>
+                <span className="font-medium">{receipt.cashier}</span>
+              </div>
+            )}
+          </div>
+
+          {receipt.customer && (
+            <>
+              <Separator className="my-3" />
+              <div className="space-y-0.5 text-[10px]">
+                <p className="text-muted-foreground">{t("pos.customer")}:</p>
+                <p className="font-medium">{receipt.customer.name}</p>
+                {receipt.customer.email && (
+                  <p className="text-muted-foreground">{receipt.customer.email}</p>
+                )}
+              </div>
+            </>
           )}
-        </div>
 
-        {receipt.customer && (
-          <>
-            <Separator className="my-3" />
-            <div className="space-y-0.5 text-[10px]">
-              <p className="text-muted-foreground">{t("pos.customer")}:</p>
-              <p className="font-medium">{receipt.customer.name}</p>
-              {receipt.customer.email && (
-                <p className="text-muted-foreground">{receipt.customer.email}</p>
-              )}
-            </div>
-          </>
-        )}
+          <Separator className="my-3" />
 
-        <Separator className="my-3" />
-
-        <table className="w-full text-[10px]">
-          <thead>
-            <tr className="text-muted-foreground">
-              <th className="pb-1 text-left font-medium">{t("pos.item")}</th>
-              <th className="pb-1 text-right font-medium">{t("pos.qty")}</th>
-              <th className="pb-1 text-right font-medium">{t("pos.price")}</th>
-              <th className="pb-1 text-right font-medium">{t("pos.total")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {receipt.items.map((item, i) => (
-              <tr key={i}>
-                <td className="py-0.5 pr-2 leading-tight">{item.name}</td>
-                <td className="py-0.5 text-right tabular-nums">{item.quantity}</td>
-                <td className="py-0.5 text-right tabular-nums">{formatCurrency(item.unit_price)}</td>
-                <td className="py-0.5 text-right font-medium tabular-nums">{formatCurrency(item.total)}</td>
+          <table className="w-full text-[10px]">
+            <thead>
+              <tr className="text-muted-foreground">
+                <th className="pb-1 text-left font-medium">{t("pos.item")}</th>
+                <th className="pb-1 text-right font-medium">{t("pos.qty")}</th>
+                <th className="pb-1 text-right font-medium">{t("pos.price")}</th>
+                <th className="pb-1 text-right font-medium">{t("pos.total")}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {receipt.items.map((item, i) => (
+                <tr key={i}>
+                  <td className="py-0.5 pr-2 leading-tight">{item.name}</td>
+                  <td className="py-0.5 text-right tabular-nums">{item.quantity}</td>
+                  <td className="py-0.5 text-right tabular-nums">{formatCurrency(item.unit_price)}</td>
+                  <td className="py-0.5 text-right font-medium tabular-nums">{formatCurrency(item.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        <Separator className="my-3" />
+          <Separator className="my-3" />
 
-        <div className="space-y-0.5 text-[10px]">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("pos.subtotal")}</span>
-            <span className="tabular-nums">{formatCurrency(receipt.subtotal)}</span>
-          </div>
-          {receipt.discount > 0 && (
+          <div className="space-y-0.5 text-[10px]">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">{t("pos.discount")}</span>
-              <span className="text-destructive tabular-nums">-{formatCurrency(receipt.discount)}</span>
+              <span className="text-muted-foreground">{t("pos.subtotal")}</span>
+              <span className="tabular-nums">{formatCurrency(receipt.subtotal)}</span>
             </div>
-          )}
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("pos.tax")}</span>
-            <span className="tabular-nums">{formatCurrency(receipt.tax)}</span>
+            {receipt.discount > 0 && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">{t("pos.discount")}</span>
+                <span className="text-destructive tabular-nums">-{formatCurrency(receipt.discount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t("pos.tax")}</span>
+              <span className="tabular-nums">{formatCurrency(receipt.tax)}</span>
+            </div>
+            <Separator className="my-0.5" />
+            <div className="flex justify-between text-xs font-bold">
+              <span>{t("pos.total")}</span>
+              <span className="tabular-nums">{formatCurrency(receipt.total)}</span>
+            </div>
           </div>
-          <Separator className="my-0.5" />
-          <div className="flex justify-between text-xs font-bold">
-            <span>{t("pos.total")}</span>
-            <span className="tabular-nums">{formatCurrency(receipt.total)}</span>
+
+          {receipt.payments.length > 0 && (
+            <>
+              <Separator className="my-3" />
+              <div className="space-y-0.5 text-[10px]">
+                <p className="text-muted-foreground">{t("pos.payments")}:</p>
+                {receipt.payments.map((payment, i) => (
+                  <div key={i} className="flex justify-between">
+                    <span className="capitalize">{payment.method.replace(/_/g, " ")}</span>
+                    <span className="tabular-nums">{formatCurrency(payment.amount)}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <Separator className="my-3" />
+
+          <p className="text-center text-[9px] text-muted-foreground">
+            {t("pos.receipt_footer")}
+          </p>
+        </div>
+      )}
+
+      {/* ── A4 Invoice layout ── */}
+      {currentLayout === "a4" && (
+        <div id="receipt-area-a4" className="layout-a4">
+          <div className="mx-auto max-w-[210mm] rounded-xl border bg-white p-8 shadow-sm dark:bg-black">
+            {/* Letterhead */}
+            <div className="flex items-start justify-between border-b-2 border-primary/20 pb-6">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">{STORE_INFO.name}</h1>
+                <div className="mt-1 space-y-0.5 text-sm text-muted-foreground">
+                  <p>{STORE_INFO.address}</p>
+                  <p>{STORE_INFO.cityStateZip}</p>
+                  <p>{STORE_INFO.phone}</p>
+                  <p>Tax ID: {STORE_INFO.taxId}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <h2 className="text-lg font-semibold uppercase tracking-wider text-muted-foreground/60">
+                  Invoice
+                </h2>
+                <p className="mt-2 text-sm font-medium">{receipt.order_number}</p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(receipt.created_at)} {formatTime(receipt.created_at)}
+                </p>
+              </div>
+            </div>
+
+            {/* Customer */}
+            {receipt.customer && (
+              <div className="mt-6 rounded-lg bg-muted/40 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Bill To
+                </p>
+                <p className="mt-1 font-medium">{receipt.customer.name}</p>
+                {receipt.customer.email && (
+                  <p className="text-sm text-muted-foreground">{receipt.customer.email}</p>
+                )}
+              </div>
+            )}
+
+            {/* Items table */}
+            <table className="mt-6 w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-muted-foreground/20">
+                  <th className="pb-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Item
+                  </th>
+                  <th className="pb-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Unit Price
+                  </th>
+                  <th className="pb-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Qty
+                  </th>
+                  <th className="pb-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {receipt.items.map((item, i) => (
+                  <tr key={i} className="border-b border-muted/30">
+                    <td className="py-3 pr-4 font-medium">{item.name}</td>
+                    <td className="py-3 text-right tabular-nums">{formatCurrency(item.unit_price)}</td>
+                    <td className="py-3 text-right tabular-nums">{item.quantity}</td>
+                    <td className="py-3 text-right font-medium tabular-nums">{formatCurrency(item.total)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Totals */}
+            <div className="mt-6 flex justify-end">
+              <div className="w-72 space-y-1.5 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="tabular-nums">{formatCurrency(receipt.subtotal)}</span>
+                </div>
+                {receipt.discount > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Discount</span>
+                    <span className="text-destructive tabular-nums">-{formatCurrency(receipt.discount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tax</span>
+                  <span className="tabular-nums">{formatCurrency(receipt.tax)}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between text-base font-bold">
+                  <span>Total</span>
+                  <span className="tabular-nums">{formatCurrency(receipt.total)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Payments */}
+            {receipt.payments.length > 0 && (
+              <div className="mt-6 border-t border-muted/30 pt-4">
+                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Payment Details
+                </h4>
+                <div className="w-72 space-y-1 text-sm">
+                  {receipt.payments.map((payment, i) => (
+                    <div key={i} className="flex justify-between">
+                      <span className="capitalize text-muted-foreground">
+                        {payment.method.replace(/_/g, " ")}
+                      </span>
+                      <span className="tabular-nums">{formatCurrency(payment.amount)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Signature */}
+            <div className="mt-10 pt-6 border-t border-muted/30">
+              <div className="flex justify-between text-sm">
+                <div>
+                  <p className="text-muted-foreground">Authorized Signature</p>
+                  <div className="mt-6 w-52 border-b border-muted-foreground/30" />
+                  <p className="mt-1 text-xs text-muted-foreground/60">Signature</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">{STORE_INFO.name}</p>
+                  <p className="text-sm text-muted-foreground">{receipt.order_number}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      )}
 
-        {receipt.payments.length > 0 && (
-          <>
-            <Separator className="my-3" />
-            <div className="space-y-0.5 text-[10px]">
-              <p className="text-muted-foreground">{t("pos.payments")}:</p>
-              {receipt.payments.map((payment, i) => (
-                <div key={i} className="flex justify-between">
-                  <span className="capitalize">{payment.method.replace(/_/g, " ")}</span>
-                  <span className="tabular-nums">{formatCurrency(payment.amount)}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        <Separator className="my-3" />
-
-        <p className="text-center text-[9px] text-muted-foreground">
-          {t("pos.receipt_footer")}
-        </p>
-      </div>
-
+      {/* ── Action buttons ── */}
       <div className="flex flex-col gap-3 sm:flex-row no-print">
+        <div className="flex items-center gap-2 flex-1">
+          {layoutToggle}
+        </div>
         <Button
           variant="outline"
           size="lg"
-          className="flex-1 min-h-[48px]"
+          className="min-h-[48px]"
           onClick={onPrint}
         >
           <Printer className="mr-2 h-5 w-5" />
@@ -301,15 +495,26 @@ export function ReceiptPreview({
         <Button
           variant="outline"
           size="lg"
-          className="flex-1 min-h-[48px]"
+          className="min-h-[48px]"
           onClick={onEmail}
         >
           <Mail className="mr-2 h-5 w-5" />
           {t("pos.email_receipt")}
         </Button>
+        {onDownloadPdf && (
+          <Button
+            variant="outline"
+            size="lg"
+            className="min-h-[48px]"
+            onClick={onDownloadPdf}
+          >
+            <FileDigit className="mr-2 h-5 w-5" />
+            Download PDF
+          </Button>
+        )}
         <Button
           size="lg"
-          className="flex-1 min-h-[48px]"
+          className="min-h-[48px]"
           onClick={onNewSale}
         >
           <Plus className="mr-2 h-5 w-5" />

@@ -28,12 +28,12 @@ export function CategorySidebar({ categories, selected, onSelect }: CategorySide
           {t("pos.categories")}
         </h2>
       </div>
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-track]:bg-transparent">
         <button
           onClick={() => onSelect(null)}
           className={cn(
-            "flex w-full items-center gap-3 border-b px-3 py-3 text-left text-sm transition-colors hover:bg-accent min-h-[44px]",
-            selected === null && "bg-accent font-medium text-primary"
+            "flex w-full items-center gap-3 border-b px-3 py-3 text-left text-sm transition-all duration-150 hover:bg-accent active:scale-[0.98] min-h-[44px] cursor-pointer",
+            selected === null && "bg-accent font-medium text-primary border-l-2 border-primary"
           )}
         >
           <Grid3X3 className="h-4 w-4 shrink-0" />
@@ -54,8 +54,8 @@ export function CategorySidebar({ categories, selected, onSelect }: CategorySide
             key={cat.id}
             onClick={() => onSelect(cat.id)}
             className={cn(
-              "flex w-full items-center gap-3 border-b px-3 py-3 text-left text-sm transition-colors hover:bg-accent min-h-[44px]",
-              selected === cat.id && "bg-accent font-medium text-primary"
+              "flex w-full items-center gap-3 border-b px-3 py-3 text-left text-sm transition-all duration-150 hover:bg-accent active:scale-[0.98] min-h-[44px] cursor-pointer",
+              selected === cat.id && "bg-accent font-medium text-primary border-l-2 border-primary"
             )}
           >
             <Tag className="h-4 w-4 shrink-0 text-muted-foreground" />

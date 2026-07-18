@@ -84,11 +84,6 @@ const Header = () => {
           </button>
           <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
           <LanguageSelector />
-          <Link href="/admin" aria-label={t("nav.admin")}>
-            <Button variant="ghost" size="icon" className="relative" suppressHydrationWarning>
-              <Shield className="h-5 w-5" />
-            </Button>
-          </Link>
           <WishlistBadge />
           <CartBadge />
           <div className="flex items-center gap-2">
@@ -161,16 +156,6 @@ const Header = () => {
                   )}
                 >
                   {t("nav.trackOrder")}
-                </Link>
-                <Link
-                  href="/admin"
-                  className={cn(
-                    "text-lg font-medium transition-colors hover:text-primary flex items-center gap-2",
-                    pathname === "/admin" ? "text-primary" : "text-muted-foreground"
-                  )}
-                >
-                  <Shield className="h-4 w-4" />
-                  {t("nav.admin")}
                 </Link>
                 <div className="mt-2">
                   <LanguageSelector />

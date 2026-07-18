@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useRef, useEffect } from "react"
 import type { POSCartItem } from "@/lib/pos-types"
 import { useTranslation } from "@/i18n/use-locale"
 import {
@@ -10,16 +11,19 @@ import {
   Percent,
   Receipt,
   ShoppingBag,
+  Pause,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Input } from "@/components/ui/input"
 
 interface CartPanelProps {
   items: POSCartItem[]
   onUpdateQuantity: (productId: string, qty: number) => void
   onRemove: (productId: string) => void
   onClear: () => void
+  onSuspend?: () => void
   subtotal: number
   tax: number
   discount: number
@@ -27,6 +31,71 @@ interface CartPanelProps {
   onCheckout: () => void
   onCustomerClick: () => void
   customerName?: string
+  onQuickQuantityChange?: (productId: string, quantity: number) => void
+}
+
+function QuantityCell({ item, onUpdateQuantity, onQuickQuantityChange }: {
+  item: POSCartItem
+  onUpdateQuantity: (productId: string, qty: number) => void
+  onQuickQuantityChange?: (productId: string, quantity: number) => void
+}) {
+  const [editing, setEditing] = useState(false)
+  const [editValue, setEditValue] = useState(String(item.quantity))
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    }
+  }, [editing])
+
+  const commit = () => {
+    const val = parseInt(editValue, 10)
+    if (!isNaN(val) && val >= 1) {
+      const clamped = Math.min(val, item.maxQuantity)
+      onUpdateQuantity(item.product_id, clamped)
+      onQuickQuantityChange?.(item.product_id, clamped)
+    } else {
+      setEditValue(String(item.quantity))
+    }
+    setEditing(false)
+  }
+
+  if (editing) {
+    return (
+      <Input
+        ref={inputRef}
+        type="number"
+        min={1}
+        max={item.maxQuantity}
+        value={editValue}
+        onChange={(e) => setEditValue(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit()
+          if (e.key === "Escape") {
+            setEditValue(String(item.quantity))
+            setEditing(false)
+          }
+        }}
+        className="h-8 w-14 text-center text-sm font-medium tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+      />
+    )
+  }
+
+  return (
+    <button
+      onClick={() => {
+        setEditValue(String(item.quantity))
+        setEditing(true)
+      }}
+      className="flex h-8 w-8 items-center justify-center text-sm font-medium tabular-nums rounded-md border border-transparent hover:border-input hover:bg-muted/50 transition-colors"
+      title="Click to edit quantity"
+    >
+      {item.quantity}
+    </button>
+  )
 }
 
 export function CartPanel({
@@ -34,6 +103,7 @@ export function CartPanel({
   onUpdateQuantity,
   onRemove,
   onClear,
+  onSuspend,
   subtotal,
   tax,
   discount,
@@ -41,6 +111,7 @@ export function CartPanel({
   onCheckout,
   onCustomerClick,
   customerName,
+  onQuickQuantityChange,
 }: CartPanelProps) {
   const { t } = useTranslation()
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
@@ -48,10 +119,10 @@ export function CartPanel({
   return (
     <div className="flex h-full flex-col bg-card">
       <div className="border-b px-4 py-3">
-        <button
-          onClick={onCustomerClick}
-          className="flex w-full items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted min-h-[44px]"
-        >
+          <button
+            onClick={onCustomerClick}
+            className="flex w-full items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2.5 text-left text-sm transition-all duration-150 hover:bg-muted active:scale-[0.98] min-h-[44px]"
+          >
           <User className="h-4 w-4 shrink-0 text-muted-foreground" />
           <div className="flex-1 min-w-0">
             <p className="truncate font-medium">
@@ -65,7 +136,7 @@ export function CartPanel({
       </div>
 
       {items.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16 text-center">
           <ShoppingBag className="h-12 w-12 text-muted-foreground/40" />
           <h3 className="font-medium text-muted-foreground">
             {t("pos.cart_empty")}
@@ -80,21 +151,34 @@ export function CartPanel({
             <span className="text-sm text-muted-foreground">
               {itemCount} {t("pos.items")}
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-xs text-destructive hover:text-destructive"
-              onClick={onClear}
-            >
-              <Trash2 className="mr-1 h-3.5 w-3.5" />
-              {t("pos.clear_all")}
-            </Button>
+            <div className="flex items-center gap-1">
+              {onSuspend && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 min-h-[44px] text-xs text-muted-foreground hover:text-foreground active:scale-[0.98]"
+                  onClick={onSuspend}
+                >
+                  <Pause className="mr-1 h-3.5 w-3.5" />
+                  {t("pos.suspend") || "Hold"}
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 min-h-[44px] text-xs text-destructive hover:text-destructive active:scale-[0.98]"
+                onClick={onClear}
+              >
+                <Trash2 className="mr-1 h-3.5 w-3.5" />
+                {t("pos.clear_all")}
+              </Button>
+            </div>
           </div>
 
           <ScrollArea className="flex-1">
             <div className="divide-y">
               {items.map((item) => (
-                <div key={item.product_id} className="flex gap-3 px-4 py-3">
+                <div key={item.product_id} className="flex gap-3 px-4 py-3 transition-all duration-150">
                   <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
                     <img
                       src={item.image_url || "/placeholder.svg"}
@@ -123,14 +207,16 @@ export function CartPanel({
                           Math.max(0, item.quantity - 1)
                         )
                       }
-                      className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted"
+                      className="flex items-center justify-center rounded-md border transition-colors hover:bg-muted active:scale-[0.98] min-w-[44px] min-h-[44px]"
                       disabled={item.quantity <= 1}
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="flex h-8 w-8 items-center justify-center text-sm font-medium tabular-nums">
-                      {item.quantity}
-                    </span>
+                    <QuantityCell
+                      item={item}
+                      onUpdateQuantity={onUpdateQuantity}
+                      onQuickQuantityChange={onQuickQuantityChange}
+                    />
                     <button
                       onClick={() =>
                         onUpdateQuantity(
@@ -138,14 +224,14 @@ export function CartPanel({
                           Math.min(item.maxQuantity, item.quantity + 1)
                         )
                       }
-                      className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted"
+                      className="flex items-center justify-center rounded-md border transition-colors hover:bg-muted active:scale-[0.98] min-w-[44px] min-h-[44px]"
                       disabled={item.quantity >= item.maxQuantity}
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => onRemove(item.product_id)}
-                      className="ml-1 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                      className="ml-1 flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive active:scale-[0.98] min-w-[44px] min-h-[44px]"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>

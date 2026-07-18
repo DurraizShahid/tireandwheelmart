@@ -14,11 +14,17 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   try {
-    const products = await pos.getPOSProducts({
+    const page = parseInt(searchParams.get("page") ?? "1", 10);
+    const limit = parseInt(searchParams.get("limit") ?? "50", 10);
+    const offset = (page - 1) * limit;
+
+    const result = await pos.getPOSProducts({
       category_id: searchParams.get("category_id") ?? undefined,
       search: searchParams.get("search") ?? undefined,
+      limit,
+      offset,
     });
-    return NextResponse.json(products);
+    return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }

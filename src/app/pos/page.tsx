@@ -11,7 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Search, ShoppingCart, User, WifiOff, Store } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Search, ShoppingCart, User, WifiOff, Store, Star, Pause } from "lucide-react"
 import { toast } from "sonner"
 import type {
   POSProduct,
@@ -22,6 +28,7 @@ import type {
   POSCheckoutResponse,
   POSShift,
   POSShiftSummary,
+  POSProductsResponse,
 } from "@/lib/pos-types"
 
 import { PosHeader } from "@/components/pos/PosHeader"
@@ -33,6 +40,9 @@ import { CustomerSearch } from "@/components/pos/CustomerSearch"
 import { ReceiptPreview } from "@/components/pos/ReceiptPreview"
 import { RegisterPanel } from "@/components/pos/RegisterPanel"
 import { ShiftSummary } from "@/components/pos/ShiftSummary"
+import { QuickProducts } from "@/components/pos/QuickProducts"
+import { SuspendedSalesPanel } from "@/components/pos/SuspendedSalesPanel"
+import { CustomerHistory } from "@/components/pos/CustomerHistory"
 
 export default function POSPage() {
   const { t } = useTranslation()
@@ -45,6 +55,8 @@ export default function POSPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<POSCustomer | null>(null)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [customerSheetOpen, setCustomerSheetOpen] = useState(false)
   const [cartSheetOpen, setCartSheetOpen] = useState(false)
   const [online, setOnline] = useState(true)
@@ -61,16 +73,24 @@ export default function POSPage() {
   const [summaryLoading, setSummaryLoading] = useState(false)
   const [registerDialogOpen, setRegisterDialogOpen] = useState(false)
 
-  const fetchProducts = useCallback(async (category?: string | null, search?: string) => {
+  const [quickProductIds, setQuickProductIds] = useState<Set<string>>(new Set())
+  const [showQuickProducts, setShowQuickProducts] = useState(false)
+  const [suspendedSheetOpen, setSuspendedSheetOpen] = useState(false)
+  const [historySheetOpen, setHistorySheetOpen] = useState(false)
+
+  const fetchProducts = useCallback(async (category?: string | null, search?: string, page?: number) => {
     setLoading(true)
     try {
       const params = new URLSearchParams()
       if (category) params.set("category_id", category)
       if (search) params.set("search", search)
-      const res = await fetch(`/api/admin/pos/products?${params.toString()}`)
+      if (page) params.set("page", String(page))
+      const res = await fetch(`/api/pos/products?${params.toString()}`)
       if (!res.ok) throw new Error("Failed to fetch products")
-      const data = await res.json()
-      setProducts(data)
+      const data: POSProductsResponse = await res.json()
+      setProducts(data.products)
+      setTotalPages(data.totalPages)
+      setCurrentPage(data.page)
     } catch {
       toast.error("Failed to load products")
     } finally {
@@ -80,7 +100,7 @@ export default function POSPage() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/pos/categories")
+      const res = await fetch("/api/pos/categories")
       if (!res.ok) throw new Error("Failed to fetch categories")
       const data = await res.json()
       setCategories(data)
@@ -106,13 +126,14 @@ export default function POSPage() {
 
   useEffect(() => {
     fetchCategories()
-    fetchProducts(null, "")
+    fetchProducts(null, "", 1)
   }, [fetchCategories, fetchProducts])
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
-      fetchProducts(selectedCategory, searchQuery)
+      setCurrentPage(1)
+      fetchProducts(selectedCategory, searchQuery, 1)
     }, 300)
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -134,6 +155,21 @@ export default function POSPage() {
   useEffect(() => {
     fetchRegisterStatus()
   }, [fetchRegisterStatus])
+
+  const fetchQuickProductIds = useCallback(async () => {
+    try {
+      const res = await fetch("/api/pos/products/quick")
+      if (!res.ok) return
+      const data = await res.json()
+      setQuickProductIds(new Set(data.map((p: { id: string }) => p.id)))
+    } catch {
+      // Ignore
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchQuickProductIds()
+  }, [fetchQuickProductIds])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -163,6 +199,11 @@ export default function POSPage() {
 
   const handleCategorySelect = (catId: string | null) => {
     setSelectedCategory(catId)
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    fetchProducts(selectedCategory, searchQuery, page)
   }
 
   const handleAddToCart = (product: POSProduct) => {
@@ -212,6 +253,55 @@ export default function POSPage() {
   const handleClearCart = () => {
     setCartItems([])
   }
+
+  const handleSuspend = useCallback(async () => {
+    try {
+      const res = await fetch("/api/pos/sales/suspend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: cartItems, customer: selectedCustomer }),
+      })
+      if (!res.ok) throw new Error("Failed to suspend sale")
+      setCartItems([])
+      setSelectedCustomer(null)
+      toast.success(t("pos.sale_suspended") || "Sale suspended")
+    } catch {
+      toast.error("Failed to suspend sale")
+    }
+  }, [cartItems, selectedCustomer])
+
+  const handleResumeSale = useCallback((items: POSCartItem[], customer: POSCustomer | null) => {
+    setCartItems(items)
+    setSelectedCustomer(customer)
+    setSuspendedSheetOpen(false)
+    toast.success(t("pos.sale_resumed") || "Sale resumed")
+  }, [])
+
+  const handleToggleQuick = useCallback(async (productId: string, isQuick: boolean) => {
+    try {
+      if (isQuick) {
+        await fetch("/api/pos/products/quick", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId }),
+        })
+        setQuickProductIds((prev) => new Set(prev).add(productId))
+      } else {
+        await fetch("/api/pos/products/quick", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId }),
+        })
+        setQuickProductIds((prev) => {
+          const next = new Set(prev)
+          next.delete(productId)
+          return next
+        })
+      }
+    } catch {
+      toast.error("Failed to update favorites")
+    }
+  }, [])
 
   const handleNewSale = () => {
     setShowReceipt(false)
@@ -351,7 +441,7 @@ export default function POSPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/30">
+    <div className="flex min-h-screen flex-col bg-muted/30 transition-all duration-200">
       <PosHeader
         registerName="Register #1"
         registerStatus={isRegisterOpen ? "open" : "closed"}
@@ -390,11 +480,25 @@ export default function POSPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-11 pl-9"
               />
+              {searchQuery.length >= 8 && /^\d{8,14}$/.test(searchQuery) && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground/60 bg-muted px-1.5 py-0.5 rounded">
+                        Barcode
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p className="text-xs">Searching by barcode/SKU</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="h-11 min-w-[44px]"
+              className="h-11 min-w-[44px] active:scale-[0.97]"
               onClick={() => setRegisterDialogOpen(true)}
               title={isRegisterOpen ? "Register is open" : "Register is closed"}
             >
@@ -410,9 +514,47 @@ export default function POSPage() {
               <span className="hidden sm:inline">{customerName || t("pos.customer")}</span>
             </Button>
 
+            {selectedCustomer && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-11 min-w-[44px]"
+                onClick={() => setHistorySheetOpen(true)}
+                title="View customer history"
+              >
+                <span className="text-xs">{t("pos.history") || "History"}</span>
+              </Button>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              className={`h-11 min-w-[44px] ${showQuickProducts ? "bg-amber-100 dark:bg-amber-900" : ""}`}
+              onClick={() => setShowQuickProducts((v) => !v)}
+              title="Quick products"
+            >
+              <Star className={`h-4 w-4 ${showQuickProducts ? "fill-amber-400 text-amber-400" : ""}`} />
+            </Button>
+
+            <Sheet open={suspendedSheetOpen} onOpenChange={setSuspendedSheetOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-11 min-w-[44px]"
+                  title="Suspended sales"
+                >
+                  <Pause className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:w-[400px] p-0">
+                <SuspendedSalesPanel onResume={handleResumeSale} />
+              </SheetContent>
+            </Sheet>
+
             <Sheet open={cartSheetOpen} onOpenChange={setCartSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="default" size="sm" className="md:hidden relative h-11">
+                <Button variant="default" size="sm" className="md:hidden relative h-11 active:scale-[0.97]">
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   {itemCount}
                 </Button>
@@ -421,8 +563,10 @@ export default function POSPage() {
                 <CartPanel
                   items={cartItems}
                   onUpdateQuantity={handleUpdateQuantity}
+                  onQuickQuantityChange={handleUpdateQuantity}
                   onRemove={handleRemoveItem}
                   onClear={handleClearCart}
+                  onSuspend={handleSuspend}
                   subtotal={subtotal}
                   tax={tax}
                   discount={discount}
@@ -438,11 +582,21 @@ export default function POSPage() {
             </Sheet>
           </div>
 
+          {showQuickProducts && (
+            <QuickProducts onAddToCart={handleAddToCart} />
+          )}
+
           <div className="flex-1 overflow-y-auto p-4">
             <ProductGrid
               products={products}
               onAddToCart={handleAddToCart}
               loading={loading}
+              total={products.length}
+              page={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onToggleQuick={handleToggleQuick}
+              quickProductIds={quickProductIds}
             />
           </div>
         </div>
@@ -451,8 +605,10 @@ export default function POSPage() {
           <CartPanel
             items={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
+            onQuickQuantityChange={handleUpdateQuantity}
             onRemove={handleRemoveItem}
             onClear={handleClearCart}
+            onSuspend={handleSuspend}
             subtotal={subtotal}
             tax={tax}
             discount={discount}
@@ -485,6 +641,20 @@ export default function POSPage() {
               }}
             />
           </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={historySheetOpen} onOpenChange={setHistorySheetOpen}>
+        <SheetContent side="right" className="w-full sm:w-[400px] p-0">
+          {selectedCustomer && (
+            <CustomerHistory
+              customerId={selectedCustomer.id}
+              customerName={`${selectedCustomer.first_name} ${selectedCustomer.last_name}`}
+              onSelectOrder={(orderId) => {
+                setHistorySheetOpen(false)
+              }}
+            />
+          )}
         </SheetContent>
       </Sheet>
 

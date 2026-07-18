@@ -109,9 +109,6 @@ export function AdminSidebar() {
       links: [{ name: t("admin.sidebar.dashboard"), href: "/admin", icon: LayoutDashboard }],
     },
     {
-      links: [{ name: t("admin.sidebar.pointOfSale"), href: "/pos", icon: CreditCard }],
-    },
-    {
       label: t("admin.sidebar.commerce"),
       links: [
         { name: t("admin.sidebar.products"), href: "/admin/products", icon: Package },

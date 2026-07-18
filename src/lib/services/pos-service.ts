@@ -1,7 +1,11 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { createInventoryService } from "@/lib/services/inventory-service";
 import { getMockPOSAnalytics } from "@/lib/pos-mock-data";
-import type { POSCheckoutRequest, POSCheckoutResponse, POSReceipt, POSAnalytics, POSProduct, POSCategory, POSCustomer, POSPayment, POSRefundRequest, POSRefundResponse, POSDiscountRequest, POSOrder } from "@/lib/pos-types";
+import type { POSCheckoutRequest, POSCheckoutResponse, POSReceipt, POSAnalytics, POSProduct, POSCategory, POSCustomer, POSPayment, POSRefundRequest, POSRefundResponse, POSDiscountRequest, POSOrder, POSProductsResponse, POSSuspendedSale, POSCartItem } from "@/lib/pos-types";
+
+function generateId(): string {
+  return `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
 
 export function createPOSService(client?: ReturnType<typeof createServerClient>) {
   const db = client ?? createServerClient();
@@ -9,20 +13,39 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
 
   // ── Products ──
 
-  async function getPOSProducts(options?: { category_id?: string; search?: string }): Promise<POSProduct[]> {
-    let query = db
+  async function getPOSProducts(options?: { category_id?: string; search?: string; limit?: number; offset?: number }): Promise<POSProductsResponse> {
+    const limit = options?.limit ?? 50;
+    const offset = options?.offset ?? 0;
+
+    let countQuery = db
+      .from("products")
+      .select("*", { count: "exact", head: true });
+
+    let dataQuery = db
       .from("products")
       .select("*, categories(id, name, slug)")
-      .order("name");
+      .order("name", { ascending: true });
 
     if (options?.category_id) {
-      query = query.eq("category_id", options.category_id);
+      countQuery = countQuery.eq("category_id", options.category_id);
+      dataQuery = dataQuery.eq("category_id", options.category_id);
     }
 
-    const { data, error } = await query;
+    if (options?.search) {
+      const q = options.search;
+      countQuery = countQuery.or(`name.ilike.%${q}%,sku.ilike.%${q}%,brand.ilike.%${q}%`);
+      dataQuery = dataQuery.or(`name.ilike.%${q}%,sku.ilike.%${q}%,brand.ilike.%${q}%`);
+    }
+
+    const { count, error: countError } = await countQuery;
+    if (countError) throw new Error(countError.message);
+
+    dataQuery = dataQuery.range(offset, offset + limit - 1);
+
+    const { data, error } = await dataQuery;
     if (error) throw new Error(error.message);
 
-    let products = (data ?? []).map((p) => ({
+    const products = (data ?? []).map((p) => ({
       id: p.id,
       name: p.name,
       slug: p.slug,
@@ -39,17 +62,13 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
       tags: p.tags ?? [],
     }));
 
-    if (options?.search) {
-      const q = options.search.toLowerCase();
-      products = products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.sku?.toLowerCase().includes(q) ||
-          p.brand?.toLowerCase().includes(q)
-      );
-    }
-
-    return products;
+    return {
+      products,
+      total: count ?? 0,
+      page: Math.floor(offset / limit) + 1,
+      limit,
+      totalPages: Math.ceil((count ?? 0) / limit),
+    };
   }
 
   async function getPOSCategories(): Promise<POSCategory[]> {
@@ -580,6 +599,112 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
     };
   }
 
+  // ── Barcode Search ──
+
+  async function searchByBarcode(barcode: string): Promise<POSProduct | null> {
+    const { data, error } = await db
+      .from("products")
+      .select("*, categories(id, name, slug)")
+      .eq("sku", barcode)
+      .maybeSingle();
+    if (error) throw new Error(`Barcode search failed: ${error.message}`);
+    if (!data) return null;
+    return {
+      id: data.id,
+      name: data.name,
+      slug: data.slug,
+      price: data.price ?? 0,
+      compare_price: data.compare_at_price ?? undefined,
+      image_url: data.image_url ?? "/placeholder.png",
+      category_id: data.category_id ?? "",
+      category_name: (data.categories as { name?: string } | null)?.name ?? "Uncategorized",
+      category_slug: (data.categories as { slug?: string } | null)?.slug ?? "",
+      brand: data.brand ?? undefined,
+      stock_quantity: data.stock_quantity ?? 0,
+      in_stock: data.in_stock ?? false,
+      sku: data.sku ?? undefined,
+      tags: data.tags ?? [],
+    };
+  }
+
+  // ── Suspend / Resume Sale ──
+
+  async function suspendSale(items: POSCartItem[], customer: POSCustomer | null, notes?: string): Promise<POSSuspendedSale> {
+    const id = generateId();
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const sale: POSSuspendedSale = {
+      id,
+      created_at: new Date().toISOString(),
+      items,
+      customer,
+      notes,
+      total,
+    };
+    const { error } = await db
+      .from("site_settings")
+      .insert({ key: `pos_suspended:${id}`, value: sale as never });
+    if (error) throw new Error(`Failed to suspend sale: ${error.message}`);
+    return sale;
+  }
+
+  async function getSuspendedSales(): Promise<POSSuspendedSale[]> {
+    const { data, error } = await db
+      .from("site_settings")
+      .select("value")
+      .ilike("key", "pos_suspended:%")
+      .order("key", { ascending: false });
+    if (error) throw new Error(`Failed to get suspended sales: ${error.message}`);
+    return (data ?? []).map((r) => r.value as POSSuspendedSale);
+  }
+
+  async function resumeSale(saleId: string): Promise<POSSuspendedSale | null> {
+    const { data, error } = await db
+      .from("site_settings")
+      .select("value")
+      .eq("key", `pos_suspended:${saleId}`)
+      .maybeSingle();
+    if (error) throw new Error(`Failed to resume sale: ${error.message}`);
+    if (!data) return null;
+    const sale = data.value as POSSuspendedSale;
+    await db.from("site_settings").delete().eq("key", `pos_suspended:${saleId}`);
+    return sale;
+  }
+
+  async function deleteSuspendedSale(saleId: string): Promise<void> {
+    const { error } = await db
+      .from("site_settings")
+      .delete()
+      .eq("key", `pos_suspended:${saleId}`);
+    if (error) throw new Error(`Failed to delete suspended sale: ${error.message}`);
+  }
+
+  // ── Quick Products (Favorites) ──
+
+  async function addQuickProduct(userId: string, productId: string): Promise<void> {
+    const key = `pos_quick:${userId}:${productId}`;
+    const { error } = await db
+      .from("site_settings")
+      .upsert({ key, value: { product_id: productId } as never }, { onConflict: "key" });
+    if (error) throw new Error(`Failed to add quick product: ${error.message}`);
+  }
+
+  async function removeQuickProduct(userId: string, productId: string): Promise<void> {
+    const { error } = await db
+      .from("site_settings")
+      .delete()
+      .eq("key", `pos_quick:${userId}:${productId}`);
+    if (error) throw new Error(`Failed to remove quick product: ${error.message}`);
+  }
+
+  async function getQuickProducts(userId: string): Promise<{ product_id: string }[]> {
+    const { data, error } = await db
+      .from("site_settings")
+      .select("value")
+      .ilike("key", `pos_quick:${userId}:%`);
+    if (error) throw new Error(`Failed to get quick products: ${error.message}`);
+    return (data ?? []).map((r) => r.value as { product_id: string });
+  }
+
   return {
     getPOSProducts,
     getPOSCategories,
@@ -596,6 +721,14 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
     cancelOrder,
     getPOSOrders,
     getPOSOrder,
+    searchByBarcode,
+    suspendSale,
+    getSuspendedSales,
+    resumeSale,
+    deleteSuspendedSale,
+    addQuickProduct,
+    removeQuickProduct,
+    getQuickProducts,
   };
 }
 

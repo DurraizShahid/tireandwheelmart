@@ -176,6 +176,7 @@ export interface POSCheckoutResponse {
   order_number: string;
   status: string;
   created_at: string;
+  notes?: string;
   customer?: POSCustomer;
   items: { name: string; quantity: number; price: number }[];
   payments: POSPayment[];
@@ -209,9 +210,40 @@ export interface POSAnalytics {
   salesByHour: { hour: number; sales: number; revenue: number }[];
 }
 
+export interface POSPaginationParams {
+  page?: number
+  limit?: number
+  offset?: number
+}
+
+export interface POSProductsResponse {
+  products: POSProduct[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
 export type POSCategory = {
   id: string;
   name: string;
   slug: string;
   product_count: number;
 };
+
+export interface POSSuspendedSale {
+  id: string
+  created_at: string
+  items: POSCartItem[]
+  customer: POSCustomer | null
+  notes?: string
+  total: number
+}
+
+export interface POSQuickProduct {
+  product_id: string
+  name: string
+  price: number
+  image_url?: string
+  brand?: string
+}

@@ -18,6 +18,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { CustomerSearch } from "./CustomerSearch"
 import { toast } from "sonner"
@@ -127,6 +128,7 @@ export function CheckoutModal({
     { method: "cash", amount: 0 },
   ])
   const [lastResponse, setLastResponse] = useState<POSCheckoutResponse | null>(null)
+  const [notes, setNotes] = useState("")
 
   const changeDue = Math.max(0, amountTendered - total)
   const cashMethods: POSPaymentMethod[] = ["cash"]
@@ -170,6 +172,7 @@ export function CheckoutModal({
       tax,
       discount,
       total,
+      notes: notes || undefined,
     };
 
     try {
@@ -186,12 +189,13 @@ export function CheckoutModal({
 
       const response: POSCheckoutResponse = await res.json();
       setLastResponse(response);
+      setNotes("");
       setStep("success");
     } catch (err) {
       toast.error((err as Error).message);
       setStep("payment");
     }
-  }, [items, customer, subtotal, tax, discount, total, onComplete, makePayments]);
+  }, [items, customer, subtotal, tax, discount, total, notes, onComplete, makePayments]);
 
   const handleSplitAmountChange = useCallback(
     (index: number, newAmount: number) => {
@@ -236,8 +240,8 @@ export function CheckoutModal({
 
   if (step === "success") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-md flex-col items-center px-6 text-center">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm transition-all duration-300">
+        <div className="mx-auto flex max-w-md flex-col items-center px-6 text-center animate-in zoom-in-50 duration-300">
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
             <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
           </div>
@@ -266,8 +270,8 @@ export function CheckoutModal({
 
   if (step === "processing") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
-        <div className="flex flex-col items-center gap-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm transition-all duration-300">
+        <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in-50 duration-300">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
           <p className="text-lg font-medium">{t("pos.processing_payment")}</p>
         </div>
@@ -276,7 +280,7 @@ export function CheckoutModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+    <div className="fixed inset-0 z-50 flex flex-col bg-background transition-all duration-300">
       <div className="flex items-center gap-3 border-b px-4 py-3">
         <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onClose}>
           <ArrowLeft className="h-5 w-5" />
@@ -460,7 +464,7 @@ export function CheckoutModal({
                         key={pm.value}
                         onClick={() => setPaymentMethod(pm.value)}
                         className={cn(
-                          "flex items-center gap-2 rounded-lg border px-3 py-3 text-left text-sm transition-all min-h-[48px]",
+                          "flex items-center gap-2 rounded-lg border px-3 py-3 text-left text-sm transition-all min-h-[48px] active:scale-[0.98]",
                           isActive
                             ? "border-primary bg-primary/5 ring-1 ring-primary"
                             : "hover:bg-muted"
@@ -579,6 +583,18 @@ export function CheckoutModal({
             )}
           </section>
 
+          <section>
+            <h2 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              {t("common.notes")}
+            </h2>
+            <Textarea
+              placeholder="Order notes..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="min-h-[80px] resize-y"
+            />
+          </section>
+
           <Separator />
 
           <div className="mt-4 space-y-2">
@@ -615,7 +631,7 @@ export function CheckoutModal({
             className="mt-6 w-full min-h-[52px] text-base font-semibold"
             onClick={handleCompleteSale}
             disabled={
-              (useSplitPayment && Math.abs(splitRemaining) > 0.01)
+              items.length === 0 || (useSplitPayment && Math.abs(splitRemaining) > 0.01)
             }
           >
             {`${t("pos.complete_sale")} — $${total.toFixed(2)}`}
