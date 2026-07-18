@@ -102,7 +102,7 @@ export default function LeadDetailPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <CallLeadDialog leadId={lead.id} />
+                <CallLeadDialog leadId={lead.id} leadPhone={lead.phone} leadName={lead.name} />
                 <ConvertLeadToOpportunityDialog leadId={lead.id} leadName={lead.name} defaultCustomerId={lead.converted_to_customer_id} />
                 {!lead.converted_to_customer_id && (
                   <ConvertLeadDialog leadId={lead.id} leadName={lead.name} />
