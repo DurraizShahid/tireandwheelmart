@@ -128,6 +128,7 @@ export function CheckoutModal({
     { method: "cash", amount: 0 },
   ])
   const [lastResponse, setLastResponse] = useState<POSCheckoutResponse | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [notes, setNotes] = useState("")
 
   const changeDue = Math.max(0, amountTendered - total)
@@ -151,6 +152,7 @@ export function CheckoutModal({
 
   const handleCompleteSale = useCallback(async () => {
     setStep("processing");
+    setErrorMessage(null);
 
     const payments = makePayments();
 
@@ -192,8 +194,8 @@ export function CheckoutModal({
       setNotes("");
       setStep("success");
     } catch (err) {
+      setErrorMessage((err as Error).message);
       toast.error((err as Error).message);
-      setStep("payment");
     }
   }, [items, customer, subtotal, tax, discount, total, notes, onComplete, makePayments]);
 
@@ -271,10 +273,36 @@ export function CheckoutModal({
   if (step === "processing") {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm transition-all duration-300">
-        <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in-50 duration-300">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-lg font-medium">{t("pos.processing_payment")}</p>
-        </div>
+        {errorMessage ? (
+          <div className="mx-auto flex max-w-md flex-col items-center px-6 text-center animate-in zoom-in-50 duration-300">
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10">
+              <X className="h-10 w-10 text-destructive" />
+            </div>
+            <h2 className="text-xl font-bold">{t("pos.payment_failed")}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
+            <div className="mt-8 flex w-full flex-col gap-3">
+              <Button size="lg" className="w-full min-h-[48px]" onClick={handleCompleteSale}>
+                {t("pos.retry")}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full min-h-[48px]"
+                onClick={() => { setStep("payment"); setErrorMessage(null); }}
+              >
+                {t("common.back")}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in-50 duration-300">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <p className="text-lg font-medium">{t("pos.processing_payment")}</p>
+            <div className="mt-2 h-2 w-48 overflow-hidden rounded-full bg-muted">
+              <div className="h-full w-2/3 animate-pulse rounded-full bg-primary" />
+            </div>
+          </div>
+        )}
       </div>
     )
   }
@@ -400,7 +428,8 @@ export function CheckoutModal({
           </section>
         </div>
 
-        <div className="border-t bg-muted/30 p-4 lg:w-96 lg:border-t-0 lg:border-l lg:p-6">
+        <div className="border-t bg-muted/30 lg:w-96 lg:border-t-0 lg:border-l flex flex-col">
+          <div className="flex-1 p-4 lg:p-6 space-y-6">
           <section className="mb-6">
             <h2 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
               {t("pos.payment_method")}
@@ -525,6 +554,20 @@ export function CheckoutModal({
                           )
                       )}
                     </div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-xs text-muted-foreground">{t("pos.quick_amounts")}:</span>
+                      {[5, 10, 20, 50, 100].map((amt) => (
+                        <Button
+                          key={`q-${amt}`}
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-xs min-w-[44px]"
+                          onClick={() => setAmountTendered(Math.max(total, amt))}
+                        >
+                          ${amt}
+                        </Button>
+                      ))}
+                    </div>
                     {changeDue > 0 && (
                       <div className="flex items-center justify-between rounded-md bg-green-50 px-3 py-2 dark:bg-green-950/30">
                         <span className="text-sm font-medium text-green-700 dark:text-green-300">
@@ -546,7 +589,7 @@ export function CheckoutModal({
                         {t("pos.card_number")}
                       </label>
                       <Input
-                        placeholder="**** **** **** {t('pos.last_4')}"
+                        placeholder={`**** **** **** ${t("pos.card_last_four")}`}
                         value={cardLastFour}
                         onChange={(e) => {
                           const val = e.target.value.replace(/\D/g, "")
@@ -594,48 +637,51 @@ export function CheckoutModal({
               className="min-h-[80px] resize-y"
             />
           </section>
-
-          <Separator />
-
-          <div className="mt-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">
-                {t("pos.subtotal")} ({items.reduce((s, i) => s + i.quantity, 0)}{" "}
-                {t("pos.items")})
-              </span>
-              <span>${subtotal.toFixed(2)}</span>
-            </div>
-            {discount > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t("pos.discount")}
-                </span>
-                <span className="text-destructive">
-                  -${discount.toFixed(2)}
-                </span>
-              </div>
-            )}
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{t("pos.tax")}</span>
-              <span>${tax.toFixed(2)}</span>
-            </div>
-            <Separator />
-            <div className="flex justify-between text-lg font-bold">
-              <span>{t("pos.total")}</span>
-              <span className="text-primary">${total.toFixed(2)}</span>
-            </div>
           </div>
 
-          <Button
-            size="lg"
-            className="mt-6 w-full min-h-[52px] text-base font-semibold"
-            onClick={handleCompleteSale}
-            disabled={
-              items.length === 0 || (useSplitPayment && Math.abs(splitRemaining) > 0.01)
-            }
-          >
-            {`${t("pos.complete_sale")} — $${total.toFixed(2)}`}
-          </Button>
+          <div className="sticky bottom-0 bg-background border-t p-4 lg:p-6">
+            <Separator />
+
+            <div className="mt-4 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {t("pos.subtotal")} ({items.reduce((s, i) => s + i.quantity, 0)}{" "}
+                  {t("pos.items")})
+                </span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {t("pos.discount")}
+                  </span>
+                  <span className="text-destructive">
+                    -${discount.toFixed(2)}
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">{t("pos.tax")}</span>
+                <span>${tax.toFixed(2)}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between text-lg font-bold">
+                <span>{t("pos.total")}</span>
+                <span className="text-primary">${total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <Button
+              size="lg"
+              className="mt-6 w-full min-h-[52px] text-base font-semibold"
+              onClick={handleCompleteSale}
+              disabled={
+                items.length === 0 || (useSplitPayment && Math.abs(splitRemaining) > 0.01)
+              }
+            >
+              {`${t("pos.complete_sale")} — $${total.toFixed(2)}`}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

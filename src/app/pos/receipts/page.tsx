@@ -26,7 +26,7 @@ import { Search, Receipt, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import type { POSOrder } from "@/lib/pos-types"
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 export default function ReceiptHistoryPage() {
   const router = useRouter()
@@ -48,8 +48,14 @@ export default function ReceiptHistoryPage() {
       const res = await fetch(`/api/pos/orders?${params.toString()}`)
       if (!res.ok) throw new Error("Failed to fetch orders")
       const data = await res.json()
-      setOrders(Array.isArray(data) ? data : [])
-      setTotalPages(Math.ceil((Array.isArray(data) ? data.length : 0) / PAGE_SIZE) || 1)
+
+      if (Array.isArray(data)) {
+        setOrders(data)
+        setTotalPages(Math.ceil(data.length / PAGE_SIZE) || 1)
+      } else {
+        setOrders(data.orders || [])
+        setTotalPages(Math.ceil((data.total || 0) / PAGE_SIZE) || 1)
+      }
     } catch {
       setOrders([])
     } finally {
@@ -129,7 +135,11 @@ export default function ReceiptHistoryPage() {
               </TableHeader>
               <TableBody>
                 {orders.map((order) => (
-                  <TableRow key={order.id}>
+                  <TableRow
+                    key={order.id}
+                    className="cursor-pointer"
+                    onClick={() => router.push(`/pos/receipts/${order.id}`)}
+                  >
                     <TableCell className="font-medium">{order.order_number}</TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(order.created_at).toLocaleDateString("en-US", {
@@ -150,7 +160,10 @@ export default function ReceiptHistoryPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.push(`/pos/receipts/${order.id}`)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          router.push(`/pos/receipts/${order.id}`)
+                        }}
                       >
                         <Receipt className="mr-1.5 h-3.5 w-3.5" />
                         View / Reprint

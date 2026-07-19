@@ -12,6 +12,7 @@ import {
   Receipt,
   ShoppingBag,
   Pause,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -32,6 +33,7 @@ interface CartPanelProps {
   onCustomerClick: () => void
   customerName?: string
   onQuickQuantityChange?: (productId: string, quantity: number) => void
+  onDiscountChange?: (discount: number) => void
 }
 
 function QuantityCell({ item, onUpdateQuantity, onQuickQuantityChange }: {
@@ -112,9 +114,22 @@ export function CartPanel({
   onCustomerClick,
   customerName,
   onQuickQuantityChange,
+  onDiscountChange,
 }: CartPanelProps) {
   const { t } = useTranslation()
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
+  const [confirmingRemoveId, setConfirmingRemoveId] = useState<string | null>(null)
+  const [showDiscount, setShowDiscount] = useState(false)
+  const [discountType, setDiscountType] = useState<"percentage" | "fixed">("fixed")
+  const [discountInput, setDiscountInput] = useState("")
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirmingRemoveId(null)
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   return (
     <div className="flex h-full flex-col bg-card">
@@ -229,19 +244,86 @@ export function CartPanel({
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </button>
-                    <button
-                      onClick={() => onRemove(item.product_id)}
-                      className="ml-1 flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive active:scale-[0.98] min-w-[44px] min-h-[44px]"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    {confirmingRemoveId === item.product_id ? (
+                      <div className="ml-1 flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            onRemove(item.product_id)
+                            setConfirmingRemoveId(null)
+                          }}
+                          className="flex items-center justify-center rounded-md bg-destructive px-2.5 text-xs font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 min-h-[44px]"
+                        >
+                          {t("common.confirm")}
+                        </button>
+                        <button
+                          onClick={() => setConfirmingRemoveId(null)}
+                          className="flex items-center justify-center rounded-md border transition-colors hover:bg-muted min-w-[44px] min-h-[44px]"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmingRemoveId(item.product_id)}
+                        className="ml-1 flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive active:scale-[0.98] min-w-[44px] min-h-[44px]"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </ScrollArea>
 
-          <div className="border-t px-4 py-3 space-y-2">
+          <div className="mt-auto border-t px-4 py-3 space-y-2">
+            {showDiscount ? (
+              <div className="rounded-lg border p-2 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex rounded-md border text-sm">
+                    <button
+                      onClick={() => setDiscountType("fixed")}
+                      className={`px-2 py-1 ${discountType === "fixed" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+                    >
+                      $
+                    </button>
+                    <button
+                      onClick={() => setDiscountType("percentage")}
+                      className={`px-2 py-1 ${discountType === "percentage" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+                    >
+                      %
+                    </button>
+                  </div>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder={discountType === "fixed" ? "0.00" : "0"}
+                    value={discountInput}
+                    onChange={(e) => {
+                      setDiscountInput(e.target.value)
+                      const val = parseFloat(e.target.value) || 0
+                      const computed = discountType === "percentage" ? (subtotal * val) / 100 : val
+                      onDiscountChange?.(Math.min(computed, subtotal))
+                    }}
+                    className="h-8 flex-1 text-sm"
+                  />
+                  <button
+                    onClick={() => { setShowDiscount(false); onDiscountChange?.(0); setDiscountInput("") }}
+                    className="text-xs text-destructive hover:underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowDiscount(true)}
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed py-2 text-xs text-muted-foreground hover:border-solid hover:bg-muted/50 transition-colors min-h-[36px]"
+              >
+                <Percent className="h-3.5 w-3.5" />
+                {t("pos.add_discount") || "Add Discount"}
+              </button>
+            )}
             {discount > 0 && (
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-1.5 text-muted-foreground">
@@ -270,7 +352,7 @@ export function CartPanel({
             </div>
             <Button
               size="lg"
-              className="mt-2 w-full min-h-[48px] text-base font-semibold"
+              className="mt-2 w-full min-h-[48px] text-base font-semibold shadow-sm hover:shadow-md transition-shadow active:scale-[0.98]"
               onClick={onCheckout}
             >
               <Receipt className="mr-2 h-5 w-5" />

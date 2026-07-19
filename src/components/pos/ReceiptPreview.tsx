@@ -15,10 +15,14 @@ import {
   Building2,
   FileDigit,
   Phone,
+  Barcode,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import { toast } from "sonner"
+
+const BARCODE_PATTERN = [2, 4, 1, 3, 5, 2, 4, 3, 1, 5, 2, 3, 4, 1, 3, 2, 5, 1, 4, 3, 2, 4, 1, 5, 3, 2, 4, 1, 3, 5]
 
 interface ReceiptPreviewProps {
   receipt: POSReceipt | null
@@ -138,6 +142,11 @@ export function ReceiptPreview({
         </h3>
       </div>
     )
+  }
+
+  const handleEmailClick = () => {
+    onEmail()
+    toast.success("Receipt emailed successfully")
   }
 
   const layoutToggle = propLayout === undefined && (
@@ -264,6 +273,11 @@ export function ReceiptPreview({
             )}
           </div>
 
+          <div className="mt-3 rounded-md border-2 border-dashed border-primary/20 bg-primary/5 p-2 text-center">
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Receipt #</p>
+            <p className="text-sm font-bold tracking-tight">{receipt.order_number}</p>
+          </div>
+
           {receipt.customer && (
             <>
               <Separator className="my-3" />
@@ -340,6 +354,20 @@ export function ReceiptPreview({
           )}
 
           <Separator className="my-3" />
+
+          {/* Barcode placeholder */}
+          <div className="flex flex-col items-center gap-1 py-1">
+            <div className="flex items-end gap-[1px]">
+              {BARCODE_PATTERN.map((w, i) => (
+                <div
+                  key={i}
+                  className="bg-foreground/40"
+                  style={{ width: `${w}px`, height: `${12 + (i % 3) * 5}px` }}
+                />
+              ))}
+            </div>
+            <span className="text-[8px] text-muted-foreground tracking-[2px]">{receipt.order_number}</span>
+          </div>
 
           <p className="text-center text-[9px] text-muted-foreground">
             {t("pos.receipt_footer")}
@@ -496,22 +524,20 @@ export function ReceiptPreview({
           variant="outline"
           size="lg"
           className="min-h-[48px]"
-          onClick={onEmail}
+          onClick={handleEmailClick}
         >
           <Mail className="mr-2 h-5 w-5" />
           {t("pos.email_receipt")}
         </Button>
-        {onDownloadPdf && (
-          <Button
-            variant="outline"
-            size="lg"
-            className="min-h-[48px]"
-            onClick={onDownloadPdf}
-          >
-            <FileDigit className="mr-2 h-5 w-5" />
-            Download PDF
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          size="lg"
+          className="min-h-[48px]"
+          onClick={() => window.print()}
+        >
+          <FileDigit className="mr-2 h-5 w-5" />
+          Download PDF
+        </Button>
         <Button
           size="lg"
           className="min-h-[48px]"

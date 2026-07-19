@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ReceiptPreview } from "@/components/pos/ReceiptPreview"
-import { ArrowLeft, Printer } from "lucide-react"
+import { ArrowLeft, Printer, Receipt } from "lucide-react"
 import { toast } from "sonner"
 import type { POSReceipt } from "@/lib/pos-types"
 
@@ -14,17 +14,22 @@ export default function ReceiptDetailPage() {
   const params = useParams()
   const [receipt, setReceipt] = useState<POSReceipt | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     if (!params.id) return
     setLoading(true)
+    setError(false)
     fetch(`/api/pos/receipt/${params.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Not found")
         return res.json()
       })
       .then((data) => setReceipt(data))
-      .catch(() => setReceipt(null))
+      .catch(() => {
+        setReceipt(null)
+        setError(true)
+      })
       .finally(() => setLoading(false))
   }, [params.id])
 
@@ -38,14 +43,9 @@ export default function ReceiptDetailPage() {
         body: JSON.stringify({ orderId: params.id }),
       })
       if (!res.ok) throw new Error("Failed to send email")
-      toast.success("Receipt emailed successfully")
     } catch {
       toast.error("Failed to email receipt")
     }
-  }
-
-  const handleDownloadPdf = () => {
-    window.open(`/api/pos/receipt/pdf?orderId=${params.id}`, "_blank")
   }
 
   if (loading) {
@@ -53,6 +53,28 @@ export default function ReceiptDetailPage() {
       <div className="mx-auto max-w-lg space-y-4">
         <Skeleton className="h-8 w-32" />
         <Skeleton className="h-[500px] w-full" />
+      </div>
+    )
+  }
+
+  if (error || !receipt) {
+    return (
+      <div className="mx-auto max-w-lg">
+        <div className="mb-4 flex items-center justify-between no-print">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/pos/receipts">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Receipts
+            </Link>
+          </Button>
+        </div>
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <Receipt className="mb-4 h-12 w-12 text-muted-foreground/50" />
+          <h3 className="text-lg font-medium text-muted-foreground">Receipt not found</h3>
+          <p className="mt-1 text-sm text-muted-foreground/60">
+            This receipt could not be found or may have been deleted.
+          </p>
+        </div>
       </div>
     )
   }
@@ -69,7 +91,7 @@ export default function ReceiptDetailPage() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handlePrint}>
             <Printer className="mr-1.5 h-4 w-4" />
-            Print
+            Reprint
           </Button>
         </div>
       </div>
@@ -79,7 +101,6 @@ export default function ReceiptDetailPage() {
         onPrint={handlePrint}
         onEmail={handleEmail}
         onNewSale={() => window.location.href = "/pos"}
-        onDownloadPdf={handleDownloadPdf}
         layout="thermal"
       />
     </div>

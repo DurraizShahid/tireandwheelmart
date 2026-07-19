@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useTranslation } from "@/i18n/use-locale"
-import { Clock, RefreshCw } from "lucide-react"
+import { Clock, RefreshCw, ReceiptText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -55,9 +55,16 @@ export function CustomerHistory({ customerId, customerName, onSelectOrder }: Cus
 
   if (loading) {
     return (
-      <div className="space-y-3 p-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 w-full rounded-lg" />
+      <div className="space-y-2 p-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3 rounded-xl border p-3">
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+            <Skeleton className="h-5 w-16 rounded-full" />
+            <Skeleton className="h-4 w-14" />
+          </div>
         ))}
       </div>
     )
@@ -65,9 +72,12 @@ export function CustomerHistory({ customerId, customerName, onSelectOrder }: Cus
 
   if (orders.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <Clock className="mb-3 h-10 w-10 text-muted-foreground/50" />
-        <p className="text-sm text-muted-foreground">{t("pos.no_orders") || "No orders yet"}</p>
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+          <ReceiptText className="h-7 w-7 text-muted-foreground/50" />
+        </div>
+        <p className="text-sm font-medium text-muted-foreground">{t("pos.no_orders") || "No orders yet"}</p>
+        <p className="mt-1 text-xs text-muted-foreground/60">Complete a checkout to see orders here</p>
       </div>
     )
   }
@@ -79,33 +89,38 @@ export function CustomerHistory({ customerId, customerName, onSelectOrder }: Cus
           <h3 className="text-sm font-semibold truncate">{customerName}</h3>
           <p className="text-xs text-muted-foreground">{orders.length} {t("pos.orders") || "orders"}</p>
         </div>
-        <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={fetchOrders}>
+        <Button variant="ghost" size="icon" className="h-8 w-8 min-h-[44px] min-w-[44px] shrink-0 active:scale-[0.97] transition-all duration-150" onClick={fetchOrders} aria-label="Refresh orders">
           <RefreshCw className="h-3.5 w-3.5" />
         </Button>
       </div>
       <ScrollArea className="flex-1">
-        <div className="divide-y">
+        <div className="space-y-1.5 p-3">
           {orders.map((order) => (
             <button
               key={order.id}
-              className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50"
+              className="flex w-full items-center gap-3 rounded-xl border bg-card p-3 text-left shadow-sm transition-all duration-150 hover:bg-accent hover:shadow-md active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 cursor-pointer"
               onClick={() => onSelectOrder?.(order.id)}
+              aria-label={`${t("pos.order") || "Order"} ${order.order_number}`}
             >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <ReceiptText className="h-4 w-4 text-muted-foreground" />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">{order.order_number}</span>
                   <Badge
                     variant="outline"
-                    className={`text-[10px] px-1.5 py-0 ${statusColor[order.status] || ""}`}
+                    className={`text-[10px] px-1.5 py-0 font-medium ${statusColor[order.status] || ""}`}
                   >
                     {order.status}
                   </Badge>
                 </div>
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="mt-0.5 text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
                   {new Date(order.created_at).toLocaleDateString()}
                 </p>
               </div>
-              <span className="text-sm font-semibold">${order.total.toFixed(2)}</span>
+              <span className="text-sm font-bold text-primary">${order.total.toFixed(2)}</span>
             </button>
           ))}
         </div>

@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const page = parseInt(searchParams.get("page") ?? "1", 10);
-    const limit = parseInt(searchParams.get("limit") ?? "50", 10);
+    const limit = parseInt(searchParams.get("limit") ?? "20", 10);
     const offset = (page - 1) * limit;
 
     const result = await pos.getPOSProducts({

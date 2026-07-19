@@ -49,10 +49,15 @@ export default function POSPage() {
 
   const [products, setProducts] = useState<POSProduct[]>([])
   const [categories, setCategories] = useState<POSCategory[]>([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
-  const [cartItems, setCartItems] = useState<POSCartItem[]>([])
-  const [selectedCustomer, setSelectedCustomer] = useState<POSCustomer | null>(null)
+  const [cartItems, setCartItems] = useState<POSCartItem[]>(() => {
+    try { const stored = sessionStorage.getItem("pos_cart"); return stored ? JSON.parse(stored) : []; } catch { return []; }
+  })
+  const [selectedCustomer, setSelectedCustomer] = useState<POSCustomer | null>(() => {
+    try { const stored = sessionStorage.getItem("pos_customer"); return stored ? JSON.parse(stored) : null; } catch { return null; }
+  })
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -62,6 +67,18 @@ export default function POSPage() {
   const [online, setOnline] = useState(true)
   const [showReceipt, setShowReceipt] = useState(false)
   const [lastReceipt, setLastReceipt] = useState<POSReceipt | null>(null)
+  const handleEmailReceipt = useCallback(async () => {
+    if (!lastReceipt?.order_number) { toast.error("No receipt to email"); return }
+    try {
+      const res = await fetch("/api/pos/receipt/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderNumber: lastReceipt.order_number }),
+      })
+      if (res.ok) toast.success("Receipt emailed")
+      else toast.error("Failed to email receipt")
+    } catch { toast.error("Failed to email receipt") }
+  }, [lastReceipt])
   const searchRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -99,6 +116,7 @@ export default function POSPage() {
   }, [])
 
   const fetchCategories = useCallback(async () => {
+    setCategoriesLoading(true)
     try {
       const res = await fetch("/api/pos/categories")
       if (!res.ok) throw new Error("Failed to fetch categories")
@@ -106,6 +124,8 @@ export default function POSPage() {
       setCategories(data)
     } catch {
       setCategories([])
+    } finally {
+      setCategoriesLoading(false)
     }
   }, [])
 
@@ -170,6 +190,14 @@ export default function POSPage() {
   useEffect(() => {
     fetchQuickProductIds()
   }, [fetchQuickProductIds])
+
+  useEffect(() => {
+    try { sessionStorage.setItem("pos_cart", JSON.stringify(cartItems)); } catch {}
+  }, [cartItems])
+
+  useEffect(() => {
+    try { sessionStorage.setItem("pos_customer", JSON.stringify(selectedCustomer)); } catch {}
+  }, [selectedCustomer])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -383,9 +411,9 @@ export default function POSPage() {
     }
   }, [shift])
 
+  const [discount, setDiscount] = useState(0)
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const tax = subtotal * 0.13
-  const discount = 0
   const total = subtotal + tax - discount
 
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
@@ -431,7 +459,7 @@ export default function POSPage() {
             <ReceiptPreview
               receipt={lastReceipt}
               onPrint={() => window.print()}
-              onEmail={() => toast.success("Receipt emailed")}
+              onEmail={handleEmailReceipt}
               onNewSale={handleNewSale}
             />
           </div>
@@ -441,7 +469,7 @@ export default function POSPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/30 transition-all duration-200">
+    <div className="flex h-screen flex-col bg-muted/30 transition-all duration-200">
       <PosHeader
         registerName="Register #1"
         registerStatus={isRegisterOpen ? "open" : "closed"}
@@ -460,17 +488,18 @@ export default function POSPage() {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="hidden md:flex w-56 shrink-0 flex-col border-r bg-card">
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        <aside className="hidden md:flex w-56 shrink-0 flex-col border-r bg-card h-full">
           <CategorySidebar
             categories={categories}
             selected={selectedCategory}
             onSelect={handleCategorySelect}
+            loading={categoriesLoading}
           />
         </aside>
 
-        <div className="flex flex-1 flex-col min-w-0">
-          <div className="flex items-center gap-3 border-b bg-card px-4 py-3">
+        <div className="flex flex-1 flex-col min-w-0 min-h-0">
+          <div className="flex items-center gap-3 border-b bg-card px-4 py-3 shrink-0">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -577,16 +606,19 @@ export default function POSPage() {
                   }}
                   onCustomerClick={() => setCustomerSheetOpen(true)}
                   customerName={customerName}
+                  onDiscountChange={setDiscount}
                 />
               </SheetContent>
             </Sheet>
           </div>
 
           {showQuickProducts && (
-            <QuickProducts onAddToCart={handleAddToCart} />
+            <div className="shrink-0">
+              <QuickProducts onAddToCart={handleAddToCart} />
+            </div>
           )}
 
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4 min-h-0">
             <ProductGrid
               products={products}
               onAddToCart={handleAddToCart}
@@ -601,7 +633,7 @@ export default function POSPage() {
           </div>
         </div>
 
-        <aside className="hidden lg:flex w-[400px] shrink-0 flex-col border-l bg-card">
+        <aside className="hidden lg:flex w-[400px] shrink-0 flex-col border-l bg-card h-full">
           <CartPanel
             items={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
@@ -616,6 +648,7 @@ export default function POSPage() {
             onCheckout={() => setCheckoutOpen(true)}
             onCustomerClick={() => setCustomerSheetOpen(true)}
             customerName={customerName}
+            onDiscountChange={setDiscount}
           />
         </aside>
       </div>

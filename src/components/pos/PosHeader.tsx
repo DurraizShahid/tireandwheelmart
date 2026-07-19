@@ -84,12 +84,13 @@ export function PosHeader({
 
       <button
         onClick={() => onRegisterClick?.()}
-        className="flex items-center gap-2 active:scale-[0.97] transition-all duration-150"
+        className="flex items-center gap-2 active:scale-[0.97] transition-all duration-150 hover:bg-accent rounded-md px-2 py-1 -mx-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         type="button"
+        aria-label={`${registerName} - ${registerStatus === "open" ? "Open" : "Closed"}`}
       >
         <span
-          className={`inline-block h-2 w-2 rounded-full ${
-            registerStatus === "open" ? "bg-green-500" : "bg-red-500"
+          className={`inline-block h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+            registerStatus === "open" ? "bg-green-500 shadow-sm shadow-green-500/50" : "bg-red-500 shadow-sm shadow-red-500/50"
           }`}
         />
         <span className="text-sm font-medium">
@@ -121,9 +122,10 @@ export function PosHeader({
         <Button
           variant="outline"
           size="sm"
-          className="h-8 min-h-[40px] gap-1.5 text-xs active:scale-[0.97]"
+          className="h-8 min-h-[44px] gap-1.5 text-xs active:scale-[0.97] transition-all duration-150"
           onClick={onNewSale}
           disabled={cartEmpty}
+          aria-label={t("pos.new_sale")}
         >
           <Plus className="h-3.5 w-3.5" />
           {t("pos.new_sale")}
@@ -131,7 +133,7 @@ export function PosHeader({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-10 w-10 md:h-8 md:w-8 min-h-[40px] min-w-[40px] active:scale-[0.97]">
+            <Button variant="ghost" size="icon" className="h-10 w-10 md:h-8 md:w-8 min-h-[44px] min-w-[44px] active:scale-[0.97] transition-all duration-150" aria-label="Settings">
               <Settings className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -175,8 +177,9 @@ export function PosHeader({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 min-h-[40px] gap-1.5 text-xs active:scale-[0.97]"
+            className="h-8 min-h-[44px] gap-1.5 text-xs active:scale-[0.97] transition-all duration-150"
             onClick={onEndOfDay}
+            aria-label={t("pos.end_of_day")}
           >
             <Clock className="h-3.5 w-3.5" />
             {t("pos.end_of_day")}
@@ -187,14 +190,19 @@ export function PosHeader({
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Clock className="h-3.5 w-3.5" />
-          <span className="tabular-nums">{currentTime}</span>
+          <span className="tabular-nums font-medium">{currentTime}</span>
         </div>
 
-        {online ? (
-          <Wifi className="h-3.5 w-3.5 text-green-500" />
-        ) : (
-          <WifiOff className="h-3.5 w-3.5 text-amber-500" />
-        )}
+        <div className="flex items-center gap-1" role="status" aria-label={online ? "Online" : "Offline"}>
+          {online ? (
+            <Wifi className="h-3.5 w-3.5 text-green-500 transition-all duration-300" />
+          ) : (
+            <WifiOff className="h-3.5 w-3.5 text-amber-500 transition-all duration-300" />
+          )}
+          <span className="hidden md:inline text-[10px] text-muted-foreground">
+            {online ? "Online" : "Offline"}
+          </span>
+        </div>
       </div>
     </header>
   )

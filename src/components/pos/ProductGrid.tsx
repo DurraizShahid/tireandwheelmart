@@ -41,7 +41,7 @@ export function ProductGrid({ products, onAddToCart, loading, total, page, total
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {Array.from({ length: 10 }).map((_, i) => (
+        {Array.from({ length: 20 }).map((_, i) => (
           <ProductCardSkeleton key={i} />
         ))}
       </div>
@@ -76,7 +76,7 @@ export function ProductGrid({ products, onAddToCart, loading, total, page, total
                 "group relative rounded-xl border bg-card transition-all duration-150 hover:shadow-lg hover:-translate-y-0.5 animate-in fade-in slide-in-from-bottom-2 duration-300",
                 outOfStock && "opacity-50"
               )}
-              style={{ animationDelay: `${(index % 10) * 30}ms` }}
+              style={{ animationDelay: `${(index % 20) * 30}ms` }}
             >
               {lowStock && !outOfStock && (
                 <div className="absolute left-2 top-2 z-10">
@@ -169,7 +169,7 @@ export function ProductGrid({ products, onAddToCart, loading, total, page, total
             {t("pos.previous") || "Previous"}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {t("pos.page_info") || "Page"} {page} {t("pos.of") || "of"} {totalPages}
+            {t("pos.page_info") || "Page"} {page} {t("pos.of") || "of"} {totalPages} ({total} {t("pos.products") || "products"})
           </span>
           <Button
             variant="outline"
