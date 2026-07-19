@@ -86,7 +86,9 @@
     },
     "header": {
       "expandSidebar": "توسيع الشريط الجانبي",
-      "collapseSidebar": "طي الشريط الجانبي"
+      "collapseSidebar": "طي الشريط الجانبي",
+      "launchPOS": "فتح نظام البيع",
+      "launchPOSTooltip": "فتح نظام البيع في علامة تبويب جديدة"
     },
     "dashboard": {
       "title": "لوحة المعلومات",

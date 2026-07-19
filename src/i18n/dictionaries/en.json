@@ -43,7 +43,12 @@
     "toggleMenu": "Toggle navigation menu",
     "adminPanel": "Admin panel",
     "logo": "Tire&Wheel Logo",
-    "skipToMain": "Skip to main content"
+    "skipToMain": "Skip to main content",
+    "portalAdmin": "Admin Portal",
+    "portalPOS": "Point of Sale",
+    "signInToAdmin": "Sign in to Admin",
+    "signInToPOS": "Sign in to POS",
+    "signOutAll": "Sign out of all devices"
   },
   "admin": {
     "sidebar": {
@@ -86,7 +91,9 @@
     },
     "header": {
       "expandSidebar": "Expand sidebar",
-      "collapseSidebar": "Collapse sidebar"
+      "collapseSidebar": "Collapse sidebar",
+      "launchPOS": "Launch POS",
+      "launchPOSTooltip": "Open POS in new tab"
     },
     "dashboard": {
       "title": "Dashboard",

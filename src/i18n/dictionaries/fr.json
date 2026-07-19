@@ -86,7 +86,9 @@
     },
     "header": {
       "expandSidebar": "Agrandir la barre latérale",
-      "collapseSidebar": "Réduire la barre latérale"
+      "collapseSidebar": "Réduire la barre latérale",
+      "launchPOS": "Lancer le PDV",
+      "launchPOSTooltip": "Ouvrir le PDV dans un nouvel onglet"
     },
     "dashboard": {
       "title": "Tableau de bord",

@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, Bell, Lock, Palette, Database, Loader2 } from "lucide-react";
+import { ActiveSessions } from "@/components/auth/ActiveSessions";
 import { toast } from "sonner";
 
 interface Settings {
@@ -208,6 +209,8 @@ export default function SettingsPage() {
                       </Button>
                     </CardContent>
                   </Card>
+
+                  <ActiveSessions />
                 </TabsContent>
 
                 <TabsContent value="appearance" className="space-y-4">

@@ -41,6 +41,11 @@ export interface TranslationDictionary {
     adminPanel: string;
     logo: string;
     skipToMain: string;
+    portalAdmin: string;
+    portalPOS: string;
+    signInToAdmin: string;
+    signInToPOS: string;
+    signOutAll: string;
   };
   admin: {
     sidebar: {
@@ -76,6 +81,8 @@ export interface TranslationDictionary {
     header: {
       expandSidebar: string;
       collapseSidebar: string;
+      launchPOS: string;
+      launchPOSTooltip: string;
     };
     dashboard: {
       title: string;
