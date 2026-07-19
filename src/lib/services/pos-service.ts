@@ -108,17 +108,53 @@ export function createPOSService(client?: ReturnType<typeof createServerClient>)
     }
 
     if (!customerId) {
-      const { data: newCustomer } = await db
-        .from("customers")
-        .insert({
-          email: customer.email,
-          first_name: customer.first_name,
-          last_name: customer.last_name,
-          phone: customer.phone || null,
-        })
-        .select("id")
-        .single();
-      customerId = newCustomer?.id ?? null;
+      if (!customer.email) {
+        // Walk-in — reuse a single well-known record
+        const { data: existing } = await db
+          .from("customers")
+          .select("id")
+          .eq("clerk_user_id", "pos_walkin_default")
+          .maybeSingle();
+        if (existing) {
+          customerId = existing.id;
+        } else {
+          const { data: newCustomer } = await db
+            .from("customers")
+            .insert({
+              clerk_user_id: "pos_walkin_default",
+              email: "walkin@pos.local",
+              first_name: "Walk-in",
+              last_name: "Customer",
+              phone: null,
+            })
+            .select("id")
+            .single();
+          customerId = newCustomer?.id ?? null;
+        }
+      } else {
+        // Lookup by email first to avoid duplicates
+        const { data: existing } = await db
+          .from("customers")
+          .select("id")
+          .eq("email", customer.email)
+          .maybeSingle();
+        if (existing) {
+          customerId = existing.id;
+        } else {
+          const { data: newCustomer } = await db
+            .from("customers")
+            .insert({
+              clerk_user_id: `pos_${generateId()}`,
+              email: customer.email,
+              first_name: customer.first_name,
+              last_name: customer.last_name,
+              phone: customer.phone || null,
+            })
+            .select("id")
+            .single();
+          customerId = newCustomer?.id ?? null;
+        }
+      }
     }
 
     if (!customerId) {

@@ -37,7 +37,11 @@ export default clerkMiddleware(async (auth, request) => {
   role = metadata?.role;
 
   if (!role && userId) {
-    role = await getUserRole(userId);
+    try {
+      role = await getUserRole(userId);
+    } catch {
+      console.warn("Failed to fetch user role from Clerk API, denying access");
+    }
   }
 
   // Protect admin routes — require signed-in user with admin role

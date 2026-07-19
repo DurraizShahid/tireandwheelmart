@@ -44,17 +44,24 @@ export function createInventoryService(client?: ReturnType<typeof createServerCl
     sourceReferenceId?: string;
     notes?: string;
   }): Promise<{ success: boolean; previous_quantity?: number; new_quantity?: number; transaction_id?: string; error?: string; available?: number }> {
-    const { data, error } = await db.rpc("adjust_stock", {
-      p_product_id: params.productId,
-      p_quantity: params.quantity,
-      p_transaction_type: params.transactionType,
-      p_user_id: params.userId ?? null,
-      p_source_module: params.sourceModule ?? "manual",
-      p_source_reference_id: params.sourceReferenceId ?? null,
-      p_notes: params.notes ?? null,
-    });
-    if (error) throw new Error(error.message);
-    return data as { success: boolean; previous_quantity?: number; new_quantity?: number; transaction_id?: string; error?: string; available?: number };
+    const { data: product, error: fetchError } = await db
+      .from("products")
+      .select("stock_quantity")
+      .eq("id", params.productId)
+      .single();
+    if (fetchError || !product) {
+      return { success: false, error: fetchError?.message || "Product not found" };
+    }
+    const previous = product.stock_quantity ?? 0;
+    const newQty = Math.max(0, previous + params.quantity);
+    const { error: updateError } = await db
+      .from("products")
+      .update({ stock_quantity: newQty, in_stock: newQty > 0 })
+      .eq("id", params.productId);
+    if (updateError) {
+      return { success: false, error: updateError.message };
+    }
+    return { success: true, previous_quantity: previous, new_quantity: newQty };
   }
 
   // ── Balance Functions ──

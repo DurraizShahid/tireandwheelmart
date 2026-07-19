@@ -177,51 +177,52 @@ export function ReceiptPreview({
   return (
     <div className="space-y-6 print:space-y-0">
       <style jsx global>{`
-        /* ── Thermal (80mm) print styles ── */
-        @media print {
-          .layout-thermal body * { visibility: hidden; }
-          .layout-thermal #receipt-area, .layout-thermal #receipt-area * { visibility: visible; }
-          .layout-thermal #receipt-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 80mm;
-            padding: 0;
-            margin: 0;
-            font-size: 10px;
-          }
-          .layout-thermal #receipt-area .no-print { display: none !important; }
-          .layout-thermal #receipt-area .print-only { display: block !important; }
-          .layout-thermal .page-break { display: none; }
-        }
-        @media print {
-          .layout-thermal { --print-page-size: 80mm auto; }
-          .layout-thermal .no-print { display: none !important; }
-        }
         .layout-thermal .print-only { display: none; }
-        @page { margin: 0; }
 
-        /* ── A4 print styles ── */
         @media print {
-          .layout-a4 body * { visibility: hidden; }
-          .layout-a4 #receipt-area-a4, .layout-a4 #receipt-area-a4 * { visibility: visible; }
-          .layout-a4 #receipt-area-a4 {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            padding: 0;
-            margin: 0;
+          @page { size: 80mm auto; margin: 0; }
+          html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; height: auto !important; }
+          body > * { visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+          #receipt-area { visibility: visible !important; }
+          #receipt-area * { visibility: visible !important; }
+          #receipt-area {
+            position: fixed !important;
+            left: 50% !important;
+            top: 0 !important;
+            transform: translateX(-50%) !important;
+            width: 80mm !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-size: 10px !important;
+            background: white !important;
+            color: black !important;
           }
-          .layout-a4 .no-print { display: none !important; }
-          .layout-a4 .page-break { page-break-before: always; }
+          #receipt-area .no-print { display: none !important; }
+          #receipt-area .print-only { display: block !important; }
         }
-        @page { size: A4; margin: 15mm 20mm; }
+
+        @media print {
+          @page { size: A4; margin: 15mm 20mm; }
+          #receipt-area-a4 { visibility: visible !important; }
+          #receipt-area-a4 * { visibility: visible !important; }
+          #receipt-area-a4 {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: white !important;
+            color: black !important;
+          }
+          #receipt-area-a4 .no-print { display: none !important; }
+          #receipt-area-a4 .page-break { page-break-before: always; }
+        }
       `}</style>
 
       {/* ── Thermal layout ── */}
       {currentLayout === "thermal" && (
-        <div id="receipt-area" className="mx-auto max-w-sm rounded-xl border bg-white p-6 shadow-sm dark:bg-black layout-thermal">
+        <div id="receipt-area" className="mx-auto max-w-sm rounded-xl border bg-white p-6 shadow-sm layout-thermal">
           <div className="text-center">
             <div className="mb-1 flex items-center justify-center gap-1.5">
               <Store className="h-4 w-4 text-primary print-only" />
@@ -378,7 +379,7 @@ export function ReceiptPreview({
       {/* ── A4 Invoice layout ── */}
       {currentLayout === "a4" && (
         <div id="receipt-area-a4" className="layout-a4">
-          <div className="mx-auto max-w-[210mm] rounded-xl border bg-white p-8 shadow-sm dark:bg-black">
+          <div className="mx-auto max-w-[210mm] rounded-xl border bg-white p-8 shadow-sm">
             {/* Letterhead */}
             <div className="flex items-start justify-between border-b-2 border-primary/20 pb-6">
               <div>

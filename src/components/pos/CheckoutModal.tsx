@@ -401,9 +401,9 @@ export function CheckoutModal({
               {t("pos.order_summary")}
             </h2>
             <div className="rounded-lg border">
-              {items.map((item) => (
+              {items.map((item, idx) => (
                 <div
-                  key={item.product_id}
+                  key={`checkout-item-${idx}`}
                   className="flex items-center gap-3 border-b px-4 py-3 last:border-b-0"
                 >
                   <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
@@ -540,10 +540,10 @@ export function CheckoutModal({
                     </div>
                     <div className="flex gap-2">
                       {[total, Math.ceil(total / 10) * 10, Math.ceil(total / 20) * 20].map(
-                        (amt) =>
+                        (amt, i) =>
                           amt > total && (
                             <Button
-                              key={amt}
+                              key={`round-${i}`}
                               variant="outline"
                               size="sm"
                               className="h-8 text-xs"

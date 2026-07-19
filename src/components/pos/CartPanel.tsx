@@ -192,8 +192,8 @@ export function CartPanel({
 
           <ScrollArea className="flex-1">
             <div className="divide-y">
-              {items.map((item) => (
-                <div key={item.product_id} className="flex gap-3 px-4 py-3 transition-all duration-150">
+              {items.map((item, idx) => (
+                <div key={`cart-item-${idx}`} className="flex gap-3 px-4 py-3 transition-all duration-150">
                   <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
                     <img
                       src={item.image_url || "/placeholder.svg"}
