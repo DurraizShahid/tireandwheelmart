@@ -69,11 +69,12 @@ export default function POSPage() {
   const [lastReceipt, setLastReceipt] = useState<POSReceipt | null>(null)
   const handleEmailReceipt = useCallback(async () => {
     if (!lastReceipt?.order_number) { toast.error("No receipt to email"); return }
+    if (!lastReceipt.customer?.email) { toast.error("No customer email on receipt"); return }
     try {
       const res = await fetch("/api/pos/receipt/email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderNumber: lastReceipt.order_number }),
+        body: JSON.stringify({ orderNumber: lastReceipt.order_number, customerEmail: lastReceipt.customer.email }),
       })
       if (res.ok) toast.success("Receipt emailed")
       else toast.error("Failed to email receipt")
